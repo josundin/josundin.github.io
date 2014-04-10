@@ -1,6 +1,6 @@
 //stitch.js
-var width = 200;
-var height = 261;
+var width = 0;
+var height = 0;
 
 //makes as gui options
 var stitch_opt = function(){
@@ -8,6 +8,9 @@ var stitch_opt = function(){
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
+    this.corner_threshold = 35;
+    this.img1 = "imgs/P1100328.jpg";
+    this.img2 = "imgs/P1100329.jpg";
 }
 
 
@@ -22,8 +25,8 @@ function createcanvas( width, height )
 {
   
   var canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  //canvas.width = width;
+  //canvas.height = height;
 
   canvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
 
@@ -46,8 +49,8 @@ function detector_App( )
   var img2Loaded = false;
   var img = new Image();
   var dummy = new Image();
-  img.src =  "imgs/left_s.jpg";
-  var canvas = createcanvas(width, height);
+  img.src =  my_opt.img1;
+  var canvas = createcanvas();
   var ctx = canvas.getContext('2d');
   img.addEventListener('load', imgLoaded , false);
 
@@ -55,7 +58,10 @@ function detector_App( )
 
   function imgLoaded() {
 
-    setupFastkeypointdetector(25);
+    width = canvas.width = img.width;
+    height = canvas.height = img.height;
+    
+    setupFastkeypointdetector(my_opt.corner_threshold);
     computeFast(img, 0);
     computeDetectors(0);
 
@@ -78,7 +84,7 @@ function detector_App( )
     else if(!img2Loaded)
     {
       img2Loaded = true;
-      img.src =  "imgs/right_s.jpg";  
+      img.src =  my_opt.img2;  
     }
   }
 
@@ -87,7 +93,7 @@ function detector_App( )
 
     //First place the two images next to other.
     canvas.width = width * 2;
-    dummy.src = "imgs/left_s.jpg";
+    dummy.src = my_opt.img1;
     ctx = canvas.getContext('2d');
     dummy.addEventListener('load', dummyLoaded(matches) , false);
 
