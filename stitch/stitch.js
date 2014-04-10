@@ -1,6 +1,8 @@
 //stitch.js
 var width = 0;
 var height = 0;
+var imaga_from_button  = 0;
+
 
 //makes as gui options
 var stitch_opt = function(){
@@ -9,16 +11,18 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 35;
-    this.img1 = "imgs/P1100328.jpg";
-    this.img2 = "imgs/P1100329.jpg";
+    this.img1 = ["imgs/P1100328.jpg","imgs/left.jpg", "imgs/IMG_0053.jpg"];
+    this.img2 = ["imgs/P1100329.jpg","imgs/right.jpg", "imgs/IMG_0051.jpg"];
 }
 
-
+var img2Loaded = false;
 window.addEventListener('load', eventWindowLoaded, false);  
 function eventWindowLoaded() {
   my_opt = new stitch_opt();
   detector_App();
 }
+
+
 
 
 function createcanvas( width, height )
@@ -33,10 +37,49 @@ function createcanvas( width, height )
   //add the canvas
   var body = document.getElementsByTagName("body")[0];
   body.appendChild(canvas);
-  
+  canvas.id="ett";
+  body.id="body";
+
   return canvas;
 }
 
+function createButton()
+{
+  var body = document.getElementsByTagName("body")[0];
+  var button = document.createElement("input");
+  button.type = "button";
+  button.value = "new imgs";
+  button.onclick = start;
+  button.id = "button";
+
+  body.appendChild(button);
+}
+
+
+function start()
+{
+  
+  var canvasElements=document.getElementById("body");
+
+  console.log("getElementById", canvasElements.childNodes);
+  for (var i=0; i<canvasElements.childNodes.length; i++)
+    if(canvasElements.childNodes[i].id == "ett" || canvasElements.childNodes[i].id == "tva")
+      canvasElements.childNodes[i].remove();
+
+  for (var i=0; i<canvasElements.childNodes.length; i++)
+    if(canvasElements.childNodes[i].id == "ett" || canvasElements.childNodes[i].id == "tva")
+      canvasElements.childNodes[i].remove();
+  for (var i=0; i<canvasElements.childNodes.length; i++)
+    if(canvasElements.childNodes[i].id == "ett" || canvasElements.childNodes[i].id == "tva" || canvasElements.childNodes[i].id == "button")
+      canvasElements.childNodes[i].remove();
+
+  img2Loaded = false;
+  
+  if(++imaga_from_button > 2)
+    imaga_from_button = 0;
+
+  detector_App();
+}
 
 
 function detector_App( )
@@ -46,10 +89,10 @@ function detector_App( )
   var img_u8, corners, threshold, count;
   var descriptors = new Array();
 
-  var img2Loaded = false;
+
   var img = new Image();
   var dummy = new Image();
-  img.src =  my_opt.img1;
+  img.src =  my_opt.img1[imaga_from_button];
   var canvas = createcanvas();
   var ctx = canvas.getContext('2d');
   img.addEventListener('load', imgLoaded , false);
@@ -84,7 +127,7 @@ function detector_App( )
     else if(!img2Loaded)
     {
       img2Loaded = true;
-      img.src =  my_opt.img2;  
+      img.src =  my_opt.img2[imaga_from_button];  
     }
   }
 
@@ -93,7 +136,7 @@ function detector_App( )
 
     //First place the two images next to other.
     canvas.width = width * 2;
-    dummy.src = my_opt.img1;
+    dummy.src = my_opt.img1[imaga_from_button];
     ctx = canvas.getContext('2d');
     dummy.addEventListener('load', dummyLoaded(matches) , false);
 
@@ -133,6 +176,7 @@ function detector_App( )
     //add the canvas
     var body = document.getElementsByTagName("body")[0];
     body.appendChild(canvas2);
+    canvas2.id= "tva";
     ctx2 = canvas2.getContext('2d');
 
 
@@ -185,6 +229,7 @@ function detector_App( )
     
     ctx2.putImageData(imageData, 0, 0);
     //ctx2.putImageData(img1Data, 0, 0);
+    createButton();
 
   } 
 
@@ -376,18 +421,18 @@ function detector_App( )
 
 
 
- function decreasing(a, b) {
+  function decreasing(a, b) {
     if (a < b) return -1;
     if (b < a) return 1;
     return 0;
   }
 
 
-function byDist(a, b) {
-    if (a[1] < b[1]) return -1;
-    if (b[1] < a[1]) return 1;
-    return 0;
-  }
+  function byDist(a, b) {
+      if (a[1] < b[1]) return -1;
+      if (b[1] < a[1]) return 1;
+      return 0;
+    }
 
   function computeMatches(matches)
   {
@@ -585,9 +630,6 @@ function byDist(a, b) {
       ctx.stroke();
     }
 
-  }
-
-
   function sign_n(x) { return x ? x < 0 ? true : false : 0; }
 
   /*
@@ -614,18 +656,20 @@ function byDist(a, b) {
   } 
 
 
-function binFor(radians, bins) {
-  var angle = radians * (180 / Math.PI);
-  if (angle < 0) {
-    angle += 180;
+  function binFor(radians, bins) {
+    var angle = radians * (180 / Math.PI);
+    if (angle < 0) {
+      angle += 180;
+    }
+
+    // center the first bin around 0
+    angle += 90 / bins;
+    angle %= 180;
+
+    var bin = Math.floor(angle / 180 * bins);
+    return bin;
   }
 
-  // center the first bin around 0
-  angle += 90 / bins;
-  angle %= 180;
-
-  var bin = Math.floor(angle / 180 * bins);
-  return bin;
-}
+}//end of detector app
 
 
