@@ -25,7 +25,7 @@ function eventWindowLoaded() {
 
 
 
-function createcanvas( width, height )
+function createcanvas( )
 {
   
   var canvas = document.createElement('canvas');
@@ -142,11 +142,12 @@ function detector_App( )
 
   }
 
+  var height_offset = 100;
 
   function dummyLoaded(matches) {
     
     ctx.drawImage(dummy, 0, 0);
-    img1Data = ctx.getImageData(0, 0, width *2, height * 2);
+    img1Data = ctx.getImageData(0, 0, width *2, height + height_offset);
     ctx.drawImage(img, width, 0);
     drawMatches(matches);    
   } 
@@ -169,7 +170,7 @@ function detector_App( )
 
     var canvas2 = document.createElement('canvas');
     canvas2.width = width * 2;
-    canvas2.height = height * 2;
+    canvas2.height = height + height_offset;
 
     canvas2.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
   
@@ -181,11 +182,11 @@ function detector_App( )
 
 
     ctx2.drawImage(img, 0, 0,  width, height);
-    var imageData = ctx2.getImageData(0, 0, width * 2, height * 2 );
+    var imageData = ctx2.getImageData(0, 0, width * 2, height + height_offset );
     var img_u8_warp, img_u8;
 
-    img_u8 = new jsfeat.matrix_t(width * 2, height * 2, jsfeat.U8_t | jsfeat.C1_t);
-    img_u8_warp = new jsfeat.matrix_t(width * 2, height * 2, jsfeat.U8_t | jsfeat.C1_t);
+    img_u8 = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+    img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
 
 
     transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
