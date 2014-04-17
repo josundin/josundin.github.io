@@ -1,6 +1,8 @@
 //stitch.js
 var width = 0;
 var height = 0;
+var canvasSize = [0, 0];
+var canvasOffset = [0, 0];
 var imaga_from_button  = 0;
 
 
@@ -11,8 +13,8 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 35;
-    this.img1 = ["imgs/left.jpg", "imgs/IMG_0053.jpg", "imgs/P1100328.jpg"];
-    this.img2 = ["imgs/right.jpg", "imgs/IMG_0051.jpg", "imgs/P1100329.jpg"];
+    this.img1 = [ "imgs/P1100328.jpg", "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg"];
+    this.img2 = [ "imgs/P1100329.jpg", "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg"];
 }
 
 var img2Loaded = false;
@@ -75,7 +77,7 @@ function start()
 
   img2Loaded = false;
   
-  if(++imaga_from_button > 2)
+  if(++imaga_from_button > my_opt.img1.length -1)
     imaga_from_button = 0;
 
   detector_App();
@@ -143,7 +145,7 @@ function detector_App( )
 
   }
 
-  var height_offset = 100;
+  var height_offset = 200;
 
   function dummyLoaded(matches) {
     
@@ -170,8 +172,8 @@ function detector_App( )
   function stitch(bestH){
 
     var canvas2 = document.createElement('canvas');
-    canvas2.width = width * 2;
-    canvas2.height = height + height_offset;
+    canvas2.width = canvasSize[0];
+    canvas2.height = canvasSize[1];
 
     canvas2.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
   
@@ -186,44 +188,27 @@ function detector_App( )
     var imageData = ctx2.getImageData(0, 0, width * 2, height + height_offset );
     var img_u8_warp, img_u8;
 
-    img_u8 = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
-    img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
-
-
-    transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
-
-    transform.data = [0.895631102547577,
-                      0.0598650393077765,
-                      144.471886478043,
-                      -0.0300950416385404,
-                      0.875761050039086,
-                      24.9868295313110,
-                      0.000214010660487613,
-                      -0.000115598275298395,
-                      1];
-
-    for (var i=0; i<9; i++)
-    {
-      transform.data[i] = bestH[i];
-    }
-
-    //jsfeat.matmath.invert_3x3(transform, transform);
-    console.log("transform", transform.data);
-
-    jsfeat.imgproc.grayscale(imageData.data, img_u8.data); 
-    jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform, 0);
-
     var data_u32 = new Uint32Array(imageData.data.buffer);
     var alpha = (0xff << 24);
 
 
-    var gray_img = new jsfeat.matrix_t(width * 2, height* 2, jsfeat.U8_t | jsfeat.C1_t);
+    var gray_img = new jsfeat.matrix_t(width * 2, height+ height_offset, jsfeat.U8_t | jsfeat.C1_t);
+    var gray_img_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
     jsfeat.imgproc.grayscale(img1Data.data, gray_img.data);
 
+    trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+    trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
+
+    //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
+    jsfeat.imgproc.warp_perspective(gray_img, gray_img_warp, trans_offset, 0);
+
+
+    warpPerspective();
 
     var i = img_u8_warp.cols*img_u8_warp.rows, pix = 0;
     while(--i >= 0) {
-        pix = img_u8_warp.data[i] ||  gray_img.data[i]; //
+        pix = img_u8_warp.data[i] ||  gray_img_warp.data[i]; //
         data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
     }
     //console.log(data_u32);
@@ -233,20 +218,34 @@ function detector_App( )
     //ctx2.putImageData(img1Data, 0, 0);
     createButton();
 
+    // inputs 
+    function warpPerspective() 
+    {
+
+      img_u8 = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+      img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+      transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+      transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+
+      for (var i=0; i<9; i++)
+      {
+        transform.data[i] = bestH[i];
+      }
+
+
+      // dot transform trans_offset
+
+      console.log("transform", transform.data);
+
+      jsfeat.imgproc.grayscale(imageData.data, img_u8.data); 
+       //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
+      jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
+      jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform_dot, 0);
+    }
+
   } 
 
-  function findCorners(H){
-
-    //multiplicera x:0    y:0, 
-                // x:max  y:0,  
-                // x:0    y:max,  
-                // x:max  y:max
-    //med H
-
-    console.log("Hello H" ,H);
-    // projectPointNormalized(pairs[j][0] ,H);
-
-  }
 
   function ransac(pairs){
       var bestliers = [];
@@ -283,9 +282,8 @@ function detector_App( )
         }
 
       }
-      console.log(bestliers.length);
-      console.log(pairs);
-
+      console.log("best inliers", bestliers.length);
+      
       ctx.strokeStyle="rgb(0,255,0)";
       ctx.beginPath();
 
@@ -300,17 +298,75 @@ function detector_App( )
       }
 
       var Hbest = Solve_8X8(construcktH);
-      console.log(Hbest);
+      console.log("Best homographie", Hbest);
 
-      var xminymin = projectPointNormalized([0, 0] ,Hbest);
-      console.log("x0y0" ,xminymin);
-
-      var xminymax = projectPointNormalized([0, height] ,Hbest);
-      console.log("x0ymax" ,xminymax);
-
+      findCorners(Hbest);
 
       return Hbest;
     //============================== end of RANSC algorithm ==============================================
+
+
+    function findCorners(H){
+
+    //points [];
+
+    points = [[0, 0], [width, 0], [0, height], [width, height]];
+
+    for(i in points)
+      console.log(points[i][0], points[i][1]);
+
+
+    projpointsX = [];
+    projpointsY = [];
+    for(i in points)
+    {
+      projpointsX.push(perspectiveTransform(points[i], Hbest)[0]);
+      projpointsY.push(perspectiveTransform(points[i], Hbest)[1]);
+      
+    }
+
+    projpointsX.push(0);
+    projpointsY.push(0);
+
+    // console.log(projpointsX);
+    // console.log(projpointsY);
+    
+    minX = _.min(projpointsX);
+    minY = _.min(projpointsY);
+
+    console.log("minX", minX);
+    console.log("minY", minY);
+
+    projpointsX.push(width);
+    projpointsY.push(height);
+
+    maxX = _.max(projpointsX) - minX;
+    maxY = _.max(projpointsY) - minY;
+
+
+    console.log("maxX", maxX);
+    console.log("maxY", maxY);
+
+    canvasSize = [maxX, maxY];
+    canvasOffset = [minX, minY]; 
+
+  }
+
+  function perspectiveTransform(pt, H)
+  {
+   // console.log("H", H);
+
+    Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
+    Hdinv = numeric.inv(Hd);
+
+    X = [ pt[0], pt[1], 1];
+    var Xp = numeric.dot(Hdinv, X);
+
+    //console.log(Xp[0]/Xp[2], Xp[1]/Xp[2]);
+
+    return [Xp[0]/Xp[2], Xp[1]/Xp[2]];
+
+  }
 
 
   function projectPointNormalized(pt, H){
