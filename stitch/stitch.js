@@ -13,8 +13,8 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 35;
-    this.img1 = [ "imgs/P1100328.jpg", "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg"];
-    this.img2 = [ "imgs/P1100329.jpg", "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg"];
+    this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
+    this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
 }
 
 var img2Loaded = false;
