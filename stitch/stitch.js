@@ -11,8 +11,8 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 35;
-    this.img1 = ["imgs/P1100328.jpg","imgs/left.jpg", "imgs/IMG_0053.jpg"];
-    this.img2 = ["imgs/P1100329.jpg","imgs/right.jpg", "imgs/IMG_0051.jpg"];
+    this.img1 = ["imgs/left.jpg", "imgs/IMG_0053.jpg", "imgs/P1100328.jpg"];
+    this.img2 = ["imgs/right.jpg", "imgs/IMG_0051.jpg", "imgs/P1100329.jpg"];
 }
 
 var img2Loaded = false;
@@ -120,6 +120,7 @@ function detector_App( )
       placeImgSidebySide(matches);
      
       var bestH = ransac(matches);
+      //findCorners(bestH);
       stitch(bestH);
       
     }
@@ -234,6 +235,18 @@ function detector_App( )
 
   } 
 
+  function findCorners(H){
+
+    //multiplicera x:0    y:0, 
+                // x:max  y:0,  
+                // x:0    y:max,  
+                // x:max  y:max
+    //med H
+
+    console.log("Hello H" ,H);
+    // projectPointNormalized(pairs[j][0] ,H);
+
+  }
 
   function ransac(pairs){
       var bestliers = [];
@@ -288,6 +301,14 @@ function detector_App( )
 
       var Hbest = Solve_8X8(construcktH);
       console.log(Hbest);
+
+      var xminymin = projectPointNormalized([0, 0] ,Hbest);
+      console.log("x0y0" ,xminymin);
+
+      var xminymax = projectPointNormalized([0, height] ,Hbest);
+      console.log("x0ymax" ,xminymax);
+
+
       return Hbest;
     //============================== end of RANSC algorithm ==============================================
 
