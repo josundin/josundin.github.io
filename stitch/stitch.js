@@ -1,4 +1,7 @@
 //stitch.js
+
+"use strict";
+
 var width = 0;
 var height = 0;
 var canvasSize = [0, 0];
@@ -17,10 +20,12 @@ var stitch_opt = function(){
     this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
 }
 
+
+var my_opt = new stitch_opt();
 var img2Loaded = false;
 window.addEventListener('load', eventWindowLoaded, false);  
 function eventWindowLoaded() {
-  my_opt = new stitch_opt();
+  //var my_opt = new stitch_opt();
   detector_App();
 }
 
@@ -86,8 +91,8 @@ function start()
 
 function detector_App( )
 {
-
-    console.log("***** START ******");
+  
+  console.log("***** START ******");
 
   //descriptor variables
   var gui,options,ctx,gridCtx;
@@ -182,12 +187,13 @@ function detector_App( )
     var body = document.getElementsByTagName("body")[0];
     body.appendChild(canvas2);
     canvas2.id= "tva";
-    ctx2 = canvas2.getContext('2d');
+    var ctx2 = canvas2.getContext('2d');
 
 
     ctx2.drawImage(img, 0, 0,  width, height);
     var imageData = ctx2.getImageData(0, 0, width * 2, height + height_offset );
-    var img_u8_warp, img_u8;
+    
+    var img_u8;
 
     var data_u32 = new Uint32Array(imageData.data.buffer);
     var alpha = (0xff << 24);
@@ -197,7 +203,7 @@ function detector_App( )
     var gray_img_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
     jsfeat.imgproc.grayscale(img1Data.data, gray_img.data);
 
-    trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+    var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
     trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
 
@@ -205,9 +211,11 @@ function detector_App( )
     jsfeat.imgproc.warp_perspective(gray_img, gray_img_warp, trans_offset, 0);
 
 
-    warpPerspective();
+    var img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+    img_u8_warp = warpPerspective();
 
-    var i = img_u8_warp.cols*img_u8_warp.rows, pix = 0;
+    var i = img_u8_warp.cols*img_u8_warp.rows;
+    var pix = 0;
     while(--i >= 0) {
         pix = img_u8_warp.data[i] ||  gray_img_warp.data[i]; //
         data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
@@ -223,10 +231,10 @@ function detector_App( )
     function warpPerspective() 
     {
 
-      img_u8 = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
-      img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
-      transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
-      transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+      var img_u8 = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+      var img_u8_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
+      var transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+      var transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
 
       for (var i=0; i<9; i++)
@@ -238,6 +246,9 @@ function detector_App( )
        //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
       jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform_dot, 0);
+    
+      return img_u8_warp;
+
     }
 
   } 
@@ -252,13 +263,13 @@ function detector_App( )
         //Make a sample     
         var sample = _.sample(pairs, 4);
         //remove the samples
-        pr = _.difference(pairs, sample);
+        var pr = _.difference(pairs, sample);
         //console.log("sample", sample);
         //console.log("pr", pr); 
 
         //create a new H from the samples
         var H = Solve_8X8(sample);
-        currentInliers = [];
+        var currentInliers = [];
         //check all matches for inliers
         for (var j=0; j<pairs.length; j++) 
         {  
@@ -283,7 +294,7 @@ function detector_App( )
       ctx.strokeStyle="rgb(0,255,0)";
       ctx.beginPath();
 
-      construcktH = [];
+      var construcktH = [];
       for(var i in bestliers)
       {
         ctx.moveTo( pairs[bestliers[i]][0][0], pairs[bestliers[i]][0][1]);
@@ -306,14 +317,14 @@ function detector_App( )
 
     //points [];
 
-    points = [[0, 0], [width, 0], [0, height], [width, height]];
+    var points = [[0, 0], [width, 0], [0, height], [width, height]];
 
     for(i in points)
       //console.log(points[i][0], points[i][1]);
 
 
-    projpointsX = [];
-    projpointsY = [];
+    var projpointsX = [];
+    var projpointsY = [];
     for(i in points)
     {
       projpointsX.push(perspectiveTransform(points[i], Hbest)[0]);
@@ -327,8 +338,8 @@ function detector_App( )
     // console.log(projpointsX);
     // console.log(projpointsY);
     
-    minX = _.min(projpointsX);
-    minY = _.min(projpointsY);
+    var minX = _.min(projpointsX);
+    var minY = _.min(projpointsY);
 
     // console.log("minX", minX);
     // console.log("minY", minY);
@@ -336,8 +347,8 @@ function detector_App( )
     projpointsX.push(width);
     projpointsY.push(height);
 
-    maxX = _.max(projpointsX) - minX;
-    maxY = _.max(projpointsY) - minY;
+    var maxX = _.max(projpointsX) - minX;
+    var maxY = _.max(projpointsY) - minY;
 
 
     // console.log("maxX", maxX);
@@ -352,10 +363,10 @@ function detector_App( )
   {
    // console.log("H", H);
 
-    Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
-    Hdinv = numeric.inv(Hd);
+    var Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
+    var Hdinv = numeric.inv(Hd);
 
-    X = [ pt[0], pt[1], 1];
+    var X = [ pt[0], pt[1], 1];
     var Xp = numeric.dot(Hdinv, X);
 
     //console.log(Xp[0]/Xp[2], Xp[1]/Xp[2]);
@@ -403,7 +414,7 @@ function detector_App( )
 
     for(var ii in pts){       
       var i = ii * 16;
-      ax = new Array(8);
+      var ax = new Array(8);
       ax[0] = pts[ii][0][0];
       ax[1] = pts[ii][0][1];
       ax[2] = 1;
@@ -414,7 +425,7 @@ function detector_App( )
       ax[7] = -pts[ii][0][1] * pts[ii][1][0];
        
 
-      ay = new Array(8);
+      var ay = new Array(8);
       ay[0]  = 0;
       ay[1]  = 0;
       ay[2] = 0;
@@ -521,6 +532,11 @@ function detector_App( )
     */
     
       //compute the matches N*M matches (N = number of matches in img1, M = number of matches in img2)
+
+      var dists = [];
+      var test = [];
+      var dista = [];
+      var imgdata = [];
       
       for (var i = 0; i < descriptors[0].length; i++) {
           dists = [];
@@ -620,7 +636,7 @@ function detector_App( )
       var windowRadius = my_opt.descriptor_radius;
       var numout = 0;
       var vectors = processing.gradientVectors(canvas);
-      desc = new Array(count);
+      var desc = new Array(count);
       
       for(var i =0; i < count; i++)
       {
