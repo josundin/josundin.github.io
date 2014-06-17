@@ -12,7 +12,7 @@ var stitch_opt = function(){
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
-    this.corner_threshold = 35;
+    this.corner_threshold = 45;
     this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
     this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
 }
@@ -86,6 +86,9 @@ function start()
 
 function detector_App( )
 {
+
+    console.log("***** START ******");
+
   //descriptor variables
   var gui,options,ctx,gridCtx;
   var img_u8, corners, threshold, count;
@@ -117,8 +120,6 @@ function detector_App( )
       computeMatches(matches);
 
       console.log("numbers of matches", matches.length);
-      console.log("The matches", matches);
-      console.log("my_opt", my_opt);
       placeImgSidebySide(matches);
      
       var bestH = ransac(matches);
@@ -233,11 +234,6 @@ function detector_App( )
         transform.data[i] = bestH[i];
       }
 
-
-      // dot transform trans_offset
-
-      console.log("transform", transform.data);
-
       jsfeat.imgproc.grayscale(imageData.data, img_u8.data); 
        //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
@@ -313,7 +309,7 @@ function detector_App( )
     points = [[0, 0], [width, 0], [0, height], [width, height]];
 
     for(i in points)
-      console.log(points[i][0], points[i][1]);
+      //console.log(points[i][0], points[i][1]);
 
 
     projpointsX = [];
@@ -334,8 +330,8 @@ function detector_App( )
     minX = _.min(projpointsX);
     minY = _.min(projpointsY);
 
-    console.log("minX", minX);
-    console.log("minY", minY);
+    // console.log("minX", minX);
+    // console.log("minY", minY);
 
     projpointsX.push(width);
     projpointsY.push(height);
@@ -344,8 +340,8 @@ function detector_App( )
     maxY = _.max(projpointsY) - minY;
 
 
-    console.log("maxX", maxX);
-    console.log("maxY", maxY);
+    // console.log("maxX", maxX);
+    // console.log("maxY", maxY);
 
     canvasSize = [maxX, maxY];
     canvasOffset = [minX, minY]; 
