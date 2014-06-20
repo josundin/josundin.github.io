@@ -130,6 +130,8 @@ function detector_App( )
       var bestH = ransac(matches);
       //findCorners(bestH);
       stitch(bestH);
+
+      stitch_color(bestH);      
       
     }
 
@@ -173,6 +175,202 @@ function detector_App( )
       ctx.stroke();  
     }
   }
+
+
+
+
+function stitch_color(bestH){
+
+  //create the common canvas
+  var common_canvas = createcanvas_warp("tva");
+  common_canvas.width = canvasSize[0];
+  common_canvas.height = canvasSize[1];
+  var common_ctx = common_canvas.getContext('2d');
+
+
+  var img1 = new Image();
+  img1.src =  my_opt.img1[imaga_from_button];
+
+  img1.onload = function() {
+      setupWarp(img1);
+      var Homography1 = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];                    
+      applyWarp(img1, Homography1);
+
+    //      console.log("REMOVE CANVAS");
+    var canvasElements=document.getElementById("body");
+    for (var i=0; i<canvasElements.childNodes.length; i++)
+      if(canvasElements.childNodes[i].id == "warping")
+        canvasElements.childNodes[i].remove();
+
+    for (var i=0; i<canvasElements.childNodes.length; i++)
+      if(canvasElements.childNodes[i].id == "warping")
+        canvasElements.childNodes[i].remove();
+
+  }
+
+  var img2 = new Image();
+  img2.src =  my_opt.img2[imaga_from_button];
+
+  img2.onload = function() {
+      setupWarp(img2);
+      //var Homography2 =  numeric.dot(bestH, [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1]);
+      
+
+      var transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+      var transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+      var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+      trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
+
+
+      for (var i=0; i<9; i++)
+      {
+        transform.data[i] = bestH[i];
+      }
+      jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
+
+
+      console.log("Homography2:", transform_dot.data);
+      // var Atb = numeric.dot(At, b);
+
+
+      applyWarp(img2, transform_dot.data);
+
+    //      console.log("REMOVE CANVAS");
+    // var canvasElements=document.getElementById("body");
+    // for (var i=0; i<canvasElements.childNodes.length; i++)
+    //   if(canvasElements.childNodes[i].id == "warping")
+    //     canvasElements.childNodes[i].remove();
+
+    // for (var i=0; i<canvasElements.childNodes.length; i++)
+    //   if(canvasElements.childNodes[i].id == "warping")
+    //     canvasElements.childNodes[i].remove();
+
+  }
+
+
+
+    var tmpctx,canvasWidth,canvasHeight, s_canvas;
+
+    function createcanvas_warp( idname )
+    {
+      
+      var canvas = document.createElement('canvas');
+      
+ 
+
+      canvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
+      //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
+
+      //add the canvas
+      var body = document.getElementsByTagName("body")[0];
+      body.appendChild(canvas);
+      canvas.id = idname;
+      body.id = "body";
+
+      return canvas;
+    }
+
+
+    function setupWarp(den_img) {
+
+        canvas = createcanvas_warp("warping");
+        canvas.width = den_img.width;
+      canvas.height = den_img.height;
+        tmpctx = canvas.getContext('2d');
+        tmpctx.drawImage(img, 0, 0, den_img.width, den_img.height);
+    }
+
+    function applyWarp(den_img, Homography) {
+
+      //https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Canvas_tutorial/Pixel_manipulation_with_canvas
+      var imageData = tmpctx.getImageData(0, 0, den_img.width , den_img.height );
+      //Find out how big the warped canvas should bee
+      //var max_img_size = find_max(Homography);
+      // create a new image where we will store the warped image
+      var imageWarpData = tmpctx.getImageData(0, 0, canvasSize[0], canvasSize[1]);
+
+      warp_perspective_color(imageData, imageWarpData, Homography);
+      //common_ctx.globalAlpha = 1.9;
+      common_ctx.globalCompositeOperation = 'destination-over'
+      common_ctx.fillStyle = 'blue';
+      common_ctx.putImageData(imageWarpData, 0, 0);
+      common_ctx.fillRect(0,0,280,210)
+
+      //console.log(imageWarpData);
+
+      //imageWarpData;
+
+    }
+
+
+    //Bilinear interpolation
+    function warp_perspective_color(src, dst, transform)
+    {
+        var dst_width=dst.width|0, dst_height=dst.height|0;
+        var src_width=src.width|0, src_height=src.height|0;
+
+        var x=0,y=0,off=0,ixs=0,iys=0,xs=0.0,ys=0.0,xs0=0.0,ys0=0.0,ws=0.0,sc=0.0,a=0.0,b=0.0,p0r=0.0,p1r=0.0, p0g=0.0,p1g=0.0, p0b=0.0,p1b=0.0;
+        var td=transform;
+        var m00=td[0],m01=td[1],m02=td[2],
+            m10=td[3],m11=td[4],m12=td[5],
+            m20=td[6],m21=td[7],m22=td[8];
+
+        var dptr = 0;
+        for(var i = 0; i < dst_height; ++i)
+        {
+
+            xs0 = m01 * i + m02,
+            ys0 = m11 * i + m12,
+            ws  = m21 * i + m22;
+            for(var j = 0; j < dst_width; j++, dptr+=4, xs0+=m00, ys0+=m10, ws+=m20)
+            {
+                sc = 1.0 / ws;
+                xs = xs0 * sc, ys = ys0 * sc;
+                ixs = xs | 0, iys = ys | 0;
+
+                if(xs > 0 && ys > 0 && ixs < (src_width - 1) && iys < (src_height - 1))
+                {
+
+                    a = Math.max(xs - ixs, 0.0);
+                    b = Math.max(ys - iys, 0.0);
+                    //off = (src_width*iys + ixs)|0;
+                    off = (( (src.width*4)*iys) + (ixs * 4))|0;
+
+                    p0r = src.data[off] +  a * (src.data[off+4] - src.data[off]);
+                    p1r = src.data[off+(src_width*4)] + a * (src.data[off+(src_width*4)+4] - src.data[off+(src_width*4)]);
+
+                    p0g = src.data[off +1] +  a * (src.data[off+4 +1] - src.data[off +1]);
+                    p1g = src.data[off+(src_width*4)+1] + a * (src.data[off+(src_width*4)+4 +1] - src.data[off+(src_width*4) +1]);
+
+                    p0b = src.data[off +2] +  a * (src.data[off+4 +2] - src.data[off +2]);
+                    p1b = src.data[off+(src_width*4)+2] + a * (src.data[off+(src_width*4)+4 +2] - src.data[off+(src_width*4) +2]);
+
+                    dst.data[dptr + 0] = p0r + b * (p1r - p0r);
+                    dst.data[dptr + 1]= p0g + b * (p1g - p0g);
+                    dst.data[dptr + 2]= p0b + b * (p1b - p0b);
+
+                    dst.data[((i*(dst.width*4)) + (j*4))+ 3]= 255;
+                }
+                else
+                    dst.data[((i*(dst.width*4)) + (j*4))+ 3]= 0;
+            }
+        }
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
   function stitch(bestH){
@@ -246,12 +444,16 @@ function detector_App( )
        //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
       jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform_dot, 0);
+
+      console.log("transform_dot:", transform_dot.data);
     
       return img_u8_warp;
 
     }
 
   } 
+
+
 
 
   function ransac(pairs){
