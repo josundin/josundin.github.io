@@ -181,12 +181,19 @@ function detector_App( )
 
 function stitch_color(bestH){
 
+  var imgOjs = [];
+
   //create the common canvas
   var common_canvas = createcanvas_warp("tva");
   common_canvas.width = canvasSize[0];
   common_canvas.height = canvasSize[1];
   var common_ctx = common_canvas.getContext('2d');
 
+
+  var common_canvas2 = createcanvas_warp("tva");
+  common_canvas2.width = canvasSize[0];
+  common_canvas2.height = canvasSize[1];
+  var common_ctx2 = common_canvas2.getContext('2d');
 
   var img1 = new Image();
   img1.src =  my_opt.img1[imaga_from_button];
@@ -208,47 +215,55 @@ function stitch_color(bestH){
 
   }
 
-  var img2 = new Image();
-  img2.src =  my_opt.img2[imaga_from_button];
+//   var img2 = new Image();
+//   img2.src =  my_opt.img2[imaga_from_button];
 
-  img2.onload = function() {
-      setupWarp(img2);
-      //var Homography2 =  numeric.dot(bestH, [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1]);
+//   img2.onload = function() {
+//       setupWarp(img2);
+//       //var Homography2 =  numeric.dot(bestH, [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1]);
       
 
-      var transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
-      var transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+//       var transform = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+//       var transform_dot = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
-      var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+//       var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
-      trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
-
-
-      for (var i=0; i<9; i++)
-      {
-        transform.data[i] = bestH[i];
-      }
-      jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
+//       trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
 
 
-      console.log("Homography2:", transform_dot.data);
-      // var Atb = numeric.dot(At, b);
+//       for (var i=0; i<9; i++)
+//       {
+//         transform.data[i] = bestH[i];
+//       }
+//       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
 
 
-      applyWarp(img2, transform_dot.data);
+//       console.log("Homography2:", transform_dot.data);
+//       // var Atb = numeric.dot(At, b);
 
-    //      console.log("REMOVE CANVAS");
-    // var canvasElements=document.getElementById("body");
-    // for (var i=0; i<canvasElements.childNodes.length; i++)
-    //   if(canvasElements.childNodes[i].id == "warping")
-    //     canvasElements.childNodes[i].remove();
 
-    // for (var i=0; i<canvasElements.childNodes.length; i++)
-    //   if(canvasElements.childNodes[i].id == "warping")
-    //     canvasElements.childNodes[i].remove();
+//       applyWarp(img2, transform_dot.data);
 
-  }
+//     //      console.log("REMOVE CANVAS");
+//     // var canvasElements=document.getElementById("body");
+//     // for (var i=0; i<canvasElements.childNodes.length; i++)
+//     //   if(canvasElements.childNodes[i].id == "warping")
+//     //     canvasElements.childNodes[i].remove();
 
+//     // for (var i=0; i<canvasElements.childNodes.length; i++)
+//     //   if(canvasElements.childNodes[i].id == "warping")
+//     //     canvasElements.childNodes[i].remove();
+
+//     console.log("the shit is done",imgOjs[1]);
+//   //common_ctx2.drawImage(img, 0, 0, canvasSize[0], canvasSize[1]);
+// //     var img1_N = new Image();
+// //     img1_N.src = imgOjs[0];
+// //     common_ctx2.drawImage(img1_N, 0, 0);
+// // //common_ctx2.putImageData(imgOjs[1], 0, 0);
+
+//   }
+
+  
 
 
     var tmpctx,canvasWidth,canvasHeight, s_canvas;
@@ -279,7 +294,7 @@ function stitch_color(bestH){
         canvas.width = den_img.width;
       canvas.height = den_img.height;
         tmpctx = canvas.getContext('2d');
-        tmpctx.drawImage(img, 0, 0, den_img.width, den_img.height);
+        tmpctx.drawImage(den_img, 0, 0, den_img.width, den_img.height);
     }
 
     function applyWarp(den_img, Homography) {
@@ -292,16 +307,11 @@ function stitch_color(bestH){
       var imageWarpData = tmpctx.getImageData(0, 0, canvasSize[0], canvasSize[1]);
 
       warp_perspective_color(imageData, imageWarpData, Homography);
-      //common_ctx.globalAlpha = 1.9;
-      common_ctx.globalCompositeOperation = 'destination-over'
-      common_ctx.fillStyle = 'blue';
       common_ctx.putImageData(imageWarpData, 0, 0);
-      common_ctx.fillRect(0,0,280,210)
 
-      //console.log(imageWarpData);
-
-      //imageWarpData;
-
+      //imgOjs.push(common_ctx.getImageData(0, 0, canvasSize[0], canvasSize[1]));
+      imgOjs.push(common_canvas.toDataURL()  );
+      
     }
 
 
@@ -357,6 +367,7 @@ function stitch_color(bestH){
                     dst.data[((i*(dst.width*4)) + (j*4))+ 3]= 0;
             }
         }
+        console.log("done warp");
     }
 
 
