@@ -132,9 +132,16 @@ function detector_App( )
 
       console.log("T1", T1);
 
-      var test = [ [1, 2],[3, 4], [5, 6]];
+
+        //corners[i] = new jsfeat.point2d_t(0,0,0,0);
+      var test = [];
+      //test = [ [1, 2],[3, 4], [5, 6]];
+
+      test[0] = new jsfeat.point2d_t(1, 2, 0, 0);
+      test[1] = new jsfeat.point2d_t(3, 4, 0, 0);
+      test[2] = new jsfeat.point2d_t(5, 6, 0, 0);
       console.log("test", test);
-      var T2 = normalized_points(test, 2);
+      var T2 = normalized_points(test, 3);
 
       console.log("T2", T2);
       
@@ -181,8 +188,8 @@ function detector_App( )
 
       console.log("m_x1 :", m_x1 , "m_y1 :", m_y1, "sum_d :", av_distance);
 
-      return [[Math.sqrt(2/av_distance),0,-m_x1 * Math.sqrt(2/av_distance)],
-              [0,Math.sqrt(2/av_distance),-m_y1 * Math.sqrt(2/av_distance)],
+      return [[Math.sqrt(2)/av_distance,0,-m_x1 * (Math.sqrt(2)/av_distance)],
+              [0,Math.sqrt(2)/av_distance,-m_y1 * (Math.sqrt(2)/av_distance)],
               [0,0,1]];
 
   }
