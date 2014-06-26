@@ -96,7 +96,7 @@ function detector_App( )
 
   //descriptor variables
   var gui,options,ctx,gridCtx;
-  var img_u8, corners, threshold, count;
+  var img_u8, corners, prev_corners, threshold, count, prev_count;
   var descriptors = new Array();
 
 
@@ -128,6 +128,16 @@ function detector_App( )
       console.log("the matches", matches);
       placeImgSidebySide(matches);
      
+      var T1 = normalized_points(corners, count);
+
+      console.log("T1", T1);
+
+      var test = [ [1, 2],[3, 4], [5, 6]];
+      console.log("test", test);
+      var T2 = normalized_points(test, 2);
+
+      console.log("T2", T2);
+      
       var bestH = ransac(matches);
       //findCorners(bestH);
       stitch(bestH);
@@ -141,6 +151,40 @@ function detector_App( )
       img2Loaded = true;
       img.src =  my_opt.img2[imaga_from_button];  
     }
+  }
+
+
+  function normalized_points(crnrs, n_crnrs)
+  {
+    //console.log("prev_corners", prev_count);
+    //console.log("corners", count);
+
+    var m_x1 = 0;
+    var m_y1 = 0;
+    var av_distance = 0;
+
+      for(var i =0; i < n_crnrs; i++)
+      {
+        m_x1 += crnrs[i].x;
+        m_y1 += crnrs[i].y;
+      }
+
+      m_x1 = m_x1 / n_crnrs;
+      m_y1 = m_y1 / n_crnrs;
+
+      for(var i =0; i < n_crnrs; i++)
+      {
+        av_distance += Math.sqrt(Math.pow(crnrs[i].x - m_x1, 2) + Math.pow(crnrs[i].y - m_y1, 2));
+      }      
+
+      av_distance = av_distance / n_crnrs;
+
+      console.log("m_x1 :", m_x1 , "m_y1 :", m_y1, "sum_d :", av_distance);
+
+      return [[Math.sqrt(2/av_distance),0,-m_x1 * Math.sqrt(2/av_distance)],
+              [0,Math.sqrt(2/av_distance),-m_y1 * Math.sqrt(2/av_distance)],
+              [0,0,1]];
+
   }
 
 
@@ -278,7 +322,7 @@ function stitch_color(bestH){
 
         canvas = createcanvas_warp("warping");
         canvas.width = den_img.width;
-      canvas.height = den_img.height;
+        canvas.height = den_img.height;
         tmpctx = canvas.getContext('2d');
         tmpctx.drawImage(den_img, 0, 0, den_img.width, den_img.height);
     }
@@ -784,6 +828,7 @@ function stitch_color(bestH){
   {
     img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t);
 
+    prev_corners = corners;
     corners = [];
     var i = width*height;
     while(--i >= 0) {
@@ -802,6 +847,7 @@ function stitch_color(bestH){
       ctx.drawImage(image, xoffset, 0, width, height);
       var imageData = ctx.getImageData(xoffset, 0, width, height);
       jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
+      prev_count = count;
       count = jsfeat.fast_corners.detect(img_u8, corners, border);
 
       console.log("number of intrestpoints", count);
