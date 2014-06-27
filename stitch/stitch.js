@@ -143,7 +143,16 @@ function detector_App( )
       console.log("test", test);
       var T2 = normalized_points(test, 3);
 
+      var homogenius = to_homogenius(test, 3);
+
       console.log("T2", T2);
+      console.log("homogenius :", homogenius);
+
+      var T2P2 = numeric.dot(T2, homogenius);
+
+      console.log("T2P2 :", T2P2);
+
+      //nästa steg multiplicera
       
       var bestH = ransac(matches);
       //findCorners(bestH);
@@ -160,6 +169,19 @@ function detector_App( )
     }
   }
 
+
+  function to_homogenius(points, size_p)
+  {
+
+    var augmented_homogenius_points = []; 
+
+      for(var i =0; i < size_p; i++)
+      {
+        augmented_homogenius_points.push([points[i].x, points[i].y, 1]);
+      }
+
+      return augmented_homogenius_points;
+  }
 
   function normalized_points(crnrs, n_crnrs)
   {
