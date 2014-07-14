@@ -11,7 +11,7 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1000;
+    this.ransac_iter = 1;
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
@@ -126,79 +126,67 @@ function detector_App( )
 
       console.log("numbers of matches", matches.length);
       console.log("the matches", matches);
-      placeImgSidebySide(matches);
-     
-      var T1 = normalized_points(corners, count);
 
-      console.log("T1", T1);
+      var pts_img1 = [];
+      var pts_img2 = [];
 
-
-        //corners[i] = new jsfeat.point2d_t(0,0,0,0);
-      var test = [];
-      //test = [ [1, 2],[3, 4], [5, 6]];
-
-      test[0] = new jsfeat.point2d_t(1, 2, 0, 0);
-      test[1] = new jsfeat.point2d_t(3, 4, 0, 0);
-      test[2] = new jsfeat.point2d_t(5, 6, 0, 0);
-      test[3] = new jsfeat.point2d_t(7, 8, 0, 0);
-      console.log("test", test);
-      var T2 = normalized_points(test, 4);
-      T2 = numeric.transpose(T2);
-
-      var homogenius = to_homogenius(test, 4);
-
-      test = to_homogenius(test, 4);
-
-      
-
-      console.log("T2", T2);
-      console.log("homogenius :", homogenius);
-
-      var T2P2 = numeric.dot(T2, homogenius);
-      var T3P3 = numeric.transpose(T2P2);
-      T3P3 = numeric.dot(T2P2, test);
-
-      console.log("T2P2 :", T2P2);
-      console.log("T3P3 :", T3P3);
-
-
-      //test_homog = new jsfeat.matrix_t(1, 3, jsfeat.F32_t | jsfeat.C1_t);
-      var t_T = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
-
-      t_T.data = [ T2[0][0], T2[0][1], T2[0][2] , T2[1][0], T2[1][1], T2[1][2], T2[2][0], T2[2][1], T2[2][2]];
-      console.log("t_T data :", t_T.data);
-
-      var t_test = new jsfeat.matrix_t(4, 3, jsfeat.F32_t | jsfeat.C1_t);
-
-      //t_test.data = [  ];
-
-      var dptr_mul =0;
-      for (var i=0; i<test.length; i++)
+      for(var i=0; i<matches.length; i++)
       {
-        console.log("test i :", test[i], i, dptr_mul);
-        t_test.data[dptr_mul]     =  homogenius[i][0];
-        t_test.data[dptr_mul +1]  =  homogenius[i][1];
-        t_test.data[dptr_mul +2]  =  homogenius[i][2];
-
-        dptr_mul+=3;
+        pts_img1.push(matches[i][0]);
+        pts_img2.push(matches[i][1]);
       }
 
+      placeImgSidebySide(matches);
 
-      console.log("t_test data :", t_test);
+      console.log("pts_img1", pts_img1, pts_img1.length);
+      // console.log("pts_img2", pts_img2);
+     
+      var T1 = normalized_points(pts_img1, pts_img1.length);
+      var T2 = normalized_points(pts_img2, pts_img2.length);
 
-      var res = new jsfeat.matrix_t(4, 3, jsfeat.F32_t | jsfeat.C1_t);      
-      jsfeat.matmath.multiply(res, t_T, t_test);
+      //console.log("corners", corners);
+      console.log("T1", T1);
 
-      console.log("res",res.data);
-
-       var multest = multiplyMatrix(T2, homogenius);
+            //var T2P2 = numeric.dot(T2, homogenius);
 
 
-      //var multest =  mod.multiply(1, T2);
-      //var multest = [1, 1, 1].map(function(x) x * T2);
+      pts_img1 = to_homogenius(pts_img1, pts_img1.length);
+      T1 = numeric.transpose(T1);
+      var T1P1 = multiplyMatrix(T1, pts_img1);
+
+      console.log("pts_img1 homogenius", pts_img1);
+      console.log("T1P1", T1P1);
+
+
+      pts_img2 = to_homogenius(pts_img2, pts_img2.length);
+      T2 = numeric.transpose(T2);
+      var T2P2 = multiplyMatrix(T2, pts_img2);
+
+      var norm_matches = [T1P1, T2P2];
+
+
+      console.log("PROVIDE RANSC WITH THIS", norm_matches);
+
+      var test = [];
+      test = [ [1, 2],[3, 4], [5, 6], [7,8] ];
+
+      console.log("test igen", test);
+
+      var T4 = normalized_points(test, 4);
+      T4 = numeric.transpose(T4);
+
+      console.log("T4", T4);
+      test = to_homogenius(test, 4);
+
+      var multest = multiplyMatrix(T4, test);
       console.log("multest :", multest);
 
-      //nästa steg multiplicera
+
+      // nästa steg 
+      // sätt upp matris för ransac computation
+      // Matrisen bör vara 
+      // n x 9
+      // var av den sista columnen är ett över hela
       
       var bestH = ransac(matches);
       //findCorners(bestH);
@@ -239,7 +227,7 @@ function detector_App( )
 
       for(var i =0; i < size_p; i++)
       {
-        augmented_homogenius_points.push([points[i].x, points[i].y, 1]);
+        augmented_homogenius_points.push([points[i][0], points[i][1], 1]);
       }
 
       return augmented_homogenius_points;
@@ -250,8 +238,8 @@ function detector_App( )
   //Returns the 3x3 T matrix
   function normalized_points(crnrs, n_crnrs)
   {
-    //console.log("prev_corners", prev_count);
-    //console.log("corners", count);
+    // console.log("prev_corners", prev_count);
+    // console.log("corners", count);
 
     var m_x1 = 0;
     var m_y1 = 0;
@@ -259,8 +247,8 @@ function detector_App( )
 
       for(var i =0; i < n_crnrs; i++)
       {
-        m_x1 += crnrs[i].x;
-        m_y1 += crnrs[i].y;
+        m_x1 += crnrs[i][0];
+        m_y1 += crnrs[i][1];
       }
 
       m_x1 = m_x1 / n_crnrs;
@@ -268,18 +256,19 @@ function detector_App( )
 
       for(var i =0; i < n_crnrs; i++)
       {
-        av_distance += Math.sqrt(Math.pow(crnrs[i].x - m_x1, 2) + Math.pow(crnrs[i].y - m_y1, 2));
+        av_distance += Math.sqrt(Math.pow(crnrs[i][0] - m_x1, 2) + Math.pow(crnrs[i][1] - m_y1, 2));
       }      
 
       av_distance = av_distance / n_crnrs;
 
-      console.log("m_x1 :", m_x1 , "m_y1 :", m_y1, "sum_d :", av_distance);
+      //console.log("m_x1 :", m_x1 , "m_y1 :", m_y1, "sum_d :", av_distance);
 
       return [[Math.sqrt(2)/av_distance,0,-m_x1 * (Math.sqrt(2)/av_distance)],
               [0,Math.sqrt(2)/av_distance,-m_y1 * (Math.sqrt(2)/av_distance)],
               [0,0,1]];
 
   }
+
 
 
   function placeImgSidebySide(matches){
@@ -605,8 +594,8 @@ function stitch_color(bestH){
         var sample = _.sample(pairs, 4);
         //remove the samples
         var pr = _.difference(pairs, sample);
-        //console.log("sample", sample);
-        //console.log("pr", pr); 
+        console.log("sample", sample);
+        console.log("pr", pr); 
 
         //create a new H from the samples
         var H = Solve_8X8(sample);
@@ -646,6 +635,10 @@ function stitch_color(bestH){
       }
 
       var Hbest = Solve_8X8(construcktH);
+
+      //HERE APPLY DENORM
+      console.log("HERE APPLY DENORM");
+
       console.log("Best homographie", Hbest);
 
       findCorners(Hbest);
