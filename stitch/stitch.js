@@ -140,17 +140,63 @@ function detector_App( )
       test[0] = new jsfeat.point2d_t(1, 2, 0, 0);
       test[1] = new jsfeat.point2d_t(3, 4, 0, 0);
       test[2] = new jsfeat.point2d_t(5, 6, 0, 0);
+      test[3] = new jsfeat.point2d_t(7, 8, 0, 0);
       console.log("test", test);
-      var T2 = normalized_points(test, 3);
+      var T2 = normalized_points(test, 4);
+      T2 = numeric.transpose(T2);
 
-      var homogenius = to_homogenius(test, 3);
+      var homogenius = to_homogenius(test, 4);
+
+      test = to_homogenius(test, 4);
+
+      
 
       console.log("T2", T2);
       console.log("homogenius :", homogenius);
 
       var T2P2 = numeric.dot(T2, homogenius);
+      var T3P3 = numeric.transpose(T2P2);
+      T3P3 = numeric.dot(T2P2, test);
 
       console.log("T2P2 :", T2P2);
+      console.log("T3P3 :", T3P3);
+
+
+      //test_homog = new jsfeat.matrix_t(1, 3, jsfeat.F32_t | jsfeat.C1_t);
+      var t_T = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+      t_T.data = [ T2[0][0], T2[0][1], T2[0][2] , T2[1][0], T2[1][1], T2[1][2], T2[2][0], T2[2][1], T2[2][2]];
+      console.log("t_T data :", t_T.data);
+
+      var t_test = new jsfeat.matrix_t(4, 3, jsfeat.F32_t | jsfeat.C1_t);
+
+      //t_test.data = [  ];
+
+      var dptr_mul =0;
+      for (var i=0; i<test.length; i++)
+      {
+        console.log("test i :", test[i], i, dptr_mul);
+        t_test.data[dptr_mul]     =  homogenius[i][0];
+        t_test.data[dptr_mul +1]  =  homogenius[i][1];
+        t_test.data[dptr_mul +2]  =  homogenius[i][2];
+
+        dptr_mul+=3;
+      }
+
+
+      console.log("t_test data :", t_test);
+
+      var res = new jsfeat.matrix_t(4, 3, jsfeat.F32_t | jsfeat.C1_t);      
+      jsfeat.matmath.multiply(res, t_T, t_test);
+
+      console.log("res",res.data);
+
+       var multest = multiplyMatrix(T2, homogenius);
+
+
+      //var multest =  mod.multiply(1, T2);
+      //var multest = [1, 1, 1].map(function(x) x * T2);
+      console.log("multest :", multest);
 
       //nästa steg multiplicera
       
@@ -169,6 +215,22 @@ function detector_App( )
     }
   }
 
+  function multiplyMatrix(m1, m2) 
+  {
+    var result = [];
+    for(var j = 0; j < m2.length; j++) {
+        result[j] = [];
+        for(var k = 0; k < m1[0].length; k++) {
+            var sum = 0;
+            for(var i = 0; i < m1.length; i++) {
+                sum += m1[i][k] * m2[j][i];
+            }
+            result[j].push(sum);
+        }
+    }
+    return result;
+  }
+
 
   function to_homogenius(points, size_p)
   {
@@ -183,6 +245,9 @@ function detector_App( )
       return augmented_homogenius_points;
   }
 
+
+  //Hartleys normalization
+  //Returns the 3x3 T matrix
   function normalized_points(crnrs, n_crnrs)
   {
     //console.log("prev_corners", prev_count);
