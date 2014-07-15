@@ -11,7 +11,7 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1;
+    this.ransac_iter = 1000;
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
@@ -162,8 +162,17 @@ function detector_App( )
       T2 = numeric.transpose(T2);
       var T2P2 = multiplyMatrix(T2, pts_img2);
 
-      var norm_matches = [T1P1, T2P2];
+      console.log();
 
+      var T2P2_n = [];
+      var T1P1_n = [];
+
+      var norm_matches = [];
+
+      for(var i=0; i<T2P2.length; i++)
+      {
+        norm_matches.push([ [ T1P1[i][0], T1P1[i][1] ] , [ T2P2[i][0], T2P2[i][1] ]]);
+      }
 
       console.log("PROVIDE RANSC WITH THIS", norm_matches);
 
@@ -188,7 +197,7 @@ function detector_App( )
       // n x 9
       // var av den sista columnen är ett över hela
       
-      var bestH = ransac(matches);
+      var bestH = ransac(matches, T1, T2);
       //findCorners(bestH);
       stitch(bestH);
 
@@ -584,7 +593,7 @@ function stitch_color(bestH){
 
 
 
-  function ransac(pairs){
+  function ransac(pairs , T1 , T2){
       var bestliers = [];
       
 
@@ -594,11 +603,11 @@ function stitch_color(bestH){
         var sample = _.sample(pairs, 4);
         //remove the samples
         var pr = _.difference(pairs, sample);
-        console.log("sample", sample);
-        console.log("pr", pr); 
-
         //create a new H from the samples
         var H = Solve_8X8(sample);
+
+        H = denorm(T1, T2, H);
+
         var currentInliers = [];
         //check all matches for inliers
         for (var j=0; j<pairs.length; j++) 
@@ -645,6 +654,41 @@ function stitch_color(bestH){
 
       return Hbest;
     //============================== end of RANSC algorithm ==============================================
+
+    function denorm(T1, T2, H_hat)
+    {
+
+      // // make H_hat a matrix
+      // var tmp_h = [ [H_hat[0], H_hat[1], H_hat[2]],
+      //               [H_hat[3], H_hat[4], H_hat[5]],
+      //               [H_hat[6], H_hat[7], H_hat[8]]];
+
+      // // //console.log("h hat", tmp_h);
+
+      // T2 = numeric.transpose(T2);
+
+      // var T2inv = numeric.inv(T2);
+      // var mul_T2in_H_hat = multiplyMatrix(T2inv, tmp_h); 
+
+      // //var mul_T2in_H_hat_t = numeric.transpose(mul_T2in_H_hat);
+
+      // var tmp_h = multiplyMatrix(mul_T2in_H_hat, T1);
+
+
+      // // var d_T2_H = numeric.dot(T2inv,tmp_h);
+      // // tmp_h = numeric.dot(d_T2_H,T1);
+
+      // // var teet_t = numeric.transpose(tmp_h);
+      // // tmp_h = teet_t;
+
+      // //console.log("res ", result_t2_h_t1);
+
+      // //return result_t2_h_t1;
+      // return [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1],tmp_h[2][2] ];
+
+      return H_hat;
+
+    }
 
 
     function findCorners(H){
