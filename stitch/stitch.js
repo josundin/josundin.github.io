@@ -11,7 +11,7 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1000;
+    this.ransac_iter = 100;
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
@@ -139,34 +139,34 @@ function detector_App( )
       placeImgSidebySide(matches);
 
       console.log("pts_img1", pts_img1, pts_img1.length);
-      // console.log("pts_img2", pts_img2);
+      // // console.log("pts_img2", pts_img2);
      
-      var T1 = normalized_points(pts_img1, pts_img1.length);
-      var T2 = normalized_points(pts_img2, pts_img2.length);
+      // var T1 = normalized_points(pts_img1, pts_img1.length);
+      // var T2 = normalized_points(pts_img2, pts_img2.length);
 
-      //console.log("corners", corners);
-      console.log("T1", T1);
+      // //console.log("corners", corners);
+      // console.log("T1", T1);
 
-            //var T2P2 = numeric.dot(T2, homogenius);
-
-
-      pts_img1 = to_homogenius(pts_img1, pts_img1.length);
-      T1 = numeric.transpose(T1);
-      var T1P1 = multiplyMatrix(T1, pts_img1);
-
-      console.log("pts_img1 homogenius", pts_img1);
-      console.log("T1P1", T1P1);
+      //       //var T2P2 = numeric.dot(T2, homogenius);
 
 
-      pts_img2 = to_homogenius(pts_img2, pts_img2.length);
-      T2 = numeric.transpose(T2);
-      var T2P2 = multiplyMatrix(T2, pts_img2);
+      // pts_img1 = to_homogenius(pts_img1, pts_img1.length);
+      // T1 = numeric.transpose(T1);
+      // var T1P1 = multiplyMatrix(T1, pts_img1);
 
-      console.log();
+      // console.log("pts_img1 homogenius", pts_img1);
+      // console.log("T1P1", T1P1);
 
-      var T2P2_n = [];
-      var T1P1_n = [];
 
+      // pts_img2 = to_homogenius(pts_img2, pts_img2.length);
+      // T2 = numeric.transpose(T2);
+      // var T2P2 = multiplyMatrix(T2, pts_img2);
+
+      var T1 , T1P1, T2 , T2P2 = [];
+
+      [T1P1, T1] = hartly_normalization(pts_img1);
+      [T2P2, T2] = hartly_normalization(pts_img2);
+    
       var norm_matches = [];
 
       for(var i=0; i<T2P2.length; i++)
@@ -268,7 +268,7 @@ function detector_App( )
 
     var H_norm = numeric.dot(T2tT2inv, T2tHT1);     
 
-    console.log("H_norm", H_norm);
+    //console.log("H_norm", H_norm);
 
     return H_norm;
   }
@@ -668,7 +668,15 @@ function stitch_color(bestH){
         //create a new H from the samples
         var H = Solve_8X8(sample);
 
-        H = denorm(T1, T2, H);
+        //H = denorm(T1, T2, H);
+
+        // var tmp_hh = [ [H[0], H[1], H[2]],
+        //       [H[3], H[4], H[5]],
+        //       [H[6], H[7], H[8]]];
+
+        // var tmp_h = denormalize(T1, T2, tmp_hh);
+
+        // var HH = [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1],tmp_h[2][2] ];
 
         var currentInliers = [];
         //check all matches for inliers
@@ -681,12 +689,14 @@ function stitch_color(bestH){
           //console.log("ERROR", err);            
           if(err < my_opt.ransac_inlier_threshold){
               currentInliers.push(j);
+              //console.log("ERROR", err, i);
             }
         }
 
         if(bestliers.length < currentInliers.length)
         {
           bestliers = currentInliers;
+          console.log("inliers ", bestliers.length, i);
         }
 
       }
