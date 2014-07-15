@@ -176,19 +176,40 @@ function detector_App( )
 
       console.log("PROVIDE RANSC WITH THIS", norm_matches);
 
+      //*******************************
+      // TEST POINT 
+      //*******************************
       var test = [];
       test = [ [1, 2],[3, 4], [5, 6], [7,8] ];
 
-      console.log("test igen", test);
+      var T1_test , T1P1_test, T2_test , T2P2_test = [];
 
-      var T4 = normalized_points(test, 4);
-      T4 = numeric.transpose(T4);
+      [T1P1_test, T1_test] = hartly_normalization(test);
 
-      console.log("T4", T4);
-      test = to_homogenius(test, 4);
+      console.log("good stuff <matrix:", T1_test, "points", T1P1_test);
 
-      var multest = multiplyMatrix(T4, test);
-      console.log("multest :", multest);
+      var test2 = [ [9, 10], [11, 12], [13, 14], [15, 16] ];
+      [T2P2_test, T2_test] = hartly_normalization(test2);
+
+
+      var H_hat = [[9,4,7],[2,5,8],[3,6,1]];
+
+      denormalize(T1_test, T2_test, H_hat)
+
+      var A = [[1,2,3],[4,5,6],[7,3,9]];
+      var B = [[12,12,13],[24,25,26],[37,33,39]];
+
+     console.log("H_hat :", H_hat);
+     console.log("A :", A);
+     console.log("B :", B);
+
+     var AB = numeric.dot(A, B);
+
+     console.log("AB", AB);
+
+     AB = multiplyMatrix(numeric.transpose(A),numeric.transpose(B));
+     console.log("AB mul", AB);
+
 
 
       // nästa steg 
@@ -211,6 +232,47 @@ function detector_App( )
       img.src =  my_opt.img2[imaga_from_button];  
     }
   }
+
+  //Returns the T matrix and the normalized points
+  function hartly_normalization(pts)
+  {
+      console.log("pts", pts);
+      var T_matrix = normalized_points(pts, pts.length);
+      
+      pts = to_homogenius(pts, pts.length);
+      pts = numeric.transpose(pts);
+      //
+      var TtimiesP = numeric.dot(T_matrix, pts);
+
+      //console.log("TtimiesP", TtimiesP, pts);
+
+      return [TtimiesP, T_matrix ]
+
+  }  
+
+  function denormalize(T1, T2, H_hat)
+  {
+
+    // ************
+    // solve
+    // ************
+    // dot((T2t, T2)̈́^1, (T2t, H*T1))
+
+
+    var T2t  = numeric.transpose(T2);
+    var T2tT2 = numeric.dot(T2t, T2);
+    var T2tT2inv = numeric.inv(T2tT2);
+    var HT1 = numeric.dot(H_hat, T1);
+    //console.log("HT1", HT1);
+    var T2tHT1 = numeric.dot(T2t, HT1);
+
+    var H_norm = numeric.dot(T2tT2inv, T2tHT1);     
+
+    console.log("H_norm", H_norm);
+
+    return H_norm;
+  }
+
 
   function multiplyMatrix(m1, m2) 
   {
