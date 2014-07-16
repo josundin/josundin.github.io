@@ -11,7 +11,7 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 100;
+    this.ransac_iter = 1000;
     this.ransac_inlier_threshold = 1;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
@@ -164,8 +164,22 @@ function detector_App( )
 
       var T1 , T1P1, T2 , T2P2 = [];
 
-      [T1P1, T1] = hartly_normalization(pts_img1);
-      [T2P2, T2] = hartly_normalization(pts_img2);
+      // [T1P1, T1] = hartly_normalization(pts_img1);
+      // [T2P2, T2] = hartly_normalization(pts_img2);
+
+      var tmp_V1 = hartly_normalization(pts_img1);
+      var tmp_V2 = hartly_normalization(pts_img2);
+
+      T1P1 = tmp_V1[0];
+      T1 = tmp_V1[1];
+
+      T2P2 = tmp_V2[0];
+      T2 = tmp_V2[1];
+
+
+
+      T1P1 = numeric.transpose(T1P1);
+      T2P2 = numeric.transpose(T2P2);
     
       var norm_matches = [];
 
@@ -182,33 +196,33 @@ function detector_App( )
       var test = [];
       test = [ [1, 2],[3, 4], [5, 6], [7,8] ];
 
-      var T1_test , T1P1_test, T2_test , T2P2_test = [];
+      //var T1_test , T1P1_test, T2_test , T2P2_test = [];
 
-      [T1P1_test, T1_test] = hartly_normalization(test);
+      //[T1P1_test, T1_test] = hartly_normalization(test);
 
-      console.log("good stuff <matrix:", T1_test, "points", T1P1_test);
+     //  console.log("good stuff <matrix:", T1_test, "points", T1P1_test);
 
-      var test2 = [ [9, 10], [11, 12], [13, 14], [15, 16] ];
-      [T2P2_test, T2_test] = hartly_normalization(test2);
+     //  var test2 = [ [9, 10], [11, 12], [13, 14], [15, 16] ];
+     //  [T2P2_test, T2_test] = hartly_normalization(test2);
 
 
-      var H_hat = [[9,4,7],[2,5,8],[3,6,1]];
+     //  var H_hat = [[9,4,7],[2,5,8],[3,6,1]];
 
-      denormalize(T1_test, T2_test, H_hat)
+     //  denormalize(T1_test, T2_test, H_hat)
 
-      var A = [[1,2,3],[4,5,6],[7,3,9]];
-      var B = [[12,12,13],[24,25,26],[37,33,39]];
+     //  var A = [[1,2,3],[4,5,6],[7,3,9]];
+     //  var B = [[12,12,13],[24,25,26],[37,33,39]];
 
-     console.log("H_hat :", H_hat);
-     console.log("A :", A);
-     console.log("B :", B);
+     // console.log("H_hat :", H_hat);
+     // console.log("A :", A);
+     // console.log("B :", B);
 
-     var AB = numeric.dot(A, B);
+     // var AB = numeric.dot(A, B);
 
-     console.log("AB", AB);
+     // console.log("AB", AB);
 
-     AB = multiplyMatrix(numeric.transpose(A),numeric.transpose(B));
-     console.log("AB mul", AB);
+     // AB = multiplyMatrix(numeric.transpose(A),numeric.transpose(B));
+     // console.log("AB mul", AB);
 
 
 
@@ -218,7 +232,7 @@ function detector_App( )
       // n x 9
       // var av den sista columnen är ett över hela
       
-      var bestH = ransac(matches, T1, T2);
+      var bestH = ransac(norm_matches, T1, T2);
       //findCorners(bestH);
       stitch(bestH);
 
@@ -668,7 +682,9 @@ function stitch_color(bestH){
         //create a new H from the samples
         var H = Solve_8X8(sample);
 
-        //H = denorm(T1, T2, H);
+        // console.log("H innan :", H);
+        H = denorm(T1, T2, H);
+        // console.log("H efter :", H);
 
         // var tmp_hh = [ [H[0], H[1], H[2]],
         //       [H[3], H[4], H[5]],
@@ -677,6 +693,7 @@ function stitch_color(bestH){
         // var tmp_h = denormalize(T1, T2, tmp_hh);
 
         // var HH = [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1],tmp_h[2][2] ];
+        // H = HH;
 
         var currentInliers = [];
         //check all matches for inliers
@@ -715,10 +732,15 @@ function stitch_color(bestH){
         construcktH.push(pairs[bestliers[i]]);  
       }
 
+      console.log("construcktH", construcktH);
+
       var Hbest = Solve_8X8(construcktH);
+
+
 
       //HERE APPLY DENORM
       console.log("HERE APPLY DENORM");
+      Hbest = denorm(T1, T2, Hbest);
 
       console.log("Best homographie", Hbest);
 
@@ -731,34 +753,31 @@ function stitch_color(bestH){
     {
 
       // // make H_hat a matrix
-      // var tmp_h = [ [H_hat[0], H_hat[1], H_hat[2]],
-      //               [H_hat[3], H_hat[4], H_hat[5]],
-      //               [H_hat[6], H_hat[7], H_hat[8]]];
-
-      // // //console.log("h hat", tmp_h);
-
-      // T2 = numeric.transpose(T2);
-
-      // var T2inv = numeric.inv(T2);
-      // var mul_T2in_H_hat = multiplyMatrix(T2inv, tmp_h); 
-
-      // //var mul_T2in_H_hat_t = numeric.transpose(mul_T2in_H_hat);
-
-      // var tmp_h = multiplyMatrix(mul_T2in_H_hat, T1);
+      var tmp_h = [ [H_hat[0], H_hat[1], H_hat[2]],
+                    [H_hat[3], H_hat[4], H_hat[5]],
+                    [H_hat[6], H_hat[7], H_hat[8]]];
 
 
-      // // var d_T2_H = numeric.dot(T2inv,tmp_h);
-      // // tmp_h = numeric.dot(d_T2_H,T1);
+    // ************
+    // solve
+    // ************
+    // dot((T2t, T2)̈́^1, (T2t, H*T1))
 
-      // // var teet_t = numeric.transpose(tmp_h);
-      // // tmp_h = teet_t;
+    // dot (T1^⁻1, Ḧ , T2 )
 
-      // //console.log("res ", result_t2_h_t1);
+    //var T2tT2 = numeric.dot(T2t, T2);
+    var T1inv = numeric.inv(T1);
+    var T1H = numeric.dot(T1inv, tmp_h);
+    var T1HT2 = numeric.dot(T1H, T2);
 
-      // //return result_t2_h_t1;
-      // return [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1],tmp_h[2][2] ];
+    //console.log("T1HT2", T1HT2);
 
-      return H_hat;
+    tmp_h = numeric.transpose(T1HT2) ;
+    // tmp_h = T1HT2 ;
+
+    return [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1], tmp_h[2][2] ]; //
+
+      //return H_hat;
 
     }
 
@@ -899,6 +918,9 @@ function stitch_color(bestH){
 
       //solve
       // dot((At, A)̈́^1, (At, b))
+
+      //console.log("A", A);
+
       var At  = numeric.transpose(A);
       var AtA = numeric.dot(At, A);
       var AtAinv = numeric.inv(AtA);
