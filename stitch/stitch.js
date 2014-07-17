@@ -11,8 +11,8 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1000;
-    this.ransac_inlier_threshold = 1;
+    this.ransac_iter = 1;
+    this.ransac_inlier_threshold = 2;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 45;
@@ -232,7 +232,7 @@ function detector_App( )
       // n x 9
       // var av den sista columnen är ett över hela
       
-      var bestH = ransac(norm_matches, T1, T2);
+      var bestH = ransac(matches, T1, T2);
       //findCorners(bestH);
       stitch(bestH);
 
@@ -682,26 +682,21 @@ function stitch_color(bestH){
         //create a new H from the samples
         var H = Solve_8X8(sample);
 
-        // console.log("H innan :", H);
-        H = denorm(T1, T2, H);
-        // console.log("H efter :", H);
-
-        // var tmp_hh = [ [H[0], H[1], H[2]],
-        //       [H[3], H[4], H[5]],
-        //       [H[6], H[7], H[8]]];
-
-        // var tmp_h = denormalize(T1, T2, tmp_hh);
-
-        // var HH = [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1],tmp_h[2][2] ];
-        // H = HH;
-
+        //iH: invert H here to save computations
+        // but first convert to 3x3 format
+        var H3x3 = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
+        var iH = numeric.inv(H3x3);
         var currentInliers = [];
         //check all matches for inliers
         for (var j=0; j<pairs.length; j++) 
         {  
           //compute the transformation points
-          var Xp = projectPointNormalized(pairs[j][0] ,H);
-          var err = backProjectedError(pairs[j][1], Xp);
+          //var Xp = projectPointNormalized(pairs[j][0] ,H);
+          //calculate error in one image
+          //var err = backProjectedError(pairs[j][1], Xp);
+
+          //calculate error in both images, called Symmetric transfer error in the book 
+          var err = Sym_trans_error(pairs[j][0] , pairs[j][1], H, iH);
 
           //console.log("ERROR", err);            
           if(err < my_opt.ransac_inlier_threshold){
@@ -740,7 +735,7 @@ function stitch_color(bestH){
 
       //HERE APPLY DENORM
       console.log("HERE APPLY DENORM");
-      Hbest = denorm(T1, T2, Hbest);
+      //Hbest = denorm(T1, T2, Hbest);
 
       console.log("Best homographie", Hbest);
 
@@ -748,6 +743,52 @@ function stitch_color(bestH){
 
       return Hbest;
     //============================== end of RANSC algorithm ==============================================
+
+    function Sym_trans_error(pt_img1 , pt_img2, H, Hdinv)
+    {
+
+
+          ////////////////////////////////////////
+          /// Calculates distance of data using symmetric transfer error
+          /// p.95 in the book
+          ///////////////////////////////////////
+
+
+          /////////////////////////////////////////
+          ///////// Error img 1 ////////////
+
+          var Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];  
+          var X = [ pt_img1[0], pt_img1[1], 1];
+          //xp = Hx
+          var Xp = numeric.dot(Hd, X);
+    
+           var err1 = backProjectedError(pt_img2, [Xp[0]/Xp[2], Xp[1]/Xp[2]]);
+
+
+          /// Alternative way to compute
+          //Hx1    = H*x1;
+          //var Hx1 = projectPointNormalized(pt_img1 ,H);
+          //calculate error in one image
+          //var err = backProjectedError(pt_img2, Hx1);
+
+          /////////////////////////////////////////////////
+          //////// EFEKTIVAre variant
+
+          X = [ pt_img2[0], pt_img2[1], 1];
+          Xp = numeric.dot(Hdinv, X);
+
+          var err2 = backProjectedError(pt_img1, [Xp[0]/Xp[2], Xp[1]/Xp[2]]);
+
+          //return [Xp[0]/Xp[2], Xp[1]/Xp[2]];
+          /////////////////////////////////////////////////
+
+          console.log("err1" ,err1);
+          console.log("err2" ,err2);
+          //console.log("err3" ,err3);
+
+          //sum the two errors
+          return err1 + err2;
+    }
 
     function denorm(T1, T2, H_hat)
     {
@@ -761,11 +802,7 @@ function stitch_color(bestH){
     // ************
     // solve
     // ************
-    // dot((T2t, T2)̈́^1, (T2t, H*T1))
-
     // dot (T1^⁻1, Ḧ , T2 )
-
-    //var T2tT2 = numeric.dot(T2t, T2);
     var T1inv = numeric.inv(T1);
     var T1H = numeric.dot(T1inv, tmp_h);
     var T1HT2 = numeric.dot(T1H, T2);
@@ -773,7 +810,6 @@ function stitch_color(bestH){
     //console.log("T1HT2", T1HT2);
 
     tmp_h = numeric.transpose(T1HT2) ;
-    // tmp_h = T1HT2 ;
 
     return [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1], tmp_h[2][2] ]; //
 
@@ -830,8 +866,7 @@ function stitch_color(bestH){
 
   function perspectiveTransform(pt, H)
   {
-   // console.log("H", H);
-
+   
     var Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
     var Hdinv = numeric.inv(Hd);
 
@@ -872,6 +907,7 @@ function stitch_color(bestH){
 
      function backProjectedError(p, q){
       //console.log(p[0], p[1], q[0], q[1]);
+      //console.log("p,q", p,q);
 
       return Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2));
 
