@@ -11,8 +11,8 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1;
-    this.ransac_inlier_threshold = 2;
+    this.ransac_iter = 1000;
+    this.ransac_inlier_threshold = 350;
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 45;
@@ -178,8 +178,8 @@ function detector_App( )
 
 
 
-      T1P1 = numeric.transpose(T1P1);
-      T2P2 = numeric.transpose(T2P2);
+      //T1P1 = numeric.transpose(T1P1);
+      //T2P2 = numeric.transpose(T2P2);
     
       var norm_matches = [];
 
@@ -250,7 +250,7 @@ function detector_App( )
   //Returns the T matrix and the normalized points
   function hartly_normalization(pts)
   {
-      console.log("pts", pts);
+      //console.log("pts", pts);
       var T_matrix = normalized_points(pts, pts.length);
       
       pts = to_homogenius(pts, pts.length);
@@ -669,18 +669,57 @@ function stitch_color(bestH){
 
 
 
-  function ransac(pairs , T1 , T2){
+  function ransac(pairs , T111 , T211){
       var bestliers = [];
+      var pts_img1 = [];
+      var pts_img2 = [];
       
 
       for (var i=0; i<my_opt.ransac_iter; i++) 
       {
         //Make a sample     
         var sample = _.sample(pairs, 4);
-        //remove the samples
-        var pr = _.difference(pairs, sample);
+       
+        //////////////////////////////////////////////////////////
+        //1. Normalize the points
+
+        pts_img1 = [pairs[0][0],pairs[1][0],pairs[2][0],pairs[3][0]];
+        pts_img2 = [pairs[0][1],pairs[1][1],pairs[2][1],pairs[3][1]];
+
+        var T1 , T1P1, T2 , T2P2 = [];
+
+        // [T1P1, T1] = hartly_normalization(pts_img1);
+        // [T2P2, T2] = hartly_normalization(pts_img2);
+
+        var tmp_V1 = hartly_normalization(pts_img1);
+        var tmp_V2 = hartly_normalization(pts_img2);
+
+        T1P1 = tmp_V1[0];
+        T1 = tmp_V1[1];
+
+        T2P2 = tmp_V2[0];
+        T2 = tmp_V2[1];
+
+        //MÅste vi göra denna?
+        T1P1 = numeric.transpose(T1P1);
+        T2P2 = numeric.transpose(T2P2);
+
+        //console.log("T1P1:", T1P1 );
+
+        var norm_sample = [ [[T1P1[0][0], T1P1[0][1]] , [T2P2[0][0], T2P2[0][1]]], 
+                            [[T1P1[1][0], T1P1[1][1]] , [T2P2[1][0], T2P2[1][1]]],
+                            [[T1P1[2][0], T1P1[2][1]] , [T2P2[2][0], T2P2[2][1]]],
+                            [[T1P1[3][0], T1P1[3][1]] , [T2P2[3][0], T2P2[3][1]]] ];
+
+        //console.log("norm_sample:", norm_sample );
+        
+        //////////////////////////////////
+
         //create a new H from the samples
-        var H = Solve_8X8(sample);
+        var H = Solve_8X8(norm_sample);
+        //console.log("H innan", H);
+        H = denorm(T1, T2, H);
+        //console.log("H efter", H);
 
         //iH: invert H here to save computations
         // but first convert to 3x3 format
@@ -690,15 +729,11 @@ function stitch_color(bestH){
         //check all matches for inliers
         for (var j=0; j<pairs.length; j++) 
         {  
-          //compute the transformation points
-          //var Xp = projectPointNormalized(pairs[j][0] ,H);
-          //calculate error in one image
-          //var err = backProjectedError(pairs[j][1], Xp);
 
           //calculate error in both images, called Symmetric transfer error in the book 
           var err = Sym_trans_error(pairs[j][0] , pairs[j][1], H, iH);
 
-          //console.log("ERROR", err);            
+          //console.log("ERROR", err, j);            
           if(err < my_opt.ransac_inlier_threshold){
               currentInliers.push(j);
               //console.log("ERROR", err, i);
@@ -782,9 +817,8 @@ function stitch_color(bestH){
           //return [Xp[0]/Xp[2], Xp[1]/Xp[2]];
           /////////////////////////////////////////////////
 
-          console.log("err1" ,err1);
-          console.log("err2" ,err2);
-          //console.log("err3" ,err3);
+          // console.log("err1" ,err1);
+          // console.log("err2" ,err2);
 
           //sum the two errors
           return err1 + err2;
@@ -810,6 +844,7 @@ function stitch_color(bestH){
     //console.log("T1HT2", T1HT2);
 
     tmp_h = numeric.transpose(T1HT2) ;
+    //tmp_h = T1HT2;
 
     return [tmp_h[0][0],tmp_h[0][1],tmp_h[0][2],tmp_h[1][0],tmp_h[1][1],tmp_h[1][2], tmp_h[2][0],tmp_h[2][1], tmp_h[2][2] ]; //
 
