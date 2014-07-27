@@ -16,8 +16,8 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.8;
     this.descriptor_radius = 8;
     this.corner_threshold = 45;
-    this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
-    this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
+    this.img1 = ["imgs/left.jpg", "imgs/zmonet16.jpg"];//this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
+    this.img2 = ["imgs/right.jpg", "imgs/zmonet2.jpg"];//this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
 }
 
 
@@ -380,7 +380,7 @@ function stitch_color(bestH){
       var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
       trans_offset.data = [1,0,canvasOffset[0],0,1,canvasOffset[1],0,0,1];
-
+      console.log("lal", trans_offset.data);
 
       for (var i=0; i<9; i++)
       {
@@ -1198,6 +1198,9 @@ function stitch_color(bestH){
       var numout = 0;
       var vectors = processing.gradientVectors(canvas);
       var desc = new Array(count);
+
+
+      extractHistogramsFromWindow(8,8,windowRadius, vectors)
       
       for(var i =0; i < count; i++)
       {
@@ -1205,41 +1208,41 @@ function stitch_color(bestH){
         var ypos = corners[i].y;
 
         // [f,d] = vl_sift(I) ;
+
         desc[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
         //console.log(ypos, xpos, vectors[ypos][xpos]);
         //console.log(desc[i]);
         //drawcell(canvas, xpos, ypos, windowRadius);
       }
-
       descriptors.push(desc);
-      //console.log(desc);
     }
-      
 
 
+  
     function extractHistogramsFromWindow(x,y, radius, vectors) 
     {
+      //console.log("extract :", x , y);
       var cellradius = radius / 2;
       
-       var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors).concat(
-                        extractHistogramsFromCell(x-(radius/2), y-radius, cellradius, vectors), 
-                        extractHistogramsFromCell(x, y-radius, cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y-radius, cellradius, vectors),
+       var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors, 1).concat(
+                        extractHistogramsFromCell(x-(radius/2), y-radius, cellradius, vectors, 2), 
+                        extractHistogramsFromCell(x, y-radius, cellradius, vectors, 2),
+                        extractHistogramsFromCell(x+(radius/2), y-radius, cellradius, vectors, 1),
 
-                        extractHistogramsFromCell(x-radius, y-(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y-(radius/2), cellradius, vectors), 
-                        extractHistogramsFromCell(x, y-(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y-(radius/2), cellradius, vectors),
+                        extractHistogramsFromCell(x-radius, y-(radius/2), cellradius, vectors, 2),
+                        extractHistogramsFromCell(x-(radius/2), y-(radius/2), cellradius, vectors, 4), 
+                        extractHistogramsFromCell(x, y-(radius/2), cellradius, vectors, 4),
+                        extractHistogramsFromCell(x+(radius/2), y-(radius/2), cellradius, vectors, 2),
 
-                        extractHistogramsFromCell(x-radius, y, cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y, cellradius, vectors), 
-                        extractHistogramsFromCell(x, y, cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y, cellradius, vectors),
+                        extractHistogramsFromCell(x-radius, y, cellradius, vectors, 2),
+                        extractHistogramsFromCell(x-(radius/2), y, cellradius, vectors, 4), 
+                        extractHistogramsFromCell(x, y, cellradius, vectors, 4),
+                        extractHistogramsFromCell(x+(radius/2), y, cellradius, vectors, 2),
 
-                        extractHistogramsFromCell(x-radius, y+(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y+(radius/2), cellradius, vectors), 
-                        extractHistogramsFromCell(x, y+(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y+(radius/2), cellradius, vectors)
+                        extractHistogramsFromCell(x-radius, y+(radius/2), cellradius, vectors, 1),
+                        extractHistogramsFromCell(x-(radius/2), y+(radius/2), cellradius, vectors, 2), 
+                        extractHistogramsFromCell(x, y+(radius/2), cellradius, vectors, 2),
+                        extractHistogramsFromCell(x+(radius/2), y+(radius/2), cellradius, vectors, 1)
 
                         );
 
@@ -1286,8 +1289,11 @@ function stitch_color(bestH){
   /*
     Provide the x, y cordinates of the upper left corner of the cell
   */
-  function extractHistogramsFromCell(x,y, cellradius, gradients) 
+  function extractHistogramsFromCell(x,y, cellradius, gradients, mult) 
   {
+
+    //console.log("cell ", x, y, mult);
+
     //from x-rad, y-rad till x,y
     var histogram = zeros(8);
 
@@ -1298,6 +1304,12 @@ function stitch_color(bestH){
         histogram[bin] += vector.mag;
         //console.log("y : ", y + i, "x :", x + j);
       }
+    }
+
+    for(var i =0; i < histogram.length; i++)
+    {
+     //vec2.push(3 * vec1[i]) ;
+     histogram[i] *= mult;
     }
 
     //console.log("my hist : ", histogram);
