@@ -11,13 +11,13 @@ var imaga_from_button  = 0;
 
 //makes as gui options
 var stitch_opt = function(){
-    this.ransac_iter = 1000;
-    this.ransac_inlier_threshold = 3;
-    this.Lowe_criterion = 0.8;
+    this.ransac_iter = 2000;
+    this.ransac_inlier_threshold = 5;
+    this.Lowe_criterion = 0.89;
     this.descriptor_radius = 8;
-    this.corner_threshold = 45;
-    this.img1 = ["imgs/left.jpg", "imgs/zmonet16.jpg"];//this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
-    this.img2 = ["imgs/right.jpg", "imgs/zmonet2.jpg"];//this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
+    this.corner_threshold = 22;
+    this.img1 = ["imgs/zmonet1.jpg", "imgs/zmonet16.jpg"];//this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
+    this.img2 = ["imgs/zmonet4.jpg", "imgs/zmonet1.jpg"];//this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
 }
 
 
