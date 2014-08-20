@@ -16,8 +16,8 @@ var stitch_opt = function(){
     this.Lowe_criterion = 0.89;
     this.descriptor_radius = 8;
     this.corner_threshold = 22;
-    this.img1 = ["imgs/zmonet1.jpg", "imgs/zmonet16.jpg"];//this.img1 = [ "imgs/left.jpg", "imgs/right.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg","imgs/P1100328.jpg", "imgs/P1100329.jpg"];
-    this.img2 = ["imgs/zmonet4.jpg", "imgs/zmonet1.jpg"];//this.img2 = [ "imgs/right.jpg", "imgs/left.jpg", "imgs/IMG_0051.jpg", "imgs/IMG_0053.jpg","imgs/P1100329.jpg", "imgs/P1100328.jpg"];
+    this.img1 = ["imgs/eiffel1.jpg"];
+    this.img2 = ["imgs/eiffel2.jpg"];
 }
 
 
@@ -124,9 +124,7 @@ function detector_App( )
       var matches = [];
       computeMatches(matches);
 
-      console.log("numbers of matches", matches.length);
-      console.log("the matches", matches);
-
+      
       var pts_img1 = [];
       var pts_img2 = [];
 
@@ -137,8 +135,6 @@ function detector_App( )
       }
 
       placeImgSidebySide(matches);
-
-      console.log("pts_img1", pts_img1, pts_img1.length);
      
       var T1 , T1P1, T2 , T2P2 = [];
 
@@ -159,8 +155,6 @@ function detector_App( )
 
       T1P1 = numeric.transpose(T1P1);
       T2P2 = numeric.transpose(T2P2);
-
-      console.log("normalized pts", T1P1);
     
       var norm_matches = [];
 
@@ -169,7 +163,6 @@ function detector_App( )
         norm_matches.push([ [ T1P1[i][0], T1P1[i][1] ] , [ T2P2[i][0], T2P2[i][1] ]]);
       }
 
-      console.log("PROVIDE RANSC WITH THIS", norm_matches);
 
       //*******************************
       // TEST POINT 
@@ -389,7 +382,7 @@ function stitch_color(bestH){
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
 
 
-      console.log("Homography2:", transform_dot.data);
+      //console.log("Homography2:", transform_dot.data);
       // var Atb = numeric.dot(At, b);
 
 
@@ -603,7 +596,7 @@ function stitch_color(bestH){
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
       jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform_dot, 0);
 
-      console.log("transform_dot:", transform_dot.data);
+      //console.log("transform_dot:", transform_dot.data);
     
       return img_u8_warp;
 
@@ -689,11 +682,14 @@ function stitch_color(bestH){
         if(bestliers.length < currentInliers.length)
         {
           bestliers = currentInliers;
-          console.log("inliers ", bestliers.length, i);
+          //console.log("inliers ", bestliers.length, i);
         }
 
       }
+      console.log("numbers of matches", pairs.length);
       console.log("best inliers", bestliers.length);
+
+      console.log(" In/Out ratio ;", bestliers.length / pairs.length );
       
       ctx.strokeStyle="rgb(0,255,0)";
       ctx.beginPath();
@@ -708,7 +704,7 @@ function stitch_color(bestH){
         construcktH.push(pairs[bestliers[i]]);  
       }
 
-      console.log("construcktH", construcktH);
+      //console.log("construcktH", construcktH);
 
       //var Hbest = Solve_8X8(construcktH);
       var Hbest = Solve_SVD(construcktH);
@@ -716,7 +712,7 @@ function stitch_color(bestH){
 
 
       //HERE APPLY DENORM
-      console.log("HERE APPLY DENORM");
+      //console.log("HERE APPLY DENORM");
       //Hbest = denorm(T111, T211, Hbest);
 
       console.log("Best homographie", Hbest);
@@ -1309,7 +1305,7 @@ function stitch_color(bestH){
     for(var i =0; i < histogram.length; i++)
     {
      //vec2.push(3 * vec1[i]) ;
-     histogram[i] *= mult;
+     histogram[i] *= 1;
     }
 
     //console.log("my hist : ", histogram);
