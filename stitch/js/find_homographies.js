@@ -49,6 +49,8 @@ function find_homographies(images, dp)
 	//var baseImage = new imgObj(images.shift());
 
 	var baseImage = new imgObj(images[0]);
+
+	//DISPLAY a thumbnail of the stitched images separately
 	
    
    	// these are the rest of the images

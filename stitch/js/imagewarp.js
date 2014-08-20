@@ -112,12 +112,11 @@ function warp_App(homographies,images) {
         ctx2.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH);
 
         //hide the first canvas
-        // canvas.width = 0;
-        // canvas.height = 0;
-        // canvas.style = ('visibility', 'hidden');
+        canvas.width = 0;
+        canvas.height = 0;
+        canvas.style = ('visibility', 'hidden');
 
         
-        // ctx.putImageData(img2.warpData, 0, 0);
         // ctx2.drawImage(ctx.canvas,0,0);
        
         function H_times_offset(H) 
