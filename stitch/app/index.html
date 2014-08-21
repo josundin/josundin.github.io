@@ -8,11 +8,25 @@
 		max-height: 250px;
 		float: left;
 		margin-bottom:10px;
+		margin-left:10px;
 	}
 </style>
 </head>
     
 <body>
+
+        <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+        <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+        <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+        <script type="text/javascript" src="../ext_js/hog.js"></script>
+        <script type="text/javascript" src="../ext_js/norms.js"></script>
+        <script type="text/javascript" src="../ext_js/processing.js"></script>
+        <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="../ext_js/d3.min.js"></script>
+
+        <script type="text/javascript" src="../js/find_homographies.js"></script>
+        <script type="text/javascript" src="../js/ransac.js"></script>
+        <script type="text/javascript" src="../js/imagewarp.js"></script>
 	
 	<form id="myForm" method="post" enctype="multipart/form-data">
 
@@ -25,6 +39,7 @@
 
 	<script>
 	var selDiv = "";
+	var images = [];
 		
 	document.addEventListener("DOMContentLoaded", init, false);
 	
@@ -48,15 +63,15 @@
 	
 			var reader = new FileReader();
 			reader.onload = function (e) {
-				var html = "<img src=\"" + e.target.result + "\">" + f.name + "<br clear=\"left\"/>";
+				var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
 				selDiv.innerHTML += html;
-				console.log("URL:" ,e);				
+				console.log("URL:" ,f.name);				
 			}
-			reader.readAsDataURL(f); 
+			reader.readAsDataURL(f);
 			
 		});
 		
-		console.log("the files:", files);
+		console.log("the files:", filesArr);
 		
 	}
 	</script>
