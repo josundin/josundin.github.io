@@ -72,24 +72,50 @@
 	
 			var reader = new FileReader();
 			reader.onload = function (e) {
-				var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
-				baseImage = new imgOpt(event.target.result)
-				selDiv.innerHTML += html;
-				console.log("URL:" ,f.name);
 
-				var canvas2 = createcanvas();
-		        canvas2.width =  300;
-		        canvas2.height =  300;
-		        var ctx2 = canvas2.getContext('2d');
 
-		        ctx2.drawImage( baseImage.img, 0 , 0);
-								
+			var promise = setupfunctionfirst().then(dofunctionsecond);
+
+			function setupfunctionfirst()
+					{
+					    var d = new $.Deferred();
+
+	    				var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
+						//Här är src, pucha denna i en array
+						baseImage = new imgOpt(e.target.result)
+						selDiv.innerHTML += html;
+						console.log("URL:" ,f.name);
+
+					    d.resolve();
+					    return d.promise()
+					}
+
+
+
+				function dofunctionsecond()
+				{
+				    var d = new $.Deferred();
+
+					var canvas2 = createcanvas();
+			        canvas2.width =  300;
+			        canvas2.height =  300;
+			        var ctx2 = canvas2.getContext('2d');
+			        ctx2.drawImage( baseImage.img, 0 , 0);
+			        console.log("the files:", filesArr);
+
+				    d.resolve();
+				    return d.promise()
+				}
+
+
+
+
 			}
 			reader.readAsDataURL(f);
 			
 		});
 		
-		console.log("the files:", filesArr);
+		
 
 		
 		
