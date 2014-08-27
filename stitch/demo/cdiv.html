@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Demo</title>
+<style>
+	#selectedFiles img {
+		max-width: 250px;
+		max-height: 250px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+</style>
+</head>
+<body>
+<header>
+    <h1>The most important heading on this page</h1>
+    <p>With some supplementary information</p>
+</header>
+
+<div id="selectedFiles"></div>
+<div id="divControls"></div>
+<div id="divGameStage"></div>
+<script type="text/javascript">
+"use strict";
+
+	var selDiv = "";
+	document.addEventListener("DOMContentLoaded", init, false);
+
+
+	function init() {
+//		document.querySelector('#files').addEventListener('change', handleFileSelect, false);
+	selDiv = document.querySelector("#selectedFiles");
+
+	placeimgs();
+	//selDiv = document.querySelector("#selectedFiles");
+
+	loadCanvas("divGameStage");
+
+	}
+
+	function placeimgs()
+	{
+		//selDiv.innerHTML = "";
+		console.log("place imgs");
+    
+		var images = ["../imgs/right.jpg", "../imgs/left.jpg"];
+
+		var filesArr = Array.prototype.slice.call(images);
+
+
+
+		console.log("fore");		
+		for (var i = 0; i < images.length; i++) 
+		{
+
+			console.log(i, images[i]);
+			
+
+		 //   	var html = "<img src=\"" + images[i] + "\">"  ;//+ f.name
+			
+			// selDiv.innerHTML += html;
+
+			var image = new Image();
+
+			// DOM 1+ - use this or above method
+			// var image = document.createElement('img');
+
+			// Set path and alt properties
+			image.src = images[i];
+			//image.alt = alt;
+
+			// Add it to the DOM
+			selDiv.appendChild(image);
+
+		}
+
+
+
+
+	}
+
+
+    function loadCanvas(id) 
+    {
+        var canvas = document.createElement('canvas');
+        var div = document.getElementById(id); 
+        canvas.id     = "CursorLayer";
+        canvas.width  = 1224;
+        canvas.height = 768;
+        canvas.style.zIndex   = 8;
+        canvas.style.position = "absolute";
+        canvas.style.border   = "1px solid";
+        div.appendChild(canvas)
+    }
+
+</script>
+</body>
+</html>
