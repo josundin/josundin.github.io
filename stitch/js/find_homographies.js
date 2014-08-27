@@ -404,7 +404,7 @@ function find_homographies(images, dp)
 		var body = document.getElementsByTagName("body")[0];
 		body.appendChild(tmpCanvas);
 		tmpCanvas.id="descriptors";
-		body.id="body";
+		//body.id="body";
 
 		return tmpCanvas;
 	}

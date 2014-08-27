@@ -43,7 +43,7 @@ function warp_App(homographies,images) {
 
     }
 
-    function createcanvas( )
+    function createcanvas()
     {      
       var tmpCanvas = document.createElement('canvas');
       tmpCanvas.width = imageW;
@@ -53,10 +53,13 @@ function warp_App(homographies,images) {
       //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
 
       //add the canvas
+      // var div = document.getElementById(canvas_test); 
+      // div.appendChild(tmpCanvas);
+      //add the canvas
       var body = document.getElementsByTagName("body")[0];
       body.appendChild(tmpCanvas);
       tmpCanvas.id="warping";
-      body.id="body";
+      //body.id="body";
 
       return tmpCanvas;
     }

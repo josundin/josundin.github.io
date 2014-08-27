@@ -12,31 +12,78 @@
 		margin-left:10px;
 	}
 </style>
+
+<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
 </head>
 <body>
-<header>
-    <h1>The most important heading on this page</h1>
-    <p>With some supplementary information</p>
-</header>
+<div class="container">
+	<header>
+	    <h1>The most important heading on this page</h1>
+	    <p>With some supplementary information</p>
+	</header>
 
-<div id="selectedFiles"></div>
-<div id="divControls"></div>
-<div id="divGameStage"></div>
+
+	<div class="row">
+
+		<div class="span6">
+			<h2>1 What is this?</h2>
+			<p>
+				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="selectedFiles"></div>
+
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>2 What is this?</h2>
+			<p>
+				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="divGameStage"></div>
+		
+		</div>
+	</div>
+</div>
+
+
+
 <script type="text/javascript">
 "use strict";
 
+	var imgOpt = function(imgsrc){
+	    this.warpData = 0;
+	    this.img = new Image();
+	    this.img.src = imgsrc;
+		}
+
+
 	var selDiv = "";
+	var baseImage;
 	document.addEventListener("DOMContentLoaded", init, false);
 
 
 	function init() {
-//		document.querySelector('#files').addEventListener('change', handleFileSelect, false);
 	selDiv = document.querySelector("#selectedFiles");
 
 	placeimgs();
-	//selDiv = document.querySelector("#selectedFiles");
+	var canvas = loadCanvas("divGameStage");
+    var ctx = canvas.getContext('2d');
 
-	loadCanvas("divGameStage");
+    console.log("after");
+    ctx.drawImage(baseImage.img, 0, 0);
+	
 
 	}
 
@@ -45,7 +92,7 @@
 		//selDiv.innerHTML = "";
 		console.log("place imgs");
     
-		var images = ["../imgs/right.jpg", "../imgs/left.jpg"];
+		var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 
 		var filesArr = Array.prototype.slice.call(images);
 
@@ -56,6 +103,7 @@
 		{
 
 			console.log(i, images[i]);
+			baseImage = new imgOpt(images[i]);
 			
 
 		 //   	var html = "<img src=\"" + images[i] + "\">"  ;//+ f.name
@@ -92,7 +140,9 @@
         canvas.style.zIndex   = 8;
         canvas.style.position = "absolute";
         canvas.style.border   = "1px solid";
-        div.appendChild(canvas)
+        div.appendChild(canvas);
+
+        return canvas;
     }
 
 </script>
