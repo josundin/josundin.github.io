@@ -98,6 +98,8 @@ function warp_App(id, homographies,images) {
             // create the warp data, where we will store the warped image
             warpImages[i].warpData = ctx.getImageData(0, 0, canvasOffset.maxW,canvasOffset.maxH);
 
+            console.log(homographies[i], i);
+
             // multiply the homographie with the transaltion matrix
             var h_dot = H_times_offset(homographies[i]);
 

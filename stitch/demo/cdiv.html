@@ -13,7 +13,19 @@
 	}
 </style>
 
-<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+	<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+	<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+	<script type="text/javascript" src="../ext_js/hog.js"></script>
+	<script type="text/javascript" src="../ext_js/norms.js"></script>
+	<script type="text/javascript" src="../ext_js/processing.js"></script>
+	<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="../ext_js/d3.min.js"></script>
+
+	<script type="text/javascript" src="../js/find_homographies.js"></script>
+	<script type="text/javascript" src="../js/ransac.js"></script>
+	<script type="text/javascript" src="../js/imagewarp.js"></script>
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
@@ -51,7 +63,7 @@
 				<strong>Try it for yourself.</strong>
 			</p>
 
-			<div id="divGameStage"></div>
+			<div id="divStitched"></div>
 		
 		</div>
 	</div>
@@ -91,20 +103,22 @@
 
 
 	var baseImage;
+	var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	var homographies = [];
 	document.addEventListener("DOMContentLoaded", init, false);
 
 
 	function init() {
 		
 		var selDiv1 = document.querySelector("#selectedF1");
-		var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+		
 		placeimgs(images1, selDiv1);
 
-		var canvas = loadCanvas("divGameStage");
-	    var ctx = canvas.getContext('2d');
+		// var canvas = loadCanvas("divGameStage");
+	 //    var ctx = canvas.getContext('2d');
+	 //    ctx.drawImage(baseImage.img, 0, 0);
 
-	    console.log("after");
-	    ctx.drawImage(baseImage.img, 0, 0);
+	 	start_stitch(images1);
 
 
 		// var selDiv2 = document.querySelector("#selectedF2");
@@ -113,20 +127,13 @@
 
 	}
 
+
 	function placeimgs(images, wdiv)
 	{
-		//selDiv.innerHTML = "";
-		console.log("place imgs");
-    
 		var filesArr = Array.prototype.slice.call(images);
 
-
-
-		console.log("fore");		
 		for (var i = 0; i < images.length; i++) 
 		{
-
-			console.log(i, images[i]);
 			baseImage = new imgOpt(images[i]);
 			
 			var image = new Image();
@@ -139,10 +146,32 @@
 
 		}
 
-
-
-
 	}
+
+
+	//To make sure functions are made in sequences, for the alignment
+    function start_stitch(stitch_imgs)
+    {
+        var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
+    }
+
+    function longfunctionfirst(stitch_imgs)
+    {
+         var d = new $.Deferred();
+         homographies = new find_homographies(images1, d);
+
+        //d.resolve();
+        return d.promise()
+    }
+
+    function shortfunctionsecond()
+    {
+        var d = new $.Deferred();
+        warp_App("divStitched", homographies.H, images1);
+
+        d.resolve();
+        return d.promise()
+    }
 
 
     function loadCanvas(id) 
