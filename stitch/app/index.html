@@ -15,6 +15,8 @@
     
 <body>
 
+		<div id="the_canvas"></div>
+
         <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
         <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
         <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
@@ -87,7 +89,7 @@
 
 		   	var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
 			//Här är src, pucha denna i en array
-			baseImage = new imgOpt(e.target.result)
+			baseImage = new imgOpt(e.target.result);
 			selDiv.innerHTML += html;
 			console.log("URL:" ,f.name);
 			imgNames.push(f.name);
@@ -129,8 +131,8 @@
 	    function shortfunctionsecond()
 	    {
 	        var d = new $.Deferred();
-	        warp_App(homographies.H, imgSrcs);
-
+	        warp_App("the_canvas", homographies.H, imgSrcs);
+	        
 	        d.resolve();
 	        return d.promise()
 	    }

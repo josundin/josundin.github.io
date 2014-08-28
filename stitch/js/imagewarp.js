@@ -12,7 +12,7 @@ var imgOpt = function(imgsrc){
 }
 
 
-function warp_App(homographies,images) {
+function warp_App(id, homographies,images) {
 
     var canvas, ctx,canvasWidth,canvasHeight, canvas;
 
@@ -37,13 +37,13 @@ function warp_App(homographies,images) {
         imageW = canvasWidth = baseImage.img.width;  //640;//892;
         imageH = canvasHeight = baseImage.img.height;  //480;//642;
         //setupWarp();                    
-        applyWarp(imagesList);
+        applyWarp(id, imagesList);
 
       //eventuellt radera canvasen när klar... fast inte här
 
     }
 
-    function createcanvas()
+    function createcanvas(id)
     {      
       var tmpCanvas = document.createElement('canvas');
       tmpCanvas.width = imageW;
@@ -53,29 +53,29 @@ function warp_App(homographies,images) {
       //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
 
       //add the canvas
-      // var div = document.getElementById(canvas_test); 
-      // div.appendChild(tmpCanvas);
+      var div = document.getElementById(id); 
+      div.appendChild(tmpCanvas);
       //add the canvas
-      var body = document.getElementsByTagName("body")[0];
-      body.appendChild(tmpCanvas);
-      tmpCanvas.id="warping";
+      // var body = document.getElementsByTagName("body")[0];
+      // body.appendChild(tmpCanvas);
+      // tmpCanvas.id="warping";
       //body.id="body";
 
       return tmpCanvas;
     }
 
 
-    function applyWarp(warpImages) {
+    function applyWarp(id, warpImages) {
 
         //Create a canvas, to temporary draw the warp
-        canvas = createcanvas();
+        canvas = createcanvas(id);
         ctx = canvas.getContext('2d');
 
         // Calculate the offsets
         var canvasOffset = new canvasOpt(homographies); //Homography
 
         //Create the final canvas
-        var canvas2 = createcanvas();
+        var canvas2 = createcanvas(id);
         canvas2.width =  canvasOffset.maxW;
         canvas2.height =  canvasOffset.maxH;
         var ctx2 = canvas2.getContext('2d');

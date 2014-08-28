@@ -119,9 +119,9 @@ function find_homographies(images, dp)
 
     	
 	    //Hide the tmp canvas
-	    // canvas_find.width = 0;
-	    // canvas_find.height = 0;
-	    // canvas_find.style = ('visibility', 'hidden');
+	    canvas_find.width = 0;
+	    canvas_find.height = 0;
+	    canvas_find.style = ('visibility', 'hidden');
     	
     	dp.resolve();
 	

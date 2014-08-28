@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>The Demo</title>
 <style>
-	#selectedFiles img {
+	.selectedFiles img {
 		max-width: 250px;
 		max-height: 250px;
 		float: left;
@@ -25,7 +25,7 @@
 
 	<div class="row">
 
-		<div class="span6">
+		<div class="span12">
 			<h2>1 What is this?</h2>
 			<p>
 				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
@@ -34,7 +34,7 @@
 				<strong>Try it for yourself.</strong>
 			</p>
 
-			<div id="selectedFiles"></div>
+			<div id="selectedF1" class="selectedFiles"></div>
 
 		</div>
 	</div>
@@ -55,6 +55,26 @@
 		
 		</div>
 	</div>
+
+
+	<!--div class="row">
+
+		<div class="span6">
+			<h2>1 What is this?</h2>
+			<p>
+				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+				STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFFFFFFFFFFFFFFFFFFFFFFFFFFF.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="selectedF2" class="selectedFiles"></div>
+
+		</div>
+	</div-->
+
+
 </div>
 
 
@@ -69,31 +89,35 @@
 		}
 
 
-	var selDiv = "";
+
 	var baseImage;
 	document.addEventListener("DOMContentLoaded", init, false);
 
 
 	function init() {
-	selDiv = document.querySelector("#selectedFiles");
+		
+		var selDiv1 = document.querySelector("#selectedF1");
+		var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+		placeimgs(images1, selDiv1);
 
-	placeimgs();
-	var canvas = loadCanvas("divGameStage");
-    var ctx = canvas.getContext('2d');
+		var canvas = loadCanvas("divGameStage");
+	    var ctx = canvas.getContext('2d');
 
-    console.log("after");
-    ctx.drawImage(baseImage.img, 0, 0);
-	
+	    console.log("after");
+	    ctx.drawImage(baseImage.img, 0, 0);
+
+
+		// var selDiv2 = document.querySelector("#selectedF2");
+		// var images2 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+		// placeimgs(images2, selDiv2);		
 
 	}
 
-	function placeimgs()
+	function placeimgs(images, wdiv)
 	{
 		//selDiv.innerHTML = "";
 		console.log("place imgs");
     
-		var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
-
 		var filesArr = Array.prototype.slice.call(images);
 
 
@@ -105,22 +129,13 @@
 			console.log(i, images[i]);
 			baseImage = new imgOpt(images[i]);
 			
-
-		 //   	var html = "<img src=\"" + images[i] + "\">"  ;//+ f.name
-			
-			// selDiv.innerHTML += html;
-
 			var image = new Image();
-
-			// DOM 1+ - use this or above method
-			// var image = document.createElement('img');
-
 			// Set path and alt properties
 			image.src = images[i];
 			//image.alt = alt;
 
 			// Add it to the DOM
-			selDiv.appendChild(image);
+			wdiv.appendChild(image);
 
 		}
 
@@ -135,8 +150,8 @@
         var canvas = document.createElement('canvas');
         var div = document.getElementById(id); 
         canvas.id     = "CursorLayer";
-        canvas.width  = 1224;
-        canvas.height = 768;
+        canvas.width  = 500;
+        canvas.height = 400;
         canvas.style.zIndex   = 8;
         canvas.style.position = "absolute";
         canvas.style.border   = "1px solid";

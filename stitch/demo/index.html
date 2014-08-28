@@ -20,7 +20,7 @@
             <div id="log" class="alert alert-info"></div>
         </div-->
 
-        <div id="canvas_test"></div>
+        <div id="the_canvas"></div>
         <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
         <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
         <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
@@ -88,7 +88,7 @@ function canvasApp(){
     function shortfunctionsecond()
     {
         var d = new $.Deferred();
-        warp_App(homographies.H, images3);
+        warp_App("the_canvas", homographies.H, images3);
 
         d.resolve();
         return d.promise()
