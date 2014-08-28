@@ -5,7 +5,7 @@
 <title>The Demo</title>
 <style>
 	.selectedFiles img {
-		max-width: 250px;
+		max-width: 250;
 		max-height: 250px;
 		float: left;
 		margin-bottom:10px;
@@ -69,9 +69,9 @@
 	</div>
 
 
-	<!--div class="row">
+	<div class="row">
 
-		<div class="span6">
+		<div class="span12">
 			<h2>1 What is this?</h2>
 			<p>
 				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
@@ -83,12 +83,41 @@
 
 			<div id="selectedF2" class="selectedFiles"></div>
 
-		</div>
-	</div-->
 
+			<div class="span6">
+				<h2>Compare two images?</h2>
+				<p>
+					Drop two images on the boxes to the left.  The box below will show a generated 'diff' image, pink areas show mismatch.  This example best works with two very similar but slightly different images.  Try for yourself!
+				</p>
+				<p>
+				Don't have any images to compare? <button type="button" class="btn btn-primary" id="example-images">Use example images</button>
+				</p>
+			</div>
+
+
+			<!--button type="button" class="btn btn-primary">Primary Button to to do Stuff</button-->
+
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>2 What is this number does?</h2>
+			<p>
+				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="divStitched2"></div>
+		
+		</div>
+	</div>
 
 </div>
-
 
 
 <script type="text/javascript">
@@ -104,6 +133,9 @@
 
 	var baseImage;
 	var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	var images2 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+	//var images1 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+	//var images1 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
 	var homographies = [];
 	document.addEventListener("DOMContentLoaded", init, false);
 
@@ -121,9 +153,8 @@
 	 	start_stitch(images1);
 
 
-		// var selDiv2 = document.querySelector("#selectedF2");
-		// var images2 = ["../imgs/left.jpg", "../imgs/right.jpg"];
-		// placeimgs(images2, selDiv2);		
+		var selDiv2 = document.querySelector("#selectedF2");
+		placeimgs(images2, selDiv2);		
 
 	}
 
@@ -174,6 +205,7 @@
     }
 
 
+
     function loadCanvas(id) 
     {
         var canvas = document.createElement('canvas');
@@ -187,6 +219,39 @@
         div.appendChild(canvas);
 
         return canvas;
+    }
+
+
+	$('#example-images').click(function(){
+
+		console.log("Do the Stuff");
+		start_stitch2();
+
+		return false;
+	});
+
+	//To make sure functions are made in sequences, for the alignment
+    function start_stitch2()
+    {
+        var promise = longfunctionfirst2().then(shortfunctionsecond2);
+    }
+
+    function longfunctionfirst2()
+    {
+         var d = new $.Deferred();
+         homographies = new find_homographies(images2, d);
+
+        //d.resolve();
+        return d.promise()
+    }
+
+    function shortfunctionsecond2()
+    {
+        var d = new $.Deferred();
+        warp_App("divStitched2", homographies.H, images2);
+
+        d.resolve();
+        return d.promise()
     }
 
 </script>
