@@ -1,0 +1,106 @@
+<!doctype html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+  <title>STITCH APP</title>
+  <style>
+    #drop_zone {
+      border: 2px dashed #bbb;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 25px;
+      text-align: center;
+      font: 20pt bold 'Vollkorn';
+      color: #bbb;
+    }
+
+  #selectedFiles img {
+    max-width: 250px;
+    max-height: 250px;
+    float: left;
+    margin-bottom:10px;
+    margin-left:10px;
+  }
+
+    </style>
+
+</head>
+    
+<body>
+
+  <div id="drop_zone">Drop files here</div>
+  <div id="selectedFiles"></div>
+  <output id="list"></output>
+
+  <script>
+
+
+  document.addEventListener("DOMContentLoaded", init, false);
+  var imgSrcs =[];
+  // Setup the dnd listeners.
+  function init() {
+      var dropZone = document.getElementById('drop_zone');
+      dropZone.addEventListener('dragover', handleDragOver, false);
+      dropZone.addEventListener('drop', handleFileSelect, false);
+      selDiv = document.querySelector("#selectedFiles");
+  }
+
+
+    function handleFileSelect(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var files = e.dataTransfer.files; // FileList object.
+
+      // var files_ = e.target.files;
+      // console.log("the files:", files);
+
+      // // files is a FileList of File objects. List some properties.
+      // var output = [];
+      // for (var i = 0, f; f = files[i]; i++) {
+      //   output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+      //               f.size, ' bytes, last modified: ',
+      //               f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+      //               '</li>');
+      // }
+      // document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+
+      //////////////////////////////////////////////////////////////////////////
+    var filesArr = Array.prototype.slice.call(files);
+
+    console.log("fore");    
+    filesArr.forEach(function(f) 
+    {
+        if(!f.type.match("image.*")) {
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+
+          var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
+        //Här är src, pucha denna i en array
+        selDiv.innerHTML += html;
+        console.log("URL:" ,f.name);
+        imgSrcs.push(e.target.result);
+
+        }
+        reader.readAsDataURL(f);
+        
+    });
+
+    }
+
+    function handleDragOver(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    }
+
+
+  </script>
+
+</body>
+</html>
