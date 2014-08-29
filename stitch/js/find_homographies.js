@@ -7,6 +7,7 @@
 
 
 function find_homographies(images, dp){
+	console.log("MAAAAAAAAAAAAAAAAAAX:", maxHeight);
 	function imgObj (imgsrc)
 	{
 	//this.warpData = 0;
@@ -66,10 +67,16 @@ function find_homographies(images, dp){
 	/// All stuff is made in here
 	baseImage.img.onload = function(){
 
-		imageW = baseImage.img.width;  
-        imageH = baseImage.img.height;
+		var scale = findScale(baseImage.img.width, baseImage.img.height);
 
-        console.log("w/h ratio :", ((imageW + imageH) / (640 + 480)));
+		console.log("THEEEEEEEEEEEEE Scaaaaaaaale", scale)
+
+		imageW = baseImage.img.width * scale |0;  
+        imageH = baseImage.img.height * scale |0;
+
+        console.log("W", imageW, "H", imageH);
+
+        //console.log("w/h ratio :", ((imageW + imageH) / (640 + 480)));
 
         //my_opt.corner_threshold = 45 * ((imageW * imageH) / (640 * 480)); 
         

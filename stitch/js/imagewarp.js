@@ -14,6 +14,8 @@ var imgOpt = function(imgsrc){
 
 function warp_App(id, homographies,images) {
 
+    console.log("Waaaaaaaaaaaaaaarping");
+
     var canvas, ctx,canvasWidth,canvasHeight, canvas;
 
     var imageW = 0;
@@ -33,9 +35,11 @@ function warp_App(id, homographies,images) {
     ////////////////////////////////////////////////////////////////////////
     baseImage.img.onload = function() {
 
+        var scale = 1;//findScale(baseImage.img.width, baseImage.img.height);
+
         //Kan ta bort en av variablerna???
-        imageW = canvasWidth = baseImage.img.width;  //640;//892;
-        imageH = canvasHeight = baseImage.img.height;  //480;//642;
+        imageW = canvasWidth = baseImage.img.width * scale;  //640;//892;
+        imageH = canvasHeight = baseImage.img.height *scale;  //480;//642;
         //setupWarp();                    
         applyWarp(id, imagesList);
 
@@ -107,10 +111,13 @@ function warp_App(id, homographies,images) {
             warp_perspective_color(imageData, warpImages[i].warpData, h_dot);
 
             // Update the context with newly-modified data
-            ctx.putImageData(warpImages[i].warpData, 0, 0);
+             ctx.putImageData(warpImages[i].warpData, 0, 0);
+            //ctx.putImageData(warpImages[i].warpData, 0, 0, imageW, imageH, imageW, imageH);
+            //ctx.putImageData(imgData,x,y,dirtyX,dirtyY,dirtyWidth,dirtyHeight);
+
             // Draw the image data in final canvas
             ctx2.drawImage(ctx.canvas,0,0); // Eventuellt pusha ctx.canvas för senare bruk
-
+            //ctx2.drawImage(ctx.canvas,0, 0, imageW, imageH);
         }
 
         // Draw the base image at the offset

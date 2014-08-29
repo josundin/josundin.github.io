@@ -52,106 +52,20 @@
   <script>
   "use strict";
 
-  ///////////////////////////////
-  //These are global over files
-  var maxHeight = 320;
-  var maxWidth = 320;
-  ///////////////////////////////
-
-  
-  var imageW = 0, imageH = 0; 
-
 
   var imgSrcs =[];
   var selDiv = "";
   var homographies = [];
 
-  var imgOpt = function(imgsrc){
-    this.warpData = 0;
-    this.img = new Image();
-    this.img.src = imgsrc;
-  }
-
   document.addEventListener("DOMContentLoaded", init, false);
   
   // Setup the dnd listeners.
   function init() {
-    var dropZone = document.getElementById('drop_zone');
-    dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileSelect, false);
-    selDiv = document.querySelector("#selectedFiles");
-
-    // var scale;
-    var canvas;
-    var ctx;
-    var baseImage = new imgOpt("../imgs/P112.jpg");
-
-    baseImage.img.onload = function() {
-
-      var scale = findScale(baseImage.img.width, baseImage.img.height, maxWidth, maxHeight);
-      console.log("scale", scale);
-
-      imageW = baseImage.img.width * scale;  //640;//892;
-      imageH = baseImage.img.height * scale;  //480;//642;
-
-      canvas = createcanvas();
-      ctx = canvas.getContext('2d');  
-
-      ctx.drawImage( baseImage.img, 0 , 0, baseImage.img.width * scale, baseImage.img.height * scale);
-
-
-      //   //setupWarp();                    
-      //   applyWarp(id, imagesList);
-
-      // //eventuellt radera canvasen när klar... fast inte här
-
-    }
-    
+      var dropZone = document.getElementById('drop_zone');
+      dropZone.addEventListener('dragover', handleDragOver, false);
+      dropZone.addEventListener('drop', handleFileSelect, false);
+      selDiv = document.querySelector("#selectedFiles");
   }
-
-
-  function findScale(xSize,ySize,xGoal,yGoal){
-    // We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
-    // compute a scale for each.
-    var xScale = xGoal / xSize;
-    var yScale = yGoal / ySize;
-
-    console.log("scales:", xScale, yScale);
-
-    if(yScale < 1 || xScale < 1)
-    {
-        // If xScale makes it too tall we'll have to use yScale
-      // and if yScale makes it too wide we'll have to use xScale
-      if( xScale * ySize > yGoal ){
-          return yScale;
-      }else{
-          return xScale;
-      }
-    }
-    else
-      return 1;
-  }
-
-
-  function createcanvas( ){      
-    var tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = imageW;
-    tmpCanvas.height = imageH;
-
-    tmpCanvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
-    //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
-
-    //add the canvas
-    var body = document.getElementsByTagName("body")[0];
-    body.appendChild(tmpCanvas);
-    tmpCanvas.id="APPping";
-    body.id="body";
-
-    return tmpCanvas;
-  };
-
-
-/////////////////////////////////////////////////////////
 
 
   function handleFileSelect(e) {
@@ -162,7 +76,8 @@
     var filesArr = Array.prototype.slice.call(files);
 
     console.log("fore");    
-    filesArr.forEach(function(f){
+    filesArr.forEach(function(f) 
+    {
         if(!f.type.match("image.*")) {
           return;
         }
@@ -186,7 +101,8 @@
   }
 
 
-  function createButton(id){
+  function createButton(id)
+  {
     
     var button = document.createElement("input");
     button.type = "button";
@@ -215,26 +131,27 @@
     //console.log("imgs", imgNames);
     start_stitching()
 
-      function start_stitching(){
+      function start_stitching()
+      {
           var promise = longfunctionfirst().then(shortfunctionsecond);
       }
 
-      function longfunctionfirst(){
-
+      function longfunctionfirst()
+      {
            var d = new $.Deferred();
            homographies = new find_homographies(imgSrcs, d);
 
           //d.resolve();
-          return d.promise();
+          return d.promise()
       }
 
-      function shortfunctionsecond(){
-
+      function shortfunctionsecond()
+      {
           var d = new $.Deferred();
           warp_App("the_canvas", homographies.H, imgSrcs);
           
           d.resolve();
-          return d.promise();
+          return d.promise()
       }
   } 
 

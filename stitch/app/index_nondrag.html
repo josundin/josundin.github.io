@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+<title>STITCH APP</title>
+<style>
+	#selectedFiles img {
+		max-width: 250px;
+		max-height: 250px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+</style>
+</head>
+    
+<body>
+
+		<div id="the_canvas"></div>
+
+        <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+        <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+        <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+        <script type="text/javascript" src="../ext_js/hog.js"></script>
+        <script type="text/javascript" src="../ext_js/norms.js"></script>
+        <script type="text/javascript" src="../ext_js/processing.js"></script>
+        <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="../ext_js/d3.min.js"></script>
+
+        <script type="text/javascript" src="../js/find_homographies.js"></script>
+        <script type="text/javascript" src="../js/ransac.js"></script>
+        <script type="text/javascript" src="../js/imagewarp.js"></script>
+	
+		<form id="myForm" method="post" enctype="multipart/form-data">
+
+        Files: <input type="file" id="files" name="files" multiple accept="image/*"><br/>
+
+        <div id="selectedFiles"></div>
+
+        <!--input type="submit"-->
+	</form>
+
+	<script>
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var imgOpt = function(imgsrc){
+	    this.warpData = 0;
+	    this.img = new Image();
+	    this.img.src = imgsrc;
+		}
+
+
+	var selDiv = "";
+	var baseImage;
+
+	var imgNames = [];
+	var imgSrcs =[];
+	var homographies = [];
+		
+	document.addEventListener("DOMContentLoaded", init, false);
+	
+
+	function init() {
+		document.querySelector('#files').addEventListener('change', handleFileSelect, false);
+		selDiv = document.querySelector("#selectedFiles");
+	}
+		
+
+	function handleFileSelect(e) {
+		
+		if(!e.target.files || !window.FileReader) return;
+		
+		selDiv.innerHTML = "";
+		
+		var files = e.target.files;
+		console.log("the files:", files);
+		var filesArr = Array.prototype.slice.call(files);
+
+
+
+		console.log("fore");		
+		filesArr.forEach(function(f) 
+		{
+			if(!f.type.match("image.*")) {
+				return;
+			}
+
+			var reader = new FileReader();
+			reader.onload = function (e) {
+
+		   	var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
+			//Här är src, pucha denna i en array
+			baseImage = new imgOpt(e.target.result);
+			selDiv.innerHTML += html;
+			console.log("URL:" ,f.name);
+			imgNames.push(f.name);
+			imgSrcs.push(e.target.result);
+
+			}
+			reader.readAsDataURL(f);
+			
+		});
+
+		createButton();
+
+	}
+
+
+
+			// var promise = setupfunctionfirst().then(dofunctionsecond);
+
+	  
+	function start_stitch()
+	{	
+		console.log("imgs", imgNames);
+		start_stitching()
+
+	    function start_stitching()
+	    {
+	        var promise = longfunctionfirst().then(shortfunctionsecond);
+	    }
+
+	    function longfunctionfirst()
+	    {
+	         var d = new $.Deferred();
+	         homographies = new find_homographies(imgSrcs, d);
+
+	        //d.resolve();
+	        return d.promise()
+	    }
+
+	    function shortfunctionsecond()
+	    {
+	        var d = new $.Deferred();
+	        warp_App("the_canvas", homographies.H, imgSrcs);
+	        
+	        d.resolve();
+	        return d.promise()
+	    }
+
+		// var canvas2 = createcanvas();
+  //       canvas2.width =  300;
+  //       canvas2.height =  300;
+  //       var ctx2 = canvas2.getContext('2d');
+  //       ctx2.drawImage( baseImage.img, 0 , 0);
+	}	
+
+
+	function createButton()
+	{
+	  var body = document.getElementsByTagName("body")[0];
+	  var button = document.createElement("input");
+	  button.type = "button";
+	  button.value = "Stitch these images";
+	  button.onclick = start_stitch;
+	  button.id = "button";
+
+	  body.appendChild(button);
+	}
+
+    function createcanvas( )
+    {      
+      var tmpCanvas = document.createElement('canvas');
+      tmpCanvas.width = 300;
+      tmpCanvas.height = 300;
+
+      tmpCanvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
+      //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
+
+      //add the canvas
+      var body = document.getElementsByTagName("body")[0];
+      body.appendChild(tmpCanvas);
+      tmpCanvas.id="APPping";
+      body.id="body";
+
+      return tmpCanvas;
+    }
+
+	</script>
+
+</body>
+</html>
