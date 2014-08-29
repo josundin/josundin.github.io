@@ -1,85 +1,195 @@
-<!doctype html>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Demo</title>
+<style>
+	.selectedFiles img {
+		max-width: 250;
+		max-height: 250px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+</style>
 
-<html lang="en">
-    <head>
-        <link rel="shortcut icon" href= "favicon.ico" type="image/ico">
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="description" content="Yoou !">
-        <meta name="author" content="JoSu">
-        <title>STITCH DEMO</title>
+	<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+	<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+	<script type="text/javascript" src="../ext_js/hog.js"></script>
+	<script type="text/javascript" src="../ext_js/norms.js"></script>
+	<script type="text/javascript" src="../ext_js/processing.js"></script>
+	<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="../ext_js/d3.min.js"></script>
 
-        <script type="text/javascript">
-        </script>
-    
+	<script type="text/javascript" src="../js/find_homographies.js"></script>
+	<script type="text/javascript" src="../js/ransac.js"></script>
+	<script type="text/javascript" src="../js/imagewarp.js"></script>
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+	<header>
+	    <h1>The most important heading on this page</h1>
+	    <p>With some supplementary information, fungerar bast i vissa broesers</p>
+	</header>
 
-    <body>
-         <!--div style=" width:640px;height:480px;margin: 10px auto;">
-            <canvas id="canvas" width="300" height="255"></canvas>
-            <div id="no_rtc" class="alert alert-error" style="display:none;"></div>
-            <div id="log" class="alert alert-info"></div>
-        </div-->
 
-        <div id="the_canvas"></div>
-        <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
-        <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
-        <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
-        <script type="text/javascript" src="../ext_js/hog.js"></script>
-        <script type="text/javascript" src="../ext_js/norms.js"></script>
-        <script type="text/javascript" src="../ext_js/processing.js"></script>
-        <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
-        <script type="text/javascript" src="../ext_js/d3.min.js"></script>
+	<div class="row">
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+		<div class="span12">
+			<h2>1 What is this?</h2>
+			<p>
+				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
 
-        
-        <script type="text/javascript" src="../js/find_homographies.js"></script>
-        <script type="text/javascript" src="../js/ransac.js"></script>
-        <script type="text/javascript" src="../js/imagewarp.js"></script>
-        
+			<div id="selectedF1" class="selectedFiles"></div>
+
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>2 What is this?</h2>
+			<p>
+				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="divStitched"></div>
+		
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>1 What is this?</h2>
+			<p>
+				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+				STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFFFFFFFFFFFFFFFFFFFFFFFFFFF.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="selectedF2" class="selectedFiles"></div>
+
+
+			<div class="span6">
+				<h2>Compare two images?</h2>
+				<p>
+					Drop two images on the boxes to the left.  The box below will show a generated 'diff' image, pink areas show mismatch.  This example best works with two very similar but slightly different images.  Try for yourself!
+				</p>
+				<p>
+				Don't have any images to compare? <button type="button" class="btn btn-primary" id="example-images">Use example images</button>
+				</p>
+			</div>
+
+
+			<!--button type="button" class="btn btn-primary">Primary Button to to do Stuff</button-->
+
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>2 What is this number does?</h2>
+			<p>
+				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+			</p>
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
+
+			<div id="divStitched2"></div>
+		
+		</div>
+	</div>
+
+</div>
+
 
 <script type="text/javascript">
-
 "use strict";
 
-window.addEventListener('load', eventWindowLoaded, false);  
-    function eventWindowLoaded() {
-        canvasApp();
-        //evalApp();
-        //graph();   
-    }
+	var imgOpt = function(imgsrc){
+	    this.warpData = 0;
+	    this.img = new Image();
+	    this.img.src = imgsrc;
+		}
 
 
 
-
-function canvasApp(){
-
-    var homographies = [];
-
-    // homographies.push(Homography1);
-
-    var images3 = ["../imgs/right.jpg", "../imgs/left.jpg"];
-    var images3 = ["../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/P112.jpg"];
-    var images3 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
-    var images1 = ["eiffel1.jpg", "eiffel2.jpg"];
-
-    //var images3 = ["monet/zmonet16.jpg", "monet/zmonet14.jpg"];
+	var baseImage;
+	var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	var images2 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+	//var images1 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+	//var images1 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
+	var homographies = [];
+	document.addEventListener("DOMContentLoaded", init, false);
 
 
+	function init() {
+		
+		var selDiv1 = document.querySelector("#selectedF1");
+		
+		placeimgs(images1, selDiv1);
 
-    myfunction();
+		// var canvas = loadCanvas("divGameStage");
+	 //    var ctx = canvas.getContext('2d');
+	 //    ctx.drawImage(baseImage.img, 0, 0);
+
+	 	start_stitch(images1);
 
 
-    //To make sure functions are made in sequences, for the alignment
-    function myfunction()
+		var selDiv2 = document.querySelector("#selectedF2");
+		placeimgs(images2, selDiv2);		
+
+	}
+
+
+	function placeimgs(images, wdiv)
+	{
+		var filesArr = Array.prototype.slice.call(images);
+
+		for (var i = 0; i < images.length; i++) 
+		{
+			baseImage = new imgOpt(images[i]);
+			
+			var image = new Image();
+			// Set path and alt properties
+			image.src = images[i];
+			//image.alt = alt;
+
+			// Add it to the DOM
+			wdiv.appendChild(image);
+
+		}
+
+	}
+
+
+	//To make sure functions are made in sequences, for the alignment
+    function start_stitch(stitch_imgs)
     {
-        var promise = longfunctionfirst().then(shortfunctionsecond);
+        var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
     }
 
-    function longfunctionfirst()
+    function longfunctionfirst(stitch_imgs)
     {
          var d = new $.Deferred();
-         homographies = new find_homographies(images3, d);
+         homographies = new find_homographies(images1, d);
 
         //d.resolve();
         return d.promise()
@@ -88,17 +198,62 @@ function canvasApp(){
     function shortfunctionsecond()
     {
         var d = new $.Deferred();
-        warp_App("the_canvas", homographies.H, images3);
+        warp_App("divStitched", homographies.H, images1);
 
         d.resolve();
         return d.promise()
     }
-}
 
 
 
+    function loadCanvas(id) 
+    {
+        var canvas = document.createElement('canvas');
+        var div = document.getElementById(id); 
+        canvas.id     = "CursorLayer";
+        canvas.width  = 500;
+        canvas.height = 400;
+        canvas.style.zIndex   = 8;
+        canvas.style.position = "absolute";
+        canvas.style.border   = "1px solid";
+        div.appendChild(canvas);
 
-</script> 
-</head>
-    </body>
+        return canvas;
+    }
+
+
+	$('#example-images').click(function(){
+
+		console.log("Do the Stuff");
+		start_stitch2();
+
+		return false;
+	});
+
+	//To make sure functions are made in sequences, for the alignment
+    function start_stitch2()
+    {
+        var promise = longfunctionfirst2().then(shortfunctionsecond2);
+    }
+
+    function longfunctionfirst2()
+    {
+         var d = new $.Deferred();
+         homographies = new find_homographies(images2, d);
+
+        //d.resolve();
+        return d.promise()
+    }
+
+    function shortfunctionsecond2()
+    {
+        var d = new $.Deferred();
+        warp_App("divStitched2", homographies.H, images2);
+
+        d.resolve();
+        return d.promise()
+    }
+
+</script>
+</body>
 </html>
