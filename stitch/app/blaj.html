@@ -52,6 +52,15 @@
   <script>
   "use strict";
 
+  ///////////////////////////////
+  //These are global over files
+  var maxHeight = 320;
+  var maxWidth = 320;
+  ///////////////////////////////
+
+  
+  var imageW = 0, imageH = 0; 
+
 
   var imgSrcs =[];
   var selDiv = "";
@@ -72,24 +81,25 @@
     dropZone.addEventListener('drop', handleFileSelect, false);
     selDiv = document.querySelector("#selectedFiles");
 
-    var scale;
+    // var scale;
     var canvas;
     var ctx;
     var baseImage = new imgOpt("../imgs/P112.jpg");
 
     baseImage.img.onload = function() {
 
-      scale = findScale(baseImage.img.width, baseImage.img.height, 300,300);
+      var scale = findScale(baseImage.img.width, baseImage.img.height, maxWidth, maxHeight);
       console.log("scale", scale);
+
+      imageW = baseImage.img.width * scale;  //640;//892;
+      imageH = baseImage.img.height * scale;  //480;//642;
 
       canvas = createcanvas();
       ctx = canvas.getContext('2d');  
 
       ctx.drawImage( baseImage.img, 0 , 0, baseImage.img.width * scale, baseImage.img.height * scale);
 
-      //   //Kan ta bort en av variablerna???
-      //   imageW = canvasWidth = baseImage.img.width;  //640;//892;
-      //   imageH = canvasHeight = baseImage.img.height;  //480;//642;
+
       //   //setupWarp();                    
       //   applyWarp(id, imagesList);
 
@@ -123,11 +133,10 @@
   }
 
 
-  function createcanvas( )
-  {      
+  function createcanvas( ){      
     var tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = 300;
-    tmpCanvas.height = 300;
+    tmpCanvas.width = imageW;
+    tmpCanvas.height = imageH;
 
     tmpCanvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
     //canvas.style=(" width:640px;height:480px;margin: 10px auto;");
@@ -153,8 +162,7 @@
     var filesArr = Array.prototype.slice.call(files);
 
     console.log("fore");    
-    filesArr.forEach(function(f) 
-    {
+    filesArr.forEach(function(f){
         if(!f.type.match("image.*")) {
           return;
         }
@@ -178,8 +186,7 @@
   }
 
 
-  function createButton(id)
-  {
+  function createButton(id){
     
     var button = document.createElement("input");
     button.type = "button";
@@ -208,27 +215,26 @@
     //console.log("imgs", imgNames);
     start_stitching()
 
-      function start_stitching()
-      {
+      function start_stitching(){
           var promise = longfunctionfirst().then(shortfunctionsecond);
       }
 
-      function longfunctionfirst()
-      {
+      function longfunctionfirst(){
+
            var d = new $.Deferred();
            homographies = new find_homographies(imgSrcs, d);
 
           //d.resolve();
-          return d.promise()
+          return d.promise();
       }
 
-      function shortfunctionsecond()
-      {
+      function shortfunctionsecond(){
+
           var d = new $.Deferred();
           warp_App("the_canvas", homographies.H, imgSrcs);
           
           d.resolve();
-          return d.promise()
+          return d.promise();
       }
   } 
 

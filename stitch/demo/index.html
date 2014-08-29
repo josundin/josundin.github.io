@@ -159,8 +159,8 @@
 	}
 
 
-	function placeimgs(images, wdiv)
-	{
+	function placeimgs(images, wdiv){
+
 		var filesArr = Array.prototype.slice.call(images);
 
 		for (var i = 0; i < images.length; i++) 
@@ -181,33 +181,30 @@
 
 
 	//To make sure functions are made in sequences, for the alignment
-    function start_stitch(stitch_imgs)
-    {
+    function start_stitch(stitch_imgs){
         var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
     }
 
-    function longfunctionfirst(stitch_imgs)
-    {
+    function longfunctionfirst(stitch_imgs){
          var d = new $.Deferred();
          homographies = new find_homographies(images1, d);
 
         //d.resolve();
-        return d.promise()
+        return d.promise();
     }
 
-    function shortfunctionsecond()
-    {
+    function shortfunctionsecond(){
         var d = new $.Deferred();
         warp_App("divStitched", homographies.H, images1);
 
         d.resolve();
-        return d.promise()
+        return d.promise();
     }
 
 
 
-    function loadCanvas(id) 
-    {
+    function loadCanvas(id){
+
         var canvas = document.createElement('canvas');
         var div = document.getElementById(id); 
         canvas.id     = "CursorLayer";
@@ -231,27 +228,24 @@
 	});
 
 	//To make sure functions are made in sequences, for the alignment
-    function start_stitch2()
-    {
+    function start_stitch2(){
         var promise = longfunctionfirst2().then(shortfunctionsecond2);
     }
 
-    function longfunctionfirst2()
-    {
+    function longfunctionfirst2(){
          var d = new $.Deferred();
          homographies = new find_homographies(images2, d);
 
         //d.resolve();
-        return d.promise()
+        return d.promise();
     }
 
-    function shortfunctionsecond2()
-    {
+    function shortfunctionsecond2(){
         var d = new $.Deferred();
         warp_App("divStitched2", homographies.H, images2);
 
         d.resolve();
-        return d.promise()
+        return d.promise();
     }
 
 </script>
