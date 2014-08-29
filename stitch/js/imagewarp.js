@@ -43,8 +43,8 @@ function warp_App(id, homographies,images) {
 
     }
 
-    function createcanvas(id)
-    {      
+    function createcanvas(id){
+
       var tmpCanvas = document.createElement('canvas');
       tmpCanvas.width = imageW;
       tmpCanvas.height = imageH;
@@ -124,8 +124,8 @@ function warp_App(id, homographies,images) {
         
         // ctx2.drawImage(ctx.canvas,0,0);
        
-        function H_times_offset(H) 
-        {
+        function H_times_offset(H){
+
             //create a 3 x 3 matrix
             var tmp_h = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];  
             var trans_offset_mul = [[1,0,canvasOffset.minW],[0,1,canvasOffset.minH],[0,0,1]];
@@ -142,8 +142,8 @@ function warp_App(id, homographies,images) {
     //2. extraherar max min 
 
 
-    var canvasOpt = function(Hs)
-     {
+    var canvasOpt = function(Hs){
+
         var points = [[0, 0], [canvasWidth, 0], [0, canvasHeight], [canvasWidth, canvasHeight]];
         var projpointsX = [];
         var projpointsY = [];
@@ -182,8 +182,8 @@ function warp_App(id, homographies,images) {
 
 
 
-     var canvasOpt_org = function(H)
-     {
+     var canvasOpt_org = function(H){
+
         var points = [[0, 0], [canvasWidth, 0], [0, canvasHeight], [canvasWidth, canvasHeight]];
         var projpointsX = [];
         var projpointsY = [];
@@ -211,8 +211,8 @@ function warp_App(id, homographies,images) {
       }
 
 
-      function perspectiveTransform(pt, H)
-      {
+      function perspectiveTransform(pt, H){
+
        // console.log("H", H);
 
         var Hd = [[H[0],H[1],H[2]],[H[3],H[4],H[5]],[H[6],H[7],H[8]]];
@@ -228,8 +228,8 @@ function warp_App(id, homographies,images) {
       }
 
     //Bilinear interpolation
-    function warp_perspective_color(src, dst, transform)
-    {
+    function warp_perspective_color(src, dst, transform){
+        
         var dst_width=dst.width|0, dst_height=dst.height|0;
         var src_width=src.width|0, src_height=src.height|0;
 

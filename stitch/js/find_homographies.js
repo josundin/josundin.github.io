@@ -6,9 +6,7 @@
 
 
 
-function find_homographies(images, dp)
-//var find_homographies = function(images)
-{
+function find_homographies(images, dp){
 	function imgObj (imgsrc)
 	{
 	//this.warpData = 0;
@@ -20,8 +18,8 @@ function find_homographies(images, dp)
 	    this.img.src = imgsrc;
 	}
 
-	function pipe_opt()
-	{
+	function pipe_opt(){
+
 	    this.ransac_iter = 1500;
 	    this.ransac_inlier_threshold = 3 * 0.01;//Math.sqrt(5.99 *3); 0.8 
 	    this.Lowe_criterion = 0.8;  			//0.9
@@ -66,8 +64,7 @@ function find_homographies(images, dp)
 
 	/////////////////////////////////////////////////////////////
 	/// All stuff is made in here
-	baseImage.img.onload = function() 
-	{
+	baseImage.img.onload = function(){
 
 		imageW = baseImage.img.width;  
         imageH = baseImage.img.height;
@@ -136,8 +133,7 @@ function find_homographies(images, dp)
 
 	///////////////////////////////////////////////////////////////////////
 	// Matching 
-	function computeMatches( img1, img2, matches)
-	{
+	function computeMatches( img1, img2, matches){
 
 	/*
 	Coordinates of original match and the closest descriptor is stored in
@@ -180,8 +176,7 @@ function find_homographies(images, dp)
 
 
 	//Computes the Squared Eucledian distance between the vectors
-	function computeVectorDistance(p ,q)
-	{
+	function computeVectorDistance(p ,q){
 	// dist = dot( (vec1 - vec2).T,(vec1 - vec2))
 	//var d = Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2));
 	var d = 0;
@@ -227,8 +222,8 @@ function find_homographies(images, dp)
       //console.log(desc);
     }
 
-    function extractHistogramsFromWindow(x,y, radius, vectors) 
-    {
+    function extractHistogramsFromWindow(x,y, radius, vectors){
+
       var cellradius = radius / 2;
       
        var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors).concat(
@@ -260,8 +255,8 @@ function find_homographies(images, dp)
 
 
     //Draw the cell window
-    function drawcell(canvas, x, y, radius)
-    {
+    function drawcell(canvas, x, y, radius) {
+
       var ctxs=canvas.getContext("2d");
 
       ctx.lineWidth="1";
@@ -295,8 +290,7 @@ function find_homographies(images, dp)
 	/*
 	Provide the x, y cordinates of the upper left corner of the cell
 	*/
-	function extractHistogramsFromCell(x,y, cellradius, gradients) 
-	{
+	function extractHistogramsFromCell(x,y, cellradius, gradients) {
 		//from x-rad, y-rad till x,y
 		var histogram = zeros(8);
 
@@ -336,8 +330,8 @@ function find_homographies(images, dp)
 	/////////////////////////////////////////////////////////
 	//corner stuff
      // This is sets up the intrestpoint detector stuff
-	function setupFastkeypointdetector(image, thres)
-	{
+	function setupFastkeypointdetector(image, thres) {
+
 	    img_u8 = new jsfeat.matrix_t(imageW, imageH, jsfeat.U8_t | jsfeat.C1_t);
 	    
 	    //set corners
@@ -353,8 +347,8 @@ function find_homographies(images, dp)
 
 
 	 //compute the intrestpoints
-	function computeFast(image, xoffset) 
-	{               
+	function computeFast(image, xoffset) {
+
 		setupFastkeypointdetector(image, my_opt.corner_threshold);       
 
 		var border = my_opt.descriptor_radius; //is relative to the descriptor radius
@@ -391,8 +385,8 @@ function find_homographies(images, dp)
   	}
   	///////END corner stuff/////////////////////////////////////////////
 
-	function createcanvas( )
-	{      
+	function createcanvas( ){
+
 		var tmpCanvas = document.createElement('canvas');
 		tmpCanvas.width = imageW;
 		tmpCanvas.height = imageH;

@@ -67,67 +67,59 @@
   
   // Setup the dnd listeners.
   function init() {
-      var dropZone = document.getElementById('drop_zone');
-      dropZone.addEventListener('dragover', handleDragOver, false);
-      dropZone.addEventListener('drop', handleFileSelect, false);
-      selDiv = document.querySelector("#selectedFiles");
+    var dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', handleFileSelect, false);
+    selDiv = document.querySelector("#selectedFiles");
 
-      var scale;
-      var canvas;
-      var ctx;
-      var baseImage = new imgOpt("../imgs/P112.jpg");
+    var scale;
+    var canvas;
+    var ctx;
+    var baseImage = new imgOpt("../imgs/P112.jpg");
 
-      baseImage.img.onload = function() {
+    baseImage.img.onload = function() {
 
-        scale = findScale(baseImage.img.width, baseImage.img.height, 300,300);
-        console.log("scale", scale);
+      scale = findScale(baseImage.img.width, baseImage.img.height, 300,300);
+      console.log("scale", scale);
 
-        canvas = createcanvas();
-        ctx = canvas.getContext('2d');  
+      canvas = createcanvas();
+      ctx = canvas.getContext('2d');  
 
-        ctx.drawImage( baseImage.img, 0 , 0, baseImage.img.width * scale, baseImage.img.height * scale);
+      ctx.drawImage( baseImage.img, 0 , 0, baseImage.img.width * scale, baseImage.img.height * scale);
 
+      //   //Kan ta bort en av variablerna???
+      //   imageW = canvasWidth = baseImage.img.width;  //640;//892;
+      //   imageH = canvasHeight = baseImage.img.height;  //480;//642;
+      //   //setupWarp();                    
+      //   applyWarp(id, imagesList);
 
+      // //eventuellt radera canvasen när klar... fast inte här
 
-        //   //Kan ta bort en av variablerna???
-        //   imageW = canvasWidth = baseImage.img.width;  //640;//892;
-        //   imageH = canvasHeight = baseImage.img.height;  //480;//642;
-        //   //setupWarp();                    
-        //   applyWarp(id, imagesList);
-
-        // //eventuellt radera canvasen när klar... fast inte här
-
-      }
-
-        //var img
-
-      
-      
-
-
+    }
+    
   }
 
 
   function findScale(xSize,ySize,xGoal,yGoal){
-      // We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
-      // compute a scale for each.
-      var xScale = xGoal / xSize;
-      var yScale = yGoal / ySize;
+    // We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
+    // compute a scale for each.
+    var xScale = xGoal / xSize;
+    var yScale = yGoal / ySize;
 
-      console.log("scales:", xScale, yScale);
+    console.log("scales:", xScale, yScale);
 
-      if(yScale < 1 || xScale < 1)
-      {
-          // If xScale makes it too tall we'll have to use yScale
-        // and if yScale makes it too wide we'll have to use xScale
-        if( xScale * ySize > yGoal ){
-            return yScale;
-        }else{
-            return xScale;
-        }
+    if(yScale < 1 || xScale < 1)
+    {
+        // If xScale makes it too tall we'll have to use yScale
+      // and if yScale makes it too wide we'll have to use xScale
+      if( xScale * ySize > yGoal ){
+          return yScale;
+      }else{
+          return xScale;
       }
-      else
-        return 1;
+    }
+    else
+      return 1;
   }
 
 
@@ -147,7 +139,7 @@
     body.id="body";
 
     return tmpCanvas;
-  }
+  };
 
 
 /////////////////////////////////////////////////////////

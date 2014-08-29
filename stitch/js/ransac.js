@@ -1,8 +1,7 @@
 //ransac.js
 
 ///////RANSAC//////////////////////////////
-function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
-{
+function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
 
 	var normalzed = new normalize_points(non_norm_pairs);
 	var datatoplot = [];
@@ -81,8 +80,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 
 
 
-    function denorm(T1a, T2a, H_hat)
-    {
+    function denorm(T1a, T2a, H_hat){
 
       // // make H_hat a matrix
       var tmp_h = [ [H_hat[0], H_hat[1], H_hat[2]],
@@ -112,8 +110,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 
 
 
-	function normalize_points(pts)
-	{
+	function normalize_points(pts){
 
 		var pts_img1 = [];
 		var pts_img2 = [];
@@ -153,8 +150,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 	}
 
 
-	function to_homogenius(points, size_p)
-	{
+	function to_homogenius(points, size_p){
 
 	var augmented_homogenius_points = []; 
 
@@ -168,8 +164,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 
 
 
-	function hartly_normalization(pts)
-  	{
+	function hartly_normalization(pts){
       	//console.log("pts", pts);
 		var T_matrix = normalized_points(pts, pts.length);
 
@@ -188,8 +183,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 	//Hartleys normalization
 	//Returns the 3x3 T matrix as desscribed in the paper:
 	//Revisiting Hartley’s Normalized Eight-Point Algorithm
-	function normalized_points(crnrs, n_crnrs)
-	{
+	function normalized_points(crnrs, n_crnrs){
 	// console.log("prev_corners", prev_count);
 	// console.log("corners", count);
 
@@ -224,8 +218,7 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 
 
 
-	function lostep()
-	{
+	function lostep(){
 		//var currentloInliers = [];
 
 		if(currentInliers.length >= 7)
@@ -281,15 +274,13 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter)
 
 
 
-	function backProjectedError(p, q)
-	{
+	function backProjectedError(p, q){
      	return Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2));
     }
 
 
 
-    function Sym_trans_error(pt_img1 , pt_img2, H, Hdinv)
-    {
+    function Sym_trans_error(pt_img1 , pt_img2, H, Hdinv){
 
 
           ////////////////////////////////////////
