@@ -40,13 +40,55 @@
   <script type="text/javascript" src="../js/find_homographies.js"></script>
   <script type="text/javascript" src="../js/ransac.js"></script>
   <script type="text/javascript" src="../js/imagewarp.js"></script>
+  <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
 
-  <div id="drop_zone">Drop files here</div>
-  <div id="selectedFiles"></div>
+
+  <div class="container">
+
+    <header>
+      <h1>The most important heading on this page</h1>
+      <p>With some supplementary information, fungerar bast i vissa broesers</p>
+  </header>
+
+    <div class="row">
+
+    <div class="span12">
+      <p>
+        Stitch two or more images by File <button type="button" class="btn btn-success" id="browse ">browse</button>
+      </p>
+      <p>
+        or       
+      </p>
+
+  </div>
+
+
+      <!--button type="button" class="btn btn-primary">Primary Button to to do Stuff</button-->
+
+    </div>
+  </div>
+
+  <div id="drop_zone">Drop images here</div>
+
+  <div class="row">
+
+    <div class="span12">
+      <div id="pre-stitch" style="display:none;">
+        <h2>1 What is this?</h2>
+        <p>
+          1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+        </p>
+        <p>
+          <strong>Try it for yourself.</strong>
+        </p>
+      </div>
+      <div id="selectedFiles" class="selectedFiles"></div>
+    </div>
+  </div>
   <div id="the_canvas"></div>
   <div id="the_stitch_button"></div>
   <output id="list"></output>
-  <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+
 </head>
     
 <body>
@@ -125,10 +167,10 @@
         
     });
 
+    $('#pre-stitch').show();
     createButton("the_stitch_button");
 
   }
-
 
   function createButton(id){
     
