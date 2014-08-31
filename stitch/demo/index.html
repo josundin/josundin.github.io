@@ -194,14 +194,38 @@
         return d.promise();
     }
 
-    function shortfunctionsecond(){
-        var d = new $.Deferred();
-        warp_App("divStitched", homographies.H, images1);
+    // function shortfunctionsecond(){
+    //     var d = new $.Deferred();
+    //     warp_App("divStitched", homographies.H, images1);
 
-        d.resolve();
-        return d.promise();
-    }
+    //     d.resolve();
+    //     return d.promise();
+    // }
 
+	function shortfunctionsecond(){
+
+		var d = new $.Deferred();
+
+		if(homographies.H == -1){
+			console.log("no Goood");
+
+			var para = document.createElement("h2");
+			var node = document.createTextNode("Could not fit a Homography");
+			para.appendChild(node);
+
+			var element = document.getElementById("divStitched");
+			element.appendChild(para);
+
+		}
+
+		else{
+		warp_App("divStitched", homographies.H, images1);
+
+		}
+
+		d.resolve();
+		return d.promise();
+	}
 
 
     function loadCanvas(id){

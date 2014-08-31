@@ -69,12 +69,8 @@ function find_homographies(images, dp){
 
 		var scale = findScale(baseImage.img.width, baseImage.img.height);
 
-		console.log("THEEEEEEEEEEEEE Scaaaaaaaale", scale)
-
 		imageW = baseImage.img.width * scale |0;  
         imageH = baseImage.img.height * scale |0;
-
-        console.log("W", imageW, "H", imageH);
 
         //console.log("w/h ratio :", ((imageW + imageH) / (640 + 480)));
 
@@ -106,8 +102,8 @@ function find_homographies(images, dp){
 
 	      	//RASAC to find a good model
 	      	var homography = ransac(matches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
-	      	homographies.push(homography[0]);
-	      	data_p.push(homography[1]);
+	      	homographies.push(homography);
+	      	//data_p.push(homography[1]);
         }
     	
     
@@ -135,9 +131,8 @@ function find_homographies(images, dp){
 
 	//return homographies;
 	this.H = homographies;
-	this.data = data_p;
-	//return homographies;
-
+	//this.data = data_p;
+	
 	///////////////////////////////////////////////////////////////////////
 	// Matching 
 	function computeMatches( img1, img2, matches){

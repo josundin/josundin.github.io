@@ -25,11 +25,7 @@
     margin-left:10px;
   }
 
-    </style>
-
-</head>
-    
-<body>
+  </style>
 
   <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
   <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
@@ -50,6 +46,10 @@
   <div id="the_canvas"></div>
   <div id="the_stitch_button"></div>
   <output id="list"></output>
+  <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+</head>
+    
+<body>
 
   <script>
   "use strict";
@@ -74,58 +74,8 @@
     dropZone.addEventListener('dragover', handleDragOver, false);
     dropZone.addEventListener('drop', handleFileSelect, false);
     selDiv = document.querySelector("#selectedFiles");
-
-    // var scale;
-    var canvas;
-    var ctx;
-    var baseImage = new imgOpt("../imgs/P112.jpg");
-
-    baseImage.img.onload = function() {
-
-      var scale = findScale(baseImage.img.width, baseImage.img.height);
-      console.log("scale", scale);
-
-      imageWt = baseImage.img.width * scale;  //640;//892;
-      imageHt = baseImage.img.height * scale;  //480;//642;
-
-      canvas = createcanvas();
-      ctx = canvas.getContext('2d');  
-
-      ctx.drawImage( baseImage.img, 0 , 0, imageWt, imageHt);
-
-
-      //   //setupWarp();                    
-      //   applyWarp(id, imagesList);
-
-      // //eventuellt radera canvasen när klar... fast inte här
-
-    }
     
   }
-
-
-  // function findScale(xSize,ySize,xGoal,yGoal){
-  //   // We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
-  //   // compute a scale for each.
-  //   var xScale = xGoal / xSize;
-  //   var yScale = yGoal / ySize;
-
-  //   console.log("scales:", xScale, yScale);
-
-  //   if(yScale < 1 || xScale < 1)
-  //   {
-  //       // If xScale makes it too tall we'll have to use yScale
-  //     // and if yScale makes it too wide we'll have to use xScale
-  //     if( xScale * ySize > yGoal ){
-  //         return yScale;
-  //     }else{
-  //         return xScale;
-  //     }
-  //   }
-  //   else
-  //     return 1;
-  // }
-
 
   function createcanvas( ){      
     var tmpCanvas = document.createElement('canvas');
@@ -224,10 +174,20 @@
 
       function shortfunctionsecond(){
 
-          var d = new $.Deferred();
-          warp_App("the_canvas", homographies.H, imgSrcs);
+          if(homographies.H == -1){
+            console.log("no Goood");
+          }
+
+          else{
+
+            var d = new $.Deferred();
+            warp_App("the_canvas", homographies.H, imgSrcs);
+            
+            d.resolve();
           
-          d.resolve();
+
+          }
+
           return d.promise();
       }
   } 

@@ -4,7 +4,8 @@
 function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
 
 	var normalzed = new normalize_points(non_norm_pairs);
-	var datatoplot = [];
+	//used for the report
+	//var datatoplot = [];
 
 	var pairs = normalzed.pts;
 
@@ -54,28 +55,33 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
 	
 	console.log("best inliers", bestinliers.length);
 	console.log(" In/Out ratio ;", bestinliers.length / non_norm_pairs.length );
-	datatoplot.push(bestinliers.length / non_norm_pairs.length);
+	//datatoplot.push(bestinliers.length / non_norm_pairs.length);
 
-	// ctx.strokeStyle="rgb(0,255,0)";
-	// ctx.beginPath();
+	if(bestinliers.length >= 7) {
+		// ctx.strokeStyle="rgb(0,255,0)";
+		// ctx.beginPath();
 
-	var construcktH = [];
-	for(var i in bestinliers)
-	{
-	// ctx.moveTo( pairs[bestinliers[i]][0][0], pairs[bestinliers[i]][0][1]);
-	// ctx.lineTo( pairs[bestinliers[i]][1][0] + width, pairs[bestinliers[i]][1][1]);
-	// ctx.stroke();
+		var construcktH = [];
+		for(var i in bestinliers)
+		{
+		// ctx.moveTo( pairs[bestinliers[i]][0][0], pairs[bestinliers[i]][0][1]);
+		// ctx.lineTo( pairs[bestinliers[i]][1][0] + width, pairs[bestinliers[i]][1][1]);
+		// ctx.stroke();
 
-	construcktH.push(pairs[bestinliers[i]]);  
+		construcktH.push(pairs[bestinliers[i]]);  
+		}
+
+		//var Hbest = Solve_8X8(construcktH);
+		var Hbest = Solve_SVD(construcktH);
+		Hbest = denorm(normalzed.T1, normalzed.T2, Hbest);
+
+		console.log("h", Hbest);
+
+		return Hbest;
 	}
+	else
+		return -1;
 
-	//var Hbest = Solve_8X8(construcktH);
-	var Hbest = Solve_SVD(construcktH);
-	Hbest = denorm(normalzed.T1, normalzed.T2, Hbest);
-
-	console.log("h", Hbest);
-
-	return [Hbest, datatoplot];
 //============================== end of RANSC algorithm ==============================================
 
 
