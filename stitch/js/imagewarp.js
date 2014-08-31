@@ -126,7 +126,7 @@ function warp_App(id, homographies,images) {
         //hide the first canvas
         canvas.width = 0;
         canvas.height = 0;
-        canvas.style = ('visibility', 'hidden');
+        //canvas.style = ('visibility', 'hidden');
 
         
         // ctx2.drawImage(ctx.canvas,0,0);
