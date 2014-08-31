@@ -398,7 +398,7 @@ function find_homographies(images, dp){
 		tmpCanvas.width = imageW;
 		tmpCanvas.height = imageH;
 
-		tmpCanvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
+		//tmpCanvas.style=("position: absolute; top: 0px; left: 0px;", "border:1px solid #000000;");
 		//canvas.style=(" width:640px;height:480px;margin: 10px auto;");
 
 		//add the canvas
