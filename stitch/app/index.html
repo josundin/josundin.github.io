@@ -46,49 +46,63 @@
   <div class="container">
 
     <header>
-      <h1>The most important heading on this page</h1>
+      <h1>Image Stitching - Web-tool</h1>
       <p>With some supplementary information, fungerar bast i vissa broesers</p>
-  </header>
+    </header>
 
     <div class="row">
-
-    <div class="span12">
-      <p>
-        Stitch two or more images by File <button type="button" class="btn btn-success" id="browse ">browse</button>
-      </p>
-      <p>
-        or       
-      </p>
-
-  </div>
-
+      <div class="span12">
+        <p>
+          Stitch two or more images by File Browse: <input type="file" id="files" name="files" multiple accept="image/*"><br/>
+        </p>
+        <p>
+          or       
+        </p>
+      </div>
 
       <!--button type="button" class="btn btn-primary">Primary Button to to do Stuff</button-->
 
     </div>
-  </div>
-
+  
   <div id="drop_zone">Drop images here</div>
 
-  <div class="row">
-
-    <div class="span12">
-      <div id="pre-stitch" style="display:none;">
-        <h2>1 What is this?</h2>
-        <p>
-          1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
-        </p>
-        <p>
-          <strong>Try it for yourself.</strong>
-        </p>
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch" style="display:none;">
+          <h2>1 What is this?</h2>
+          <p>
+            1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+          </p>
+          <p>
+            <strong>Try it for yourself.</strong>
+          </p>
+        </div>
+        <div id="selectedFiles" class="selectedFiles"></div>
       </div>
-      <div id="selectedFiles" class="selectedFiles"></div>
     </div>
-  </div>
-  <div id="the_canvas"></div>
-  <div id="the_stitch_button"></div>
-  <output id="list"></output>
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch2" style="display:none;">
+          <p>
+            <strong>You have selected the above images. Run the algorithm to <button type="button" class="btn btn-primary" id="example-images">stitch the images</button>
+            </strong> Or Select new ones. 
+          </p>
+        </div>
+      </div> 
+    </div>
 
+    <div class="row">
+
+      <div class="span12">
+        <div id="stitched" style="display:none;">
+          <h2>Result:</h2>
+
+          <div id="the_canvas"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </head>
     
 <body>
@@ -115,7 +129,9 @@
     var dropZone = document.getElementById('drop_zone');
     dropZone.addEventListener('dragover', handleDragOver, false);
     dropZone.addEventListener('drop', handleFileSelect, false);
-    selDiv = document.querySelector("#selectedFiles");
+    document.querySelector('#files').addEventListener('change', handleFileSelectButton, false);
+
+    selDiv = document.querySelector("#selectedFiles"); 
     
   }
 
@@ -139,8 +155,50 @@
 
 /////////////////////////////////////////////////////////
 
+  function handleFileSelectButton(e) {
+    
+    if(!e.target.files || !window.FileReader) return;
+    
+    selDiv.innerHTML = "";
+    imgSrcs =[];
+    homographies = [];
+    
+    var files = e.target.files;
+    console.log("the files:", files);
+    var filesArr = Array.prototype.slice.call(files);
+
+    console.log("fore");    
+    filesArr.forEach(function(f) 
+    {
+      if(!f.type.match("image.*")) {
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onload = function (e) {
+
+      var html = "<img src=\"" + e.target.result + "\">"  ;//+ f.name
+      //Här är src, pucha denna i en array
+      selDiv.innerHTML += html;
+      console.log("URL:" ,f.name);
+      imgSrcs.push(e.target.result);
+
+      }
+      reader.readAsDataURL(f);
+      
+    });
+    
+    showStuff();
+
+  }
+
 
   function handleFileSelect(e) {
+
+    selDiv.innerHTML = "";
+    imgSrcs =[];
+    homographies = [];
+
     e.stopPropagation();
     e.preventDefault();
 
@@ -167,26 +225,23 @@
         
     });
 
+    showStuff();
+
+  }
+
+
+
+  function showStuff(){
     $('#pre-stitch').show();
-    createButton("the_stitch_button");
-
+    $('#pre-stitch2').show();
+    //createButton("the_stitch_button");
   }
 
-  function createButton(id){
-    
-    var button = document.createElement("input");
-    button.type = "button";
-    button.value = "Stitch these images";
-    button.onclick = start_stitch;
 
-   //the_stitch_button
-   //////////////////////////////////////////////
-    var div = document.getElementById(id); 
-    div.appendChild(button);
-    // button.id = "button";
-    // var body = document.getElementsByTagName("body")[0];
-    // body.appendChild(button);
-  }
+  $('#example-images').click(function(){
+    start_stitch();
+    return false;
+  });
 
 
   function handleDragOver(evt) {
@@ -214,24 +269,31 @@
           return d.promise();
       }
 
-      function shortfunctionsecond(){
+  function shortfunctionsecond(){
 
-          if(homographies.H == -1){
-            console.log("no Goood");
-          }
+    var d = new $.Deferred();
+    $('#stitched').show();
 
-          else{
+    if(homographies.H == -1){
+      console.log("no Goood");
 
-            var d = new $.Deferred();
-            warp_App("the_canvas", homographies.H, imgSrcs);
-            
-            d.resolve();
-          
+      var para = document.createElement("h2");
+      var node = document.createTextNode("Could not fit a Homography");
+      para.appendChild(node);
 
-          }
+      var element = document.getElementById("the_canvas");
+      element.appendChild(para);
 
-          return d.promise();
-      }
+    }
+
+    else{
+    warp_App("the_canvas", homographies.H, imgSrcs);
+
+    }
+
+    d.resolve();
+    return d.promise();
+  }
   } 
 
 
