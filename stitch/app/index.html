@@ -92,6 +92,17 @@
     </div>
 
     <div class="row">
+      <div class="span12">
+        <div id="stitching" style="display:none;">
+          <h2>Now stitching! :</h2>
+          <p>
+            Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
 
       <div class="span12">
         <div id="stitched" style="display:none;">
@@ -239,6 +250,7 @@
 
 
   $('#example-images').click(function(){
+    $('#stitching').show();
     start_stitch();
     return false;
   });
@@ -256,44 +268,45 @@
     //console.log("imgs", imgNames);
     start_stitching()
 
-      function start_stitching(){
-          var promise = longfunctionfirst().then(shortfunctionsecond);
-      }
-
-      function longfunctionfirst(){
-
-           var d = new $.Deferred();
-           homographies = new find_homographies(imgSrcs, d);
-
-          //d.resolve();
-          return d.promise();
-      }
-
-  function shortfunctionsecond(){
-
-    var d = new $.Deferred();
-    $('#stitched').show();
-
-    if(homographies.H == -1){
-      console.log("no Goood");
-
-      var para = document.createElement("h2");
-      var node = document.createTextNode("Could not fit a Homography");
-      para.appendChild(node);
-
-      var element = document.getElementById("the_canvas");
-      element.appendChild(para);
-
+    function start_stitching(){
+        var promise = longfunctionfirst().then(shortfunctionsecond);
     }
 
-    else{
-    warp_App("the_canvas", homographies.H, imgSrcs);
+    function longfunctionfirst(){
 
+         var d = new $.Deferred();
+         homographies = new find_homographies(imgSrcs, d);
+
+        //d.resolve();
+        return d.promise();
     }
 
-    d.resolve();
-    return d.promise();
-  }
+    function shortfunctionsecond(){
+
+        var d = new $.Deferred();
+        $('#stitching').hide();
+        $('#stitched').show();
+
+        if(homographies.H == -1){
+          console.log("no Goood");
+
+          var para = document.createElement("h2");
+          var node = document.createTextNode("Could not fit a Homography");
+          para.appendChild(node);
+
+          var element = document.getElementById("the_canvas");
+          element.appendChild(para);
+
+        }
+
+        else{
+        warp_App("the_canvas", homographies.H, imgSrcs);
+
+        }
+
+        d.resolve();
+        return d.promise();
+    }
   } 
 
 
