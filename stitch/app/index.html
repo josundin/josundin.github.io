@@ -84,14 +84,14 @@
       <div class="span12">
         <div id="pre-stitch2" style="display:none;">
           <p>
-            <strong>You have selected the above images. Run the algorithm to <button type="button" class="btn btn-primary" id="example-images">stitch the images</button>
+            <strong>You have selected the above images. Run the algorithm to <button type="button" onclick="start();" class="btn btn-primary" id="example-images">stitch the images</button>
             </strong> Or Select new ones. 
           </p>
         </div>
       </div> 
     </div>
 
-    <div class="row">
+    <!--div class="row">
       <div class="span12">
         <div id="stitching" style="display:none;">
           <h2>Now stitching! :</h2>
@@ -100,11 +100,19 @@
           </p>
         </div>
       </div>
-    </div>
+    </div-->
 
     <div class="row">
 
       <div class="span12">
+
+        <div id="stitching" style="display:none;">
+          <h2>Now stitching! :</h2>
+          <p>
+            Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern.
+          </p>
+        </div>  
+
         <div id="stitched" style="display:none;">
           <h2>Result:</h2>
 
@@ -249,11 +257,11 @@
   }
 
 
-  $('#example-images').click(function(){
+  function start(){
     $('#stitching').show();
     start_stitch();
     return false;
-  });
+  }
 
 
   function handleDragOver(evt) {
@@ -265,6 +273,7 @@
 
   function start_stitch()
   { 
+    $('#stitching').show();
     //console.log("imgs", imgNames);
     start_stitching()
 

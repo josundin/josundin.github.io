@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Image Alignment and Stitching</title>
-		<link rel="stylesheet" href="css/style.css" type="text/css" />
-
+		<!--link rel="stylesheet" href="css/style.css" type="text/css" /-->
+		<link rel="stylesheet" href="libs/twitter-bootstrap/bootstrap.min.css">
         <link rel="shortcut icon" href= "favicon.ico" type="image/ico">
         <meta name="description" content="Yoou !">
         <meta name="author" content="JoSu">
@@ -12,17 +12,42 @@
 
 	</head>
 	<body>
-		<div id="wrapper">
-			</span>
-			<h1>Image Stitching</h1>
-			This is a A web browser tool for Image Alignment and Stitching where every thing is computed in the web browser.
+		<!--div id="wrapper"-->
+		<div class="container">
+
+		<header>
+	      <h1>A web browser tool for Image Alignment and Stitching</h1>
+	      <p> This is a A web browser tool for Image Alignment and Image Stitching where every thing is computed in the web browser.
+	      Safari, Chrome and and Firefox are supported by these Demo and App </p>
+	    </header>
+
+		<div class="row">
+			<div class="span6">
+			
 			<dl>
 				<dt>- <a href="demo/">Demo</a></dt><dd>Demo of image Alignment and stitching.</dd>
 				<dt>- <a href="app">App</a></dt><dd>Stitch arbitrary images, and save result.</dd>
-				<dt>- <a href="eval">Evaluation</a></dt><dd>Run the experiments from the report, will take a while to compute.</dd>
+				<dt>- <a href="eval">Stitching steps</a></dt><dd>See the steps of localizing Keypoints, feature extraction (Descriptors), feature Matching and RANSAC and how to Warp the separate images.</dd>
 			</dl>
 
+			</div>
+		</div>
 
+			<div class="row">
+				<div class="span6">
+					<h2>Why?</h2>
+					<p>
+						Image stitching can be used in order to create photo mosaics like panoramas. Image alignment can also be used in image stabilization softwares.
+					</p>
+					<p>
+						In this project we present a plug-in free web browser panorama application. In order to achieve a plugin-free web browser application all stages of the pipeline ( mage access, feature detection, descriptors and rendering) are represented in HTML5 and JavaScript.   
+					</p>
+					<p>
+						<br/>
+						<a class="btn btn-large btn-primary" href="https://github.com/josundin/josundin.github.io"><strong>View project on Github</strong></a>
+					</p>
+				</div>
+			</div>
 
 
 
@@ -38,10 +63,7 @@
         
         </ol>
 	  	</div>
-    </div><!-- /wrapper -->
+    </div>
 
-		<!--[if lt IE 9]>
-			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
 	</body>
 </html>

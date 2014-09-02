@@ -32,21 +32,18 @@
 <div class="container">
 	<header>
 	    <h1>Image Stitching - Demo</h1>
-	    <p>With some supplementary information, fungerar bast i vissa broesers</p>
+	    <p>To create a panoramic image a photographer can start by taking multiple photos of a scene. This can be done by putting the camera in continuous shoot mode or a similar setting on the specific device. A burst or a sequence of multiple images is a premises to this application.</p>
 	</header>
 
 
 	<div class="row">
 
 		<div class="span12">
-			<h2>1 What is this?</h2>
+			<h2>1 The images</h2>
 			<p>
-				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
+				Step one is to get two or more images from the same one scene. Make sure that each photo has about 10-30% overlap with all other adjacent photos.
 			</p>
-			<p>
-				<strong>Try it for yourself.</strong>
-			</p>
-
+			
 			<div id="selectedF1" class="selectedFiles"></div>
 
 		</div>
@@ -56,12 +53,9 @@
 	<div class="row">
 
 		<div class="span12">
-			<h2>2 What is this?</h2>
+			<h2>2 Stitch</h2>
 			<p>
-				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
-			</p>
-			<p>
-				<strong>Try it for yourself.</strong>
+				Stitch the two example images together to one and the same image
 			</p>
 
 			<div id="divStitched"></div>
@@ -73,25 +67,21 @@
 	<div class="row">
 
 		<div class="span12">
-			<h2>1 What is this?</h2>
+			<h2>Multiple images</h2>
 			<p>
-				1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
-				STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFFFFFFFFFFFFFFFFFFFFFFFFFFF.
-			</p>
-			<p>
-				<strong>Try it for yourself.</strong>
+				The following three images, each one have higher resolution then the first each two.
 			</p>
 
 			<div id="selectedF2" class="selectedFiles"></div>
 
 
 			<div class="span6">
-				<h2>Compare two images?</h2>
+				<h2>Stitch Multiple images</h2>
 				<p>
-					Drop two images on the boxes to the left.  The box below will show a generated 'diff' image, pink areas show mismatch.  This example best works with two very similar but slightly different images.  Try for yourself!
+					This panorama will take a bit longer to compute since the images are bigger and they are more.
 				</p>
 				<p>
-				Don't have any images to compare? <button type="button" class="btn btn-primary" id="example-images">Use example images</button>
+				<button type="button" class="btn btn-primary" id="example-images">Stitch the images</button>
 				</p>
 			</div>
 
@@ -105,15 +95,16 @@
 	<div class="row">
 
 		<div class="span12">
-			<h2>2 What is this number does?</h2>
+			<h2> Result </h2>
 			<p>
-				2.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
-			</p>
-			<p>
-				<strong>Try it for yourself.</strong>
+				You can see that the size of the stitched common image increase with the number of images. The common stitched size is calculated with help of the corners of the transformed images.
 			</p>
 
 			<div id="divStitched2"></div>
+
+			<p>
+				<strong>Try it for yourself.</strong>
+			</p>
 		
 		</div>
 	</div>
