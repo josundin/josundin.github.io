@@ -95,17 +95,21 @@
 	<div class="row">
 
 		<div class="span12">
-			<h2> Result </h2>
-			<p>
-				You can see that the size of the stitched common image increase with the number of images. The common stitched size is calculated with help of the corners of the transformed images.
-			</p>
+			<div id="stitching" style="display:none;">
+				<h2> Result </h2>
+				<p>
+					You can see that the size of the stitched common image increase with the number of images. The common stitched size is calculated with help of the corners of the transformed images.
+				</p>
 
-			<div id="divStitched2"></div>
+				<div id="divStitched2"></div>
 
-			<p>
-				<strong>Try it for yourself.</strong>
-			</p>
-		
+				<p>
+					<strong>Try it for yourself with the
+					<a href="../app/">App</a>
+					</strong>
+				</p>
+			
+			</div>
 		</div>
 	</div>
 
@@ -258,8 +262,9 @@
 
     function shortfunctionsecond2(){
         var d = new $.Deferred();
+        $('#stitching').show();
         warp_App("divStitched2", homographies.H, images2);
-
+        document.getElementById( 'divStitched2' ).scrollIntoView();
         d.resolve();
         return d.promise();
     }
