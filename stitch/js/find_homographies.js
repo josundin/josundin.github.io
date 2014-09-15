@@ -7,7 +7,6 @@
 
 
 function find_homographies(images, dp){
-	console.log("MAAAAAAAAAAAAAAAAAAX:", maxHeight);
 	function imgObj (imgsrc)
 	{
 	//this.warpData = 0;
@@ -45,12 +44,8 @@ function find_homographies(images, dp){
 	//compute the homographies in order 1-2. 1-3 
 	// this is because of the restricted problem within one view
 
-	//var baseImage = new imgObj(images.shift());
-
+	//baseImage is the first image 
 	var baseImage = new imgObj(images[0]);
-
-	//DISPLAY a thumbnail of the stitched images separately
-	
    
    	// these are the rest of the images
     var imagesList = [];
