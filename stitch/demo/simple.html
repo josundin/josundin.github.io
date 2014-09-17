@@ -20,7 +20,7 @@
 	<script type="text/javascript" src="../ext_js/norms.js"></script>
 	<script type="text/javascript" src="../ext_js/processing.js"></script>
 	<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="../ext_js/d3.min.js"></script>
+	<!--script type="text/javascript" src="../ext_js/d3.min.js"></script-->
 
   	<script type="text/javascript" src="../js/layout.js"></script>
 	<script type="text/javascript" src="../js/find_homographies.js"></script>
@@ -64,9 +64,9 @@
 
 
 	var baseImage;
-	var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	//var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images1 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-	//var images1 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
+	var images1 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
 	var homographies = [];
 	document.addEventListener("DOMContentLoaded", init, false);
 
@@ -103,15 +103,15 @@
 
 	//To make sure functions are made in sequences, for the alignment
     function start_stitch(stitch_imgs){
-        var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
+        var promise = longfunctionfirst().then(shortfunctionsecond);
     }
 
-    function longfunctionfirst(stitch_imgs){
-         var d = new $.Deferred();
-         homographies = new find_homographies(images1, d);
+    function longfunctionfirst(){
+         var d1 = new $.Deferred();
+         homographies = new find_homographies(images1, d1);
 
         //d.resolve();
-        return d.promise();
+        return d1.promise();
     }
 
     // function shortfunctionsecond(){
@@ -124,7 +124,7 @@
 
 	function shortfunctionsecond(){
 
-		var d = new $.Deferred();
+		var d2 = new $.Deferred();
 
 		if(homographies.H == -1){
 			console.log("no Goood");
@@ -143,8 +143,8 @@
 
 		}
 
-		d.resolve();
-		return d.promise();
+		d2.resolve();
+		return d2.promise();
 	}
 
 

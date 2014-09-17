@@ -35,11 +35,14 @@ function warp_App(id, homographies,images) {
     ////////////////////////////////////////////////////////////////////////
     baseImage.img.onload = function() {
 
-        var scale = 1;//findScale(baseImage.img.width, baseImage.img.height);
+        var scale = findScale(baseImage.img.width, baseImage.img.height);
 
         //Kan ta bort en av variablerna???
-        imageW = canvasWidth = baseImage.img.width * scale;  //640;//892;
-        imageH = canvasHeight = baseImage.img.height *scale;  //480;//642;
+        imageW = canvasWidth = baseImage.img.width * scale |0;;  //640;//892;
+        imageH = canvasHeight = baseImage.img.height * scale |0;;  //480;//642;
+
+        console.log("w h :", imageW, imageH);
+        console.log("w h :", canvasWidth, canvasHeight);
         //setupWarp();                    
         applyWarp(id, imagesList);
 

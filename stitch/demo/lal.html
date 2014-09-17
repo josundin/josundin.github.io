@@ -95,10 +95,21 @@
 	 	var test_img = myPowerConstructor("../imgs/P110.jpg");	
 	 	test_img.set(canvas);
 
-	 	console.log(test_img.priv);
+	 	addOne(logMyNumber, 1);
+
+
+
 	}
 ////////////////////////////////////////////////////////////////
+function addOne(callback, myNumber) {
+	for (var i = 0; i < 1000; i++)
+		myNumber++;
+    callback(myNumber);
+}
 
+function logMyNumber(myNumber) {
+  console.log(myNumber);
+}
 
 	function myPowerConstructor(x){
 		console.log("Create the object");
@@ -119,7 +130,7 @@
           				ctx.drawImage(this, 0, 0);
         			};
 			
-				return that;
+				//return that;
 				},
 	            
 	            set_threshold: function(threshold) {
@@ -127,7 +138,7 @@
 	                
 	                return _threshold;
             }
-        }
+        };
 	}
 
 

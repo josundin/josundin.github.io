@@ -46,12 +46,14 @@ function find_homographies(images, dp){
 
 	//baseImage is the first image 
 	var baseImage = new imgObj(images[0]);
+	console.log("First img:" , images[0]);
    
    	// these are the rest of the images
     var imagesList = [];
     for (var i=0; i<images.length - 1; i++)
     {
         imagesList.push(new imgObj(images[i + 1]));
+        console.log("img:" , i + 1, images[i + 1]);
     }
     
 	var canvas_find = createcanvas();
@@ -67,40 +69,55 @@ function find_homographies(images, dp){
 		imageW = baseImage.img.width * scale |0;  
         imageH = baseImage.img.height * scale |0;
 
-        //console.log("w/h ratio :", ((imageW + imageH) / (640 + 480)));
+        console.log("w h :", imageW, imageH);
 
         //my_opt.corner_threshold = 45 * ((imageW * imageH) / (640 * 480)); 
         
         canvas_find.width = imageW;
         canvas_find.height = imageH;
         
-        //skapa ett object som räknar ut corners för en bestämd bild 
-        //och descriptor 
-        // läg i det fina image objectet
+        var inOrder = first_base().then(the_rest);
 
-        //loop over the rest of images
-        computeFast( baseImage,0);
-        computeDetectors(baseImage ,0);
+        //computeFast( baseImage,0);
+        //computeDetectors(baseImage ,0);
         //console.log("descriptor", baseImage.descriptors);
 
+    	function first_base(){
+			var done1 = new $.Deferred();
+			
+			computeFast( baseImage,0);
+        	computeDetectors(baseImage ,0);
+        	console.log("First", baseImage.img.src, baseImage.count);
 
-        // Loop over the rest if the images
-        for (var i=0; i<imagesList.length; i++)
-        {
-        	computeFast( imagesList[i],0);
-	    	computeDetectors( imagesList[i],0);
+			done1.resolve();
+        	return done1.promise();
+    	}
 
-	    	var matches = [];
-	      	computeMatches(baseImage, imagesList[i], matches);
 
-	      	console.log("num matches", matches.length);
+    	function the_rest(){
+    		var done2 = new $.Deferred();
 
-	      	//RASAC to find a good model
-	      	var homography = ransac(matches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
-	      	homographies.push(homography);
-	      	//data_p.push(homography[1]);
-        }
-    	
+	        // Loop over the rest if the images
+	        for (var i=0; i<imagesList.length; i++)
+	        {
+	        	computeFast( imagesList[i],0);
+		    	computeDetectors( imagesList[i],0);
+
+		    	console.log("IMG:", i, imagesList[i].img.src, imagesList[i].count);
+
+		    	var matches = [];
+		      	computeMatches(baseImage, imagesList[i], matches);
+
+		      	console.log("num matches", matches.length);
+
+		      	//RASAC to find a good model
+		      	var homography = ransac(matches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
+		      	homographies.push(homography);
+		      	//data_p.push(homography[1]);
+	        }
+	        done2.resolve();
+        	return done2.promise();
+		}    	
     
     	console.log("DONE finding H");
     	
@@ -196,6 +213,7 @@ function find_homographies(images, dp){
 	//////////////////////////////////////////////////////////////////////////////
 	/// Descriptor stuff
     function computeDetectors(image, xoffset) {
+    //computeDetectors: function(image, xoffset){	
       
       //todo make the radius a variable
       var windowRadius = my_opt.descriptor_radius;//my_opt.descriptor_radius;
@@ -345,10 +363,15 @@ function find_homographies(images, dp){
 
 	 //compute the intrestpoints
 	function computeFast(image, xoffset) {
+		canvas_find.width = 0;
+	    canvas_find.height = 0;
 
 		setupFastkeypointdetector(image, my_opt.corner_threshold);       
 
 		var border = my_opt.descriptor_radius; //is relative to the descriptor radius
+
+		canvas_find.width = imageW;
+	    canvas_find.height = imageH;
 		ctx.drawImage(image.img, 0, 0, imageW, imageH);
 		var imageData = ctx.getImageData(xoffset, 0, imageW, imageH);
 		jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
