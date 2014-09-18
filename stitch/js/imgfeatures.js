@@ -23,8 +23,9 @@ Make getters and setters for width and hight in order to make the canvas outside
         var myImg_u8;
         var myCorners = [];
 
-
-		var secret = 111;
+        var log = document.getElementById('log');
+		var stat = new profiler();
+		stat.add("fast corners");
 		
 		function sec1(){
 		return 11;
@@ -45,19 +46,60 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 		    jsfeat.fast_corners.set_threshold(my_opt.corner_threshold);
 
-		    callback(that, 0 , my_opt);
+		    callback(0 , my_opt);
 	  	};
 
-		function computeFast(image, xoffset, my_opt) {
+
+		function computeFast(xoffset, my_opt) {
 
 			var border = my_opt.descriptor_radius; //is relative to the descriptor radius
 			var imageData = myCtx.getImageData(xoffset, 0, myImageW, myImageH);
 			jsfeat.imgproc.grayscale(imageData.data, myImg_u8.data);
 			//prev_count = count;
-			image.count = jsfeat.fast_corners.detect(myImg_u8, myCorners, border);
-			console.log("cnt", image.count, myCorners.length);
+			that.count = jsfeat.fast_corners.detect(myImg_u8, myCorners, border);
+			console.log("cnt", that.count, myCorners.length);
 	  	};
 	  	///////END corner stuff/////////////////////////////////////////////
+
+
+		//////////////////////////////////////////////////////////////////////////////
+		/// Descriptor stuff
+	    function computeDetectors(this_canvas, descriptor_radius) {
+
+			var windowRadius = descriptor_radius;//my_opt.descriptor_radius;
+			var numout = 0;
+			//var vectors = processing.gradientVectors(this_canvas);
+			//var desc = new Array(image.count);
+
+			// for(var i =0; i < image.count; i++)
+			// {
+			// var xpos = image.corners[i].x + xoffset;
+			// var ypos = image.corners[i].y;
+
+			// // [f,d] = vl_sift(I) ;
+			// image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
+			// //console.log(ypos, xpos, vectors[ypos][xpos]);
+			// //console.log(desc[i]);
+			// }
+
+			// //image.descriptors.push(desc);
+			// //console.log(desc);
+	    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		return {
 				set: function(this_canvas, my_opt, callback) {
 
@@ -69,8 +111,12 @@ Make getters and setters for width and hight in order to make the canvas outside
 						this_canvas.height = myImageH;
 						myCtx = this_canvas.getContext('2d');
 				 		myCtx.drawImage(this, 0, 0);
+				 		stat.start("fast corners");
 
 						setupFastkeypointdetector(my_opt, computeFast);
+						stat.stop("fast corners");
+						computeDetectors(this_canvas, my_opt.descriptor_radius); 
+						log.innerHTML = stat.log();
 						callback();
 					};
 			
