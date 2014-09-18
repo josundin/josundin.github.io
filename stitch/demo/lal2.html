@@ -59,20 +59,23 @@
 
 
 	function init() {
+
+		function pipe_opt(){
+		    this.descriptor_radius = 8;
+		    this.corner_threshold = 45;	//22.5			//15
+		}
+
+		var my_opt = new pipe_opt();
+
 		var canvas = loadCanvas("divStitched");
 	 	
 	 	var test_img = myPowerConstructor("../imgs/P110.jpg");	
-		function logMyNumber(myNumber) {
-		  console.log("Balle:",myNumber);
-		  console.log("Ballen!", test_img.getW());
+
+	 	test_img.set(canvas, my_opt, whenDataReady);
+
+		function whenDataReady() {
+		  console.log("Data redo!", test_img.getW());
 		}
-
-	 	test_img.set(canvas, logMyNumber);
-
-
-
-
-	 	console.log("!", test_img.getW());
 	 	
 	}
 
@@ -83,12 +86,12 @@
 
         var canvas = document.createElement('canvas');
         var div = document.getElementById(id); 
-        canvas.id     = "CursorLayer";
-        canvas.width  = 500;
-        canvas.height = 400;
-        canvas.style.zIndex   = 8;
-        canvas.style.position = "absolute";
-        canvas.style.border   = "1px solid";
+        canvas.id     = "calculateDecriptors";
+        // canvas.width  = 500;
+        // canvas.height = 400;
+        // canvas.style.zIndex   = 8;
+        // canvas.style.position = "absolute";
+        // canvas.style.border   = "1px solid";
         div.appendChild(canvas);
 
         return canvas;

@@ -17,9 +17,11 @@ Make getters and setters for width and hight in order to make the canvas outside
 	_this['myPowerConstructor'] = function(x){
 		var that = new imgOpt(x);
 
+		var myCtx;
 		var myImageW;  
         var myImageH;
         var myImg_u8;
+        var myCorners = [];
 
 
 		var secret = 111;
@@ -31,61 +33,46 @@ Make getters and setters for width and hight in order to make the canvas outside
 		/////////////////////////////////////////////////////////
 		//corner stuff
 	     // This is sets up the intrestpoint detector stuff
-		function setupFastkeypointdetector() {
-			console.log("setupFast w:", myImageW, "h:",myImageH);
+		function setupFastkeypointdetector(my_opt, callback) {
+			console.log("setupFast w:", myImageW, "h:",myImageH, my_opt.corner_threshold);
 		    myImg_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
 		    
-		    // //set corners
-		    // var i = imageW*imageH;
-		    // while(--i >= 0) {
-		    //     image.corners[i] = new jsfeat.point2d_t(0,0,0,0);
-		    // }
+		    //set corners
+		    var i = myImageW*myImageH;
+		    while(--i >= 0) {
+		        myCorners[i] = new jsfeat.point2d_t(0,0,0,0);
+		    }
 
-		    // var threshold = thres;
-		    // jsfeat.fast_corners.set_threshold(threshold);
+		    jsfeat.fast_corners.set_threshold(my_opt.corner_threshold);
+
+		    callback(that, 0 , my_opt);
 	  	};
 
-		 //compute the intrestpoints
-		function computeFast(image, xoffset) {
-			canvas_find.width = 0;
-		    canvas_find.height = 0;
-
-
-			setupFastkeypointdetector(image, my_opt.corner_threshold);       
+		function computeFast(image, xoffset, my_opt) {
 
 			var border = my_opt.descriptor_radius; //is relative to the descriptor radius
-
-			canvas_find.width = imageW;
-		    canvas_find.height = imageH;
-			ctx.drawImage(image.img, 0, 0, imageW, imageH);
-			var imageData = ctx.getImageData(xoffset, 0, imageW, imageH);
-			jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
+			var imageData = myCtx.getImageData(xoffset, 0, myImageW, myImageH);
+			jsfeat.imgproc.grayscale(imageData.data, myImg_u8.data);
 			//prev_count = count;
-			image.count = jsfeat.fast_corners.detect(img_u8, image.corners, border);
+			image.count = jsfeat.fast_corners.detect(myImg_u8, myCorners, border);
+			console.log("cnt", image.count, myCorners.length);
 	  	};
 	  	///////END corner stuff/////////////////////////////////////////////
 		return {
-				set: function(this_canvas, callback) {
+				set: function(this_canvas, my_opt, callback) {
 
 					//initialize the image resolution
 				    that.img.onload = function() {
 				        myImageW = that.img.width;  
 						myImageH = that.img.height;
-						var ctx = this_canvas.getContext('2d');
-				 		ctx.drawImage(this, 0, 0);
-				 		console.log("set w:", myImageW, "h:",myImageH);
-						//ctx.drawImage(this, 0, 0);
-						setupFastkeypointdetector();
+						this_canvas.width = myImageW;
+						this_canvas.height = myImageH;
+						myCtx = this_canvas.getContext('2d');
+				 		myCtx.drawImage(this, 0, 0);
+
+						setupFastkeypointdetector(my_opt, computeFast);
 						callback();
 					};
-
-        			console.log(that);
-
-
-	 				// console.log(secret);
-	 				// console.log(sec1());
-
-
 			
 				return myImageW;
 				},
