@@ -69,12 +69,13 @@
 	var imgOpt = function(imgsrc){
 	    this.img = new Image();
 	    this.img.src = imgsrc;
+	    
 		}
 
-	function imgObj1 (imgsrc){
-	    this.img = new Image();
-	    this.img.src = imgsrc;
-	}
+	// function imgObj1 (imgsrc){
+	//     this.img = new Image();
+	//     this.img.src = imgsrc;
+	// }
 
 
 
@@ -93,10 +94,10 @@
 		var canvas = loadCanvas("divStitched");
 	 	
 	 	var test_img = myPowerConstructor("../imgs/P110.jpg");	
-	 	test_img.set(canvas);
+	 	//test_img.set(canvas);
 
 	 	addOne(logMyNumber, 1);
-
+	 	console.log(test_img.set_threshold(1));
 
 
 	}
@@ -115,16 +116,19 @@ function logMyNumber(myNumber) {
 		console.log("Create the object");
 		var that = new imgOpt(x);
 		var secret = 111;
-		that.priv = function(){
-			return secret + 22;
+		
+		function sec1(){
+		return 11;
 
-		};
+		};	
 		return {
 				set: function(this_canvas) {
 
 				 	var ctx = this_canvas.getContext('2d');
 	 				//ctx.drawImage(that.img, 0, 0);
 	 				console.log("DRAEEQW IMAGE ");
+	 				console.log(secret);
+	 				console.log(sec1());
 
 			        that.img.onload = function() {
           				ctx.drawImage(this, 0, 0);
@@ -134,9 +138,9 @@ function logMyNumber(myNumber) {
 				},
 	            
 	            set_threshold: function(threshold) {
-	                _threshold = Math.min(Math.max(threshold, 0), 255);
+	                var _threshold = Math.min(Math.max(threshold, 0), 255);
 	                
-	                return _threshold;
+	                return threshold;
             }
         };
 	}

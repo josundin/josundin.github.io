@@ -14,8 +14,6 @@ var imgOpt = function(imgsrc){
 
 function warp_App(id, homographies,images) {
 
-    console.log("Waaaaaaaaaaaaaaarping");
-
     var canvas, ctx,canvasWidth,canvasHeight, canvas;
 
     var imageW = 0;
@@ -40,10 +38,7 @@ function warp_App(id, homographies,images) {
         //Kan ta bort en av variablerna???
         imageW = canvasWidth = baseImage.img.width * scale |0;;  //640;//892;
         imageH = canvasHeight = baseImage.img.height * scale |0;;  //480;//642;
-
-        console.log("w h :", imageW, imageH);
-        console.log("w h :", canvasWidth, canvasHeight);
-        //setupWarp();                    
+                   
         applyWarp(id, imagesList);
 
       //eventuellt radera canvasen när klar... fast inte här
@@ -105,7 +100,7 @@ function warp_App(id, homographies,images) {
             // create the warp data, where we will store the warped image
             warpImages[i].warpData = ctx.getImageData(0, 0, canvasOffset.maxW,canvasOffset.maxH);
 
-            console.log(homographies[i], i);
+            //console.log(homographies[i], i);
 
             // multiply the homographie with the transaltion matrix
             var h_dot = H_times_offset(homographies[i]);

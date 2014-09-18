@@ -46,6 +46,7 @@ function find_homographies(images, dp){
 
 	//baseImage is the first image 
 	var baseImage = new imgObj(images[0]);
+	console.log(baseImage);
 	console.log("First img:" , images[0]);
    
    	// these are the rest of the images
@@ -69,8 +70,6 @@ function find_homographies(images, dp){
 		imageW = baseImage.img.width * scale |0;  
         imageH = baseImage.img.height * scale |0;
 
-        console.log("w h :", imageW, imageH);
-
         //my_opt.corner_threshold = 45 * ((imageW * imageH) / (640 * 480)); 
         
         canvas_find.width = imageW;
@@ -78,20 +77,14 @@ function find_homographies(images, dp){
         
         var inOrder = first_base().then(the_rest);
 
-        //computeFast( baseImage,0);
-        //computeDetectors(baseImage ,0);
-        //console.log("descriptor", baseImage.descriptors);
-
     	function first_base(){
 			var done1 = new $.Deferred();
 			
-			computeFast( baseImage,0);
-        	computeDetectors(baseImage ,0);
-        	console.log("First", baseImage.img.src, baseImage.count);
-
+   			computeTheStuff(baseImage, computeDetectors);
 			done1.resolve();
         	return done1.promise();
     	}
+
 
 
     	function the_rest(){
@@ -100,10 +93,7 @@ function find_homographies(images, dp){
 	        // Loop over the rest if the images
 	        for (var i=0; i<imagesList.length; i++)
 	        {
-	        	computeFast( imagesList[i],0);
-		    	computeDetectors( imagesList[i],0);
-
-		    	console.log("IMG:", i, imagesList[i].img.src, imagesList[i].count);
+		    	computeTheStuff(imagesList[i], computeDetectors);
 
 		    	var matches = [];
 		      	computeMatches(baseImage, imagesList[i], matches);
@@ -118,18 +108,15 @@ function find_homographies(images, dp){
 	        done2.resolve();
         	return done2.promise();
 		}    	
+
+		function computeTheStuff(imageObject, callback){
+			
+			computeFast( imageObject,0);
+			callback(imageObject ,0);
+		}
     
     	console.log("DONE finding H");
-    	
-		
-		console.log("number of corner intrestpoints", baseImage.count, "in ", baseImage.img.src);
-
-	    for (var i=0; i<imagesList.length; i++)
-	    {
-	    	console.log("number of corner intrestpoints", imagesList[i].count, "in ", imagesList[i].img.src);    
-	    }
-
-    	
+    	    	
 	    //Hide the tmp canvas
 	    canvas_find.width = 0;
 	    canvas_find.height = 0;
@@ -138,8 +125,6 @@ function find_homographies(images, dp){
     	dp.resolve();
 	
 	}
-
-
 
 	//return homographies;
 	this.H = homographies;
@@ -209,140 +194,7 @@ function find_homographies(images, dp){
 	////////END matching///////////////////////////////////////////
 
 
-
-	//////////////////////////////////////////////////////////////////////////////
-	/// Descriptor stuff
-    function computeDetectors(image, xoffset) {
-    //computeDetectors: function(image, xoffset){	
-      
-      //todo make the radius a variable
-      var windowRadius = my_opt.descriptor_radius;//my_opt.descriptor_radius;
-      var numout = 0;
-      var vectors = processing.gradientVectors(canvas_find);
-      //var desc = new Array(image.count);
-      
-      for(var i =0; i < image.count; i++)
-      {
-        var xpos = image.corners[i].x + xoffset;
-        var ypos = image.corners[i].y;
-
-        // [f,d] = vl_sift(I) ;
-        image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
-        //console.log(ypos, xpos, vectors[ypos][xpos]);
-        //console.log(desc[i]);
-        //drawcell(canvas, xpos, ypos, windowRadius);
-      }
-
-      //image.descriptors.push(desc);
-      //console.log(desc);
-    }
-
-    function extractHistogramsFromWindow(x,y, radius, vectors){
-
-      var cellradius = radius / 2;
-      
-       var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors).concat(
-                        extractHistogramsFromCell(x-(radius/2), y-radius, cellradius, vectors), 
-                        extractHistogramsFromCell(x, y-radius, cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y-radius, cellradius, vectors),
-
-                        extractHistogramsFromCell(x-radius, y-(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y-(radius/2), cellradius, vectors), 
-                        extractHistogramsFromCell(x, y-(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y-(radius/2), cellradius, vectors),
-
-                        extractHistogramsFromCell(x-radius, y, cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y, cellradius, vectors), 
-                        extractHistogramsFromCell(x, y, cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y, cellradius, vectors),
-
-                        extractHistogramsFromCell(x-radius, y+(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x-(radius/2), y+(radius/2), cellradius, vectors), 
-                        extractHistogramsFromCell(x, y+(radius/2), cellradius, vectors),
-                        extractHistogramsFromCell(x+(radius/2), y+(radius/2), cellradius, vectors)
-
-                        );
-
-      norm.L2(histograms);
-
-      return histograms;
-    }
-
-
-    //Draw the cell window
-    function drawcell(canvas, x, y, radius) {
-
-      var ctxs=canvas.getContext("2d");
-
-      ctx.lineWidth="1";
-      ctx.strokeStyle="rgb(255,0,0)";
-
-      // start-x, start-y, x long, y long
-      ctx.rect(x-radius , y-radius, radius/2, radius/2);
-      ctx.rect(x-(radius/2) , y-radius, radius/2, radius/2);
-      ctx.rect(x , y-radius, radius/2, radius/2);
-      ctx.rect(x +(radius/2) , y-radius, radius/2, radius/2);
-
-      ctx.rect(x-radius , y-radius/2, radius/2, radius/2);
-      ctx.rect(x-(radius/2) , y-radius/2, radius/2, radius/2);
-      ctx.rect(x , y-radius/2, radius/2, radius/2);
-      ctx.rect(x +(radius/2) , y-radius/2, radius/2, radius/2);
-
-      ctx.rect(x-radius , y, radius/2, radius/2);
-      ctx.rect(x-(radius/2) , y, radius/2, radius/2);
-      ctx.rect(x , y, radius/2, radius/2);
-      ctx.rect(x +(radius/2) , y, radius/2, radius/2);
-
-      ctx.rect(x-radius , y+radius/2, radius/2, radius/2);
-      ctx.rect(x-(radius/2) , y+radius/2, radius/2, radius/2);
-      ctx.rect(x , y+radius/2, radius/2, radius/2);
-      ctx.rect(x +(radius/2) , y+radius/2, radius/2, radius/2);
-
-      ctx.stroke();
-    }
-
-
-	/*
-	Provide the x, y cordinates of the upper left corner of the cell
-	*/
-	function extractHistogramsFromCell(x,y, cellradius, gradients) {
-		//from x-rad, y-rad till x,y
-		var histogram = zeros(8);
-
-		for (var i = 0; i < cellradius; i++) {
-		  for (var j = 0; j < cellradius; j++) {
-		    var vector = gradients[y + i][x + j];
-		    var bin = binFor(vector.orient, 8);
-		    histogram[bin] += vector.mag;
-		    //console.log("y : ", y + i, "x :", x + j);
-		  }
-		}
-
-		//console.log("my hist : ", histogram);
-		return histogram;
-
-
-	} 
-
-
-	function binFor(radians, bins) {
-		var angle = radians * (180 / Math.PI);
-		if (angle < 0) {
-		  angle += 180;
-		}
-
-		// center the first bin around 0
-		angle += 90 / bins;
-		angle %= 180;
-
-		var bin = Math.floor(angle / 180 * bins);
-		return bin;
-	}
-	///////END descriptor stuff//////////////////////////////////////
-
-
-
-	/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 	//corner stuff
      // This is sets up the intrestpoint detector stuff
 	function setupFastkeypointdetector(image, thres) {
@@ -404,6 +256,102 @@ function find_homographies(images, dp){
 	    }
   	}
   	///////END corner stuff/////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	/// Descriptor stuff
+    function computeDetectors(image, xoffset) {
+    //computeDetectors: function(image, xoffset){	
+      
+      //todo make the radius a variable
+      var windowRadius = my_opt.descriptor_radius;//my_opt.descriptor_radius;
+      var numout = 0;
+      var vectors = processing.gradientVectors(canvas_find);
+      //var desc = new Array(image.count);
+      
+      for(var i =0; i < image.count; i++)
+      {
+        var xpos = image.corners[i].x + xoffset;
+        var ypos = image.corners[i].y;
+
+        // [f,d] = vl_sift(I) ;
+        image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
+        //console.log(ypos, xpos, vectors[ypos][xpos]);
+        //console.log(desc[i]);
+      }
+
+      //image.descriptors.push(desc);
+      //console.log(desc);
+    }
+
+    function extractHistogramsFromWindow(x,y, radius, vectors){
+
+      var cellradius = radius / 2;
+      
+       var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors).concat(
+                        extractHistogramsFromCell(x-(radius/2), y-radius, cellradius, vectors), 
+                        extractHistogramsFromCell(x, y-radius, cellradius, vectors),
+                        extractHistogramsFromCell(x+(radius/2), y-radius, cellradius, vectors),
+
+                        extractHistogramsFromCell(x-radius, y-(radius/2), cellradius, vectors),
+                        extractHistogramsFromCell(x-(radius/2), y-(radius/2), cellradius, vectors), 
+                        extractHistogramsFromCell(x, y-(radius/2), cellradius, vectors),
+                        extractHistogramsFromCell(x+(radius/2), y-(radius/2), cellradius, vectors),
+
+                        extractHistogramsFromCell(x-radius, y, cellradius, vectors),
+                        extractHistogramsFromCell(x-(radius/2), y, cellradius, vectors), 
+                        extractHistogramsFromCell(x, y, cellradius, vectors),
+                        extractHistogramsFromCell(x+(radius/2), y, cellradius, vectors),
+
+                        extractHistogramsFromCell(x-radius, y+(radius/2), cellradius, vectors),
+                        extractHistogramsFromCell(x-(radius/2), y+(radius/2), cellradius, vectors), 
+                        extractHistogramsFromCell(x, y+(radius/2), cellradius, vectors),
+                        extractHistogramsFromCell(x+(radius/2), y+(radius/2), cellradius, vectors)
+
+                        );
+
+      norm.L2(histograms);
+
+      return histograms;
+    }
+
+	/*
+	Provide the x, y cordinates of the upper left corner of the cell
+	*/
+	function extractHistogramsFromCell(x,y, cellradius, gradients) {
+		//from x-rad, y-rad till x,y
+		var histogram = zeros(8);
+
+		for (var i = 0; i < cellradius; i++) {
+		  for (var j = 0; j < cellradius; j++) {
+		    var vector = gradients[y + i][x + j];
+		    var bin = binFor(vector.orient, 8);
+		    histogram[bin] += vector.mag;
+		    //console.log("y : ", y + i, "x :", x + j);
+		  }
+		}
+
+		//console.log("my hist : ", histogram);
+		return histogram;
+
+
+	} 
+
+
+	function binFor(radians, bins) {
+		var angle = radians * (180 / Math.PI);
+		if (angle < 0) {
+		  angle += 180;
+		}
+
+		// center the first bin around 0
+		angle += 90 / bins;
+		angle %= 180;
+
+		var bin = Math.floor(angle / 180 * bins);
+		return bin;
+	}
+	///////END descriptor stuff//////////////////////////////////////
 
 	function createcanvas( ){
 

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Demo</title>
+<style>
+	.selectedFiles img {
+		max-width: 250;
+		max-height: 250px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+</style>
+
+	
+	<!--script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+	<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+	<script type="text/javascript" src="../ext_js/hog.js"></script>
+	<script type="text/javascript" src="../ext_js/norms.js"></script>
+	<script type="text/javascript" src="../ext_js/processing.js"></script>
+	<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+
+  	<script type="text/javascript" src="../js/layout.js"></script>
+	<script type="text/javascript" src="../js/find_homographies.js"></script>
+	<script type="text/javascript" src="../js/ransac.js"></script>
+	<script type="text/javascript" src="../js/imagewarp.js"></script-->
+	<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+	<script type="text/javascript" src="../js/imgfeatures.js"></script>
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+	<header>
+	    <h1>Image Stitching - Demo</h1>
+	    <p>To create a panoramic image a photographer can start by taking multiple photos of a scene. This can be done by putting the camera in continuous shoot mode or a similar setting on the specific device. A burst or a sequence of multiple images is a premises to this application.</p>
+	</header>
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>3 Stitch</h2>
+			<p>
+				Stitch the two example images together to one and the same image
+			</p>
+
+			<div id="divStitched"></div>
+		
+		</div>
+	</div>
+
+</div>
+
+
+<script type="text/javascript">
+"use strict";
+
+	document.addEventListener("DOMContentLoaded", init, false);
+
+
+	function init() {
+		var canvas = loadCanvas("divStitched");
+	 	
+	 	var test_img = myPowerConstructor("../imgs/P110.jpg");	
+		function logMyNumber(myNumber) {
+		  console.log("Balle:",myNumber);
+		  console.log("Ballen!", test_img.getW());
+		}
+
+	 	test_img.set(canvas, logMyNumber);
+
+
+
+
+	 	console.log("!", test_img.getW());
+	 	
+	}
+
+////////////////////////////////////////////////////////////////
+
+
+    function loadCanvas(id){
+
+        var canvas = document.createElement('canvas');
+        var div = document.getElementById(id); 
+        canvas.id     = "CursorLayer";
+        canvas.width  = 500;
+        canvas.height = 400;
+        canvas.style.zIndex   = 8;
+        canvas.style.position = "absolute";
+        canvas.style.border   = "1px solid";
+        div.appendChild(canvas);
+
+        return canvas;
+    }
+
+</script>
+</body>
+</html>
