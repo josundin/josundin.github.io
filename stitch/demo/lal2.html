@@ -30,7 +30,7 @@
 	<script type="text/javascript" src="../ext_js/profiler.js"></script>
 	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
 	<script type="text/javascript" src="../ext_js/norms.js"></script>
-	
+
 	<script type="text/javascript" src="../js/imgfeatures.js"></script>
 	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
 </head>
@@ -86,8 +86,11 @@
 
 		function whenDataReady() {
 			stat.stop("whole procedure");
-		  console.log("Data redo!", test_img.getW());
-		  log.innerHTML = stat.log();
+			var pts = test_img.getNuberOfPoints();
+			var desc = test_img.getDescriptor();
+
+			//console.log(that.descriptors[0][1]);	
+			log.innerHTML = stat.log();
 		}
 	 	
 	}

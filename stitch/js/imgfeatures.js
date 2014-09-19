@@ -27,10 +27,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 		stat.add("fast corners");
 		stat.add("gradientVectors");
-		
-		function sec1(){
-		return 11;
-		};
+		stat.add("descriptors");
 
 		/////////////////////////////////////////////////////////
 		//corner stuff
@@ -73,6 +70,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 			var vectors = processing.gradientVectors(this_canvas);
 			stat.stop("gradientVectors");
 
+			stat.start("descriptors");
+
 			var desc = new Array(that.count);
 			for(var i =0; i < that.count; i++)
 			{
@@ -80,6 +79,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 				var ypos = that.corners[i].y;
 				that.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
 			}
+
+			stat.stop("descriptors");
 		 };
 
 	    function extractHistogramsFromWindow(x,y, radius, vectors){
@@ -158,50 +159,43 @@ Make getters and setters for width and hight in order to make the canvas outside
 		///////END descriptor stuff//////////////////////////////////////
 
 
-
-
-
-
-
-
-
-
-
-
-
 		return {
-				set: function(this_canvas, my_opt, callback) {
+			set: function(this_canvas, my_opt, callback) {
 
-					//initialize the image resolution
-				    that.img.onload = function() {
-				        myImageW = that.img.width;  
-						myImageH = that.img.height;
-						this_canvas.width = myImageW;
-						this_canvas.height = myImageH;
-						myCtx = this_canvas.getContext('2d');
-				 		myCtx.drawImage(this, 0, 0);
-				 		stat.start("fast corners");
+				//initialize the image resolution
+			    that.img.onload = function() {
+			        myImageW = that.img.width;  
+					myImageH = that.img.height;
+					this_canvas.width = myImageW;
+					this_canvas.height = myImageH;
+					myCtx = this_canvas.getContext('2d');
+			 		myCtx.drawImage(this, 0, 0);
+			 		stat.start("fast corners");
 
-						setupFastkeypointdetector(my_opt, computeFast);
-						stat.stop("fast corners");
+					setupFastkeypointdetector(my_opt, computeFast);
+					stat.stop("fast corners");
 
-						computeDetectors(this_canvas, my_opt.descriptor_radius); 
-						console.log(that.descriptors[0][1]);						
-						
-						callback();
-					};
-			
-				return myImageW;
-				},
-				set_threshold: function(threshold) {
-	                _threshold = Math.min(Math.max(threshold, 0), 255);
-	                
-	                return _threshold;
-	        	},
+					computeDetectors(this_canvas, my_opt.descriptor_radius); 					
+					
+					callback();
+				};
+		
+			return myImageW;
+			},
+			set_threshold: function(threshold) {
+                _threshold = Math.min(Math.max(threshold, 0), 255);
+                
+                return _threshold;
+        	},
 
-	        	getW: function() {
-	        		 return myImageW;
-	        }
+        	getNuberOfPoints: function() {
+        		var npts = that.count;
+        		 return that.count;
+        	},
+        	getDescriptor: function() {
+        		var descr = that.descriptors;
+				 return descr;
+        	}
 	    };
 	};
 
