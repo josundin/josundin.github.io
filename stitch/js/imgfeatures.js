@@ -15,15 +15,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 	//function myPowerConstructor(x){
 	_this['myPowerConstructor'] = function(x, stat){
-		stat.add("load image into browser");
-		stat.add("fast corners");
-		stat.add("gradientVectors");
-		stat.add("descriptors");
-
 		stat.start("load image into browser");
 		var that = new imgOpt(x);
-
-		console.log(that.img.src);
 
 		var myCtx;
 		var myImageW;  
@@ -149,7 +142,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 			var bin = Math.floor(angle / 180 * bins);
 			return bin;
-		}
+		};
 
 		function zeros(size) {
 			var array = new Array(size);
@@ -157,7 +150,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 			array[i] = 0;
 			}
 			return array;
-		}
+		};
 		///////END descriptor stuff//////////////////////////////////////
 
 
@@ -198,6 +191,10 @@ Make getters and setters for width and hight in order to make the canvas outside
         	getDescriptor: function() {
         		var descr = that.descriptors;
 				 return descr;
+        	},
+        	getSrc: function() {
+        		var src = that.img.src;
+				 return src;
         	}
 	    };
 	};

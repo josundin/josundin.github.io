@@ -64,39 +64,70 @@
 
 	document.addEventListener("DOMContentLoaded", init, false);
 
+	function pipe_opt(){
+	    this.descriptor_radius = 8;
+	    this.corner_threshold = 45;	//22.5			//15
+	}
 
 	function init() {
 
 		var log = document.getElementById('log');
 		var log_pts = document.getElementById('log_pts');
 		var stat = new profiler();
+		var canvas = loadCanvas("divStitched");
+		var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+
 		stat.add("whole procedure");
+
+		stat.add("load image into browser");
+		stat.add("fast corners");
+		stat.add("gradientVectors");
+		stat.add("descriptors");
+
+
 		stat.start("whole procedure");
 
-		function pipe_opt(){
-		    this.descriptor_radius = 8;
-		    this.corner_threshold = 45;	//22.5			//15
-		}
+		var indx = 0;
 
-		var my_opt = new pipe_opt();
 
-		var canvas = loadCanvas("divStitched");
+		computeFeatures(images[indx++]);
+
+		function computeFeatures(img){
+
+			var my_opt = new pipe_opt();
+		 	var test_img = myPowerConstructor(img, stat);	
+		 	test_img.set(canvas, my_opt, whenDataReady);
+
+			function whenDataReady() {
+				stat.stop("whole procedure");
+				var pts = test_img.getNuberOfPoints();
+				var desc = test_img.getDescriptor();
+				var srcImg = test_img.getSrc();
+
+				var lastIndex = srcImg.lastIndexOf("/");
+				srcImg = srcImg.substring(srcImg.length, lastIndex +1);
+				console.log("img done, nr pts", pts, "in:", srcImg);
+				log_pts.innerHTML = pts + " in: " + srcImg;	
+				log.innerHTML = stat.log();
+
+				if(indx < (images.length)){
+					computeFeatures(images[indx++]);
+				}
+				else{
+					console.log("done computeFeatures");
+					doneComputeFeatures();
+				}
+
+			};
+
+		};
+
+		function doneComputeFeatures(){
+			console.log("done computeFeatures !!!!!!!!!!!!!!");
+
+		};
 	 	
-	 	var test_img = myPowerConstructor("../imgs/P110.jpg", stat);	
-
-	 	test_img.set(canvas, my_opt, whenDataReady);
-
-		function whenDataReady() {
-			stat.stop("whole procedure");
-			var pts = test_img.getNuberOfPoints();
-			var desc = test_img.getDescriptor();
-			console.log("Data redo!", pts);
-			//console.log(that.descriptors[0][1]);
-			log_pts.innerHTML = pts;	
-			log.innerHTML = stat.log();
-		}
-	 	
-	}
+	};
 
 ////////////////////////////////////////////////////////////////
 
