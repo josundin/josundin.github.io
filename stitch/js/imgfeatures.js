@@ -23,6 +23,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 		stat.start("load image into browser");
 		var that = new imgOpt(x);
 
+		console.log(that.img.src);
+
 		var myCtx;
 		var myImageW;  
         var myImageH;

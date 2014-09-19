@@ -46,7 +46,8 @@
 		<div class="span12">
 			<h2>3 Stitch</h2>
 			<p>
-				Stitch the two example images together to one and the same image
+				Stitch the two example images together to one and the same image.
+				Number of interest points: <div id="log_pts" ></div>. 
 				<div id="log" class="alert alert-info"></div>
 			</p>
 
@@ -67,6 +68,7 @@
 	function init() {
 
 		var log = document.getElementById('log');
+		var log_pts = document.getElementById('log_pts');
 		var stat = new profiler();
 		stat.add("whole procedure");
 		stat.start("whole procedure");
@@ -89,7 +91,8 @@
 			var pts = test_img.getNuberOfPoints();
 			var desc = test_img.getDescriptor();
 			console.log("Data redo!", pts);
-			//console.log(that.descriptors[0][1]);	
+			//console.log(that.descriptors[0][1]);
+			log_pts.innerHTML = pts;	
 			log.innerHTML = stat.log();
 		}
 	 	
