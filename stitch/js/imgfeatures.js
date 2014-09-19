@@ -15,7 +15,14 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 	//function myPowerConstructor(x){
 	_this['myPowerConstructor'] = function(x, stat){
+		stat.add("load image into browser");
+		stat.add("fast corners");
+		stat.add("gradientVectors");
+		stat.add("descriptors");
+
+		stat.start("load image into browser");
 		var that = new imgOpt(x);
+		stat.stop("load image into browser");
 
 		var myCtx;
 		var myImageW;  
@@ -25,16 +32,11 @@ Make getters and setters for width and hight in order to make the canvas outside
         that.corners = [];
         that.descriptors = [];
 
-		stat.add("fast corners");
-		stat.add("gradientVectors");
-		stat.add("descriptors");
-
 		/////////////////////////////////////////////////////////
 		//corner stuff
 	     // This is sets up the intrestpoint detector stuff
 		function setupFastkeypointdetector(my_opt, callback) {
-			console.log("setupFast w:", myImageW, "h:",myImageH, my_opt.corner_threshold);
-		    myImg_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
+			myImg_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
 		    
 		    //set corners
 		    var i = myImageW*myImageH;
@@ -55,7 +57,6 @@ Make getters and setters for width and hight in order to make the canvas outside
 			jsfeat.imgproc.grayscale(imageData.data, myImg_u8.data);
 			//prev_count = count;
 			that.count = jsfeat.fast_corners.detect(myImg_u8, that.corners, border);
-			console.log("cnt", that.count, that.corners.length);
 	  	};
 	  	///////END corner stuff/////////////////////////////////////////////
 
