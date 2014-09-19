@@ -63,6 +63,11 @@
 
 	function init() {
 
+		var log = document.getElementById('log');
+		var stat = new profiler();
+		stat.add("whole procedure");
+		stat.start("whole procedure");
+
 		function pipe_opt(){
 		    this.descriptor_radius = 8;
 		    this.corner_threshold = 45;	//22.5			//15
@@ -72,12 +77,14 @@
 
 		var canvas = loadCanvas("divStitched");
 	 	
-	 	var test_img = myPowerConstructor("../imgs/P110.jpg");	
+	 	var test_img = myPowerConstructor("../imgs/P110.jpg", stat);	
 
 	 	test_img.set(canvas, my_opt, whenDataReady);
 
 		function whenDataReady() {
+			stat.stop("whole procedure");
 		  console.log("Data redo!", test_img.getW());
+		  log.innerHTML = stat.log();
 		}
 	 	
 	}

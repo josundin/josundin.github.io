@@ -14,7 +14,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 		}
 
 	//function myPowerConstructor(x){
-	_this['myPowerConstructor'] = function(x){
+	_this['myPowerConstructor'] = function(x, stat){
 		var that = new imgOpt(x);
 
 		var myCtx;
@@ -23,9 +23,9 @@ Make getters and setters for width and hight in order to make the canvas outside
         var myImg_u8;
         var myCorners = [];
 
-        var log = document.getElementById('log');
-		var stat = new profiler();
+
 		stat.add("fast corners");
+		stat.add("gradientVectors");
 		
 		function sec1(){
 		return 11;
@@ -66,25 +66,20 @@ Make getters and setters for width and hight in order to make the canvas outside
 		/// Descriptor stuff
 	    function computeDetectors(this_canvas, descriptor_radius) {
 
-			var windowRadius = descriptor_radius;//my_opt.descriptor_radius;
+	    	var windowRadius = descriptor_radius;//my_opt.descriptor_radius;
 			var numout = 0;
-			//var vectors = processing.gradientVectors(this_canvas);
-			//var desc = new Array(image.count);
+			stat.start("gradientVectors");
+			var vectors = processing.gradientVectors(this_canvas);
+			stat.stop("gradientVectors");
 
-			// for(var i =0; i < image.count; i++)
-			// {
-			// var xpos = image.corners[i].x + xoffset;
-			// var ypos = image.corners[i].y;
-
-			// // [f,d] = vl_sift(I) ;
-			// image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
-			// //console.log(ypos, xpos, vectors[ypos][xpos]);
-			// //console.log(desc[i]);
-			// }
-
-			// //image.descriptors.push(desc);
-			// //console.log(desc);
-	    }
+			var desc = new Array(that.count);
+			for(var i =0; i < image.count; i++)
+			{
+				var xpos = image.corners[i].x + xoffset;
+				var ypos = image.corners[i].y;
+				image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
+			}
+		 };
 
 
 
@@ -115,8 +110,9 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 						setupFastkeypointdetector(my_opt, computeFast);
 						stat.stop("fast corners");
-						computeDetectors(this_canvas, my_opt.descriptor_radius); 
-						log.innerHTML = stat.log();
+
+						computeDetectors(this_canvas, my_opt.descriptor_radius); 						
+						
 						callback();
 					};
 			
