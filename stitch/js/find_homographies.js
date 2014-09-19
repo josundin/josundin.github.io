@@ -99,6 +99,7 @@ function find_homographies(images, dp){
 		    	var matches = [];
 		      	computeMatches(baseImage, imagesList[i], matches);
 		      	console.log("IMG:", i, imagesList[i].img.src, imagesList[i].count);
+		      	console.log(imagesList[i].descriptors[0][1]);
 
 		      	console.log("num matches", matches.length);
 

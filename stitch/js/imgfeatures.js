@@ -21,8 +21,9 @@ Make getters and setters for width and hight in order to make the canvas outside
 		var myImageW;  
         var myImageH;
         var myImg_u8;
-        var myCorners = [];
-
+        //var myCorners = [];
+        that.corners = [];
+        that.descriptors = [];
 
 		stat.add("fast corners");
 		stat.add("gradientVectors");
@@ -41,7 +42,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 		    //set corners
 		    var i = myImageW*myImageH;
 		    while(--i >= 0) {
-		        myCorners[i] = new jsfeat.point2d_t(0,0,0,0);
+		        that.corners[i] = new jsfeat.point2d_t(0,0,0,0);
 		    }
 
 		    jsfeat.fast_corners.set_threshold(my_opt.corner_threshold);
@@ -56,8 +57,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 			var imageData = myCtx.getImageData(xoffset, 0, myImageW, myImageH);
 			jsfeat.imgproc.grayscale(imageData.data, myImg_u8.data);
 			//prev_count = count;
-			that.count = jsfeat.fast_corners.detect(myImg_u8, myCorners, border);
-			console.log("cnt", that.count, myCorners.length);
+			that.count = jsfeat.fast_corners.detect(myImg_u8, that.corners, border);
+			console.log("cnt", that.count, that.corners.length);
 	  	};
 	  	///////END corner stuff/////////////////////////////////////////////
 
@@ -73,15 +74,88 @@ Make getters and setters for width and hight in order to make the canvas outside
 			stat.stop("gradientVectors");
 
 			var desc = new Array(that.count);
-			for(var i =0; i < image.count; i++)
+			for(var i =0; i < that.count; i++)
 			{
-				var xpos = image.corners[i].x + xoffset;
-				var ypos = image.corners[i].y;
-				image.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
+				var xpos = that.corners[i].x;
+				var ypos = that.corners[i].y;
+				that.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
 			}
 		 };
 
+	    function extractHistogramsFromWindow(x,y, radius, vectors){
 
+	      var cellradius = radius / 2;
+	      
+	       var histograms = extractHistogramsFromCell(x-radius, y-radius, cellradius, vectors).concat(
+	                        extractHistogramsFromCell(x-(radius/2), y-radius, cellradius, vectors), 
+	                        extractHistogramsFromCell(x, y-radius, cellradius, vectors),
+	                        extractHistogramsFromCell(x+(radius/2), y-radius, cellradius, vectors),
+
+	                        extractHistogramsFromCell(x-radius, y-(radius/2), cellradius, vectors),
+	                        extractHistogramsFromCell(x-(radius/2), y-(radius/2), cellradius, vectors), 
+	                        extractHistogramsFromCell(x, y-(radius/2), cellradius, vectors),
+	                        extractHistogramsFromCell(x+(radius/2), y-(radius/2), cellradius, vectors),
+
+	                        extractHistogramsFromCell(x-radius, y, cellradius, vectors),
+	                        extractHistogramsFromCell(x-(radius/2), y, cellradius, vectors), 
+	                        extractHistogramsFromCell(x, y, cellradius, vectors),
+	                        extractHistogramsFromCell(x+(radius/2), y, cellradius, vectors),
+
+	                        extractHistogramsFromCell(x-radius, y+(radius/2), cellradius, vectors),
+	                        extractHistogramsFromCell(x-(radius/2), y+(radius/2), cellradius, vectors), 
+	                        extractHistogramsFromCell(x, y+(radius/2), cellradius, vectors),
+	                        extractHistogramsFromCell(x+(radius/2), y+(radius/2), cellradius, vectors)
+
+	                        );
+
+	      norm.L2(histograms);
+
+	      return histograms;
+	    }
+
+		/*
+		Provide the x, y cordinates of the upper left corner of the cell
+		*/
+		function extractHistogramsFromCell(x,y, cellradius, gradients) {
+			//from x-rad, y-rad till x,y
+			var histogram = zeros(8);
+
+			for (var i = 0; i < cellradius; i++) {
+			  for (var j = 0; j < cellradius; j++) {
+			    var vector = gradients[y + i][x + j];
+			    var bin = binFor(vector.orient, 8);
+			    histogram[bin] += vector.mag;
+			    //console.log("y : ", y + i, "x :", x + j);
+			  }
+			}
+
+			//console.log("my hist : ", histogram);
+			return histogram;
+		}; 
+
+
+		function binFor(radians, bins) {
+			var angle = radians * (180 / Math.PI);
+			if (angle < 0) {
+			  angle += 180;
+			}
+
+			// center the first bin around 0
+			angle += 90 / bins;
+			angle %= 180;
+
+			var bin = Math.floor(angle / 180 * bins);
+			return bin;
+		}
+
+		function zeros(size) {
+			var array = new Array(size);
+			for (var i = 0; i < size; i++) {
+			array[i] = 0;
+			}
+			return array;
+		}
+		///////END descriptor stuff//////////////////////////////////////
 
 
 
@@ -111,7 +185,8 @@ Make getters and setters for width and hight in order to make the canvas outside
 						setupFastkeypointdetector(my_opt, computeFast);
 						stat.stop("fast corners");
 
-						computeDetectors(this_canvas, my_opt.descriptor_radius); 						
+						computeDetectors(this_canvas, my_opt.descriptor_radius); 
+						console.log(that.descriptors[0][1]);						
 						
 						callback();
 					};
