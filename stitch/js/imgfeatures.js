@@ -22,7 +22,6 @@ Make getters and setters for width and hight in order to make the canvas outside
 
 		stat.start("load image into browser");
 		var that = new imgOpt(x);
-		stat.stop("load image into browser");
 
 		var myCtx;
 		var myImageW;  
@@ -171,6 +170,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 					this_canvas.height = myImageH;
 					myCtx = this_canvas.getContext('2d');
 			 		myCtx.drawImage(this, 0, 0);
+			 		stat.stop("load image into browser");
 			 		stat.start("fast corners");
 
 					setupFastkeypointdetector(my_opt, computeFast);
