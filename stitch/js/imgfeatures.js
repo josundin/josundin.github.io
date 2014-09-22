@@ -1,6 +1,5 @@
 //imgfeatures
 /*///////////////////////////////////////////////////////////////////
-Make getters and setters for width and hight in order to make the canvas outside this object
 ////////////////////////////////////////////////////////////////////*/
 
 (function(_this){
@@ -176,7 +175,7 @@ Make getters and setters for width and hight in order to make the canvas outside
 					callback();
 				};
 		
-			return myImageW;
+			return;
 			},
 			set_threshold: function(threshold) {
                 _threshold = Math.min(Math.max(threshold, 0), 255);
@@ -198,7 +197,4 @@ Make getters and setters for width and hight in order to make the canvas outside
         	}
 	    };
 	};
-
-
-
 }(this));
