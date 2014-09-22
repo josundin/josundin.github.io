@@ -1,7 +1,10 @@
 //ransac.js
+(function(_this){
+"use strict";
 
 ///////RANSAC//////////////////////////////
-function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
+//function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
+_this['ransac'] = function(non_norm_pairs, ransac_threshold, ransac_iter, callback){
 
 	var normalzed = new normalize_points(non_norm_pairs);
 	//used for the report
@@ -76,6 +79,8 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
 		Hbest = denorm(normalzed.T1, normalzed.T2, Hbest);
 
 		console.log("h", Hbest);
+		if(callback)
+			callback(Hbest);
 
 		return Hbest;
 	}
@@ -373,3 +378,4 @@ function ransac(non_norm_pairs, ransac_threshold, ransac_iter){
 
 }
 ////////END RANSAC/////////////////////////////////////////////////////
+}(this));
