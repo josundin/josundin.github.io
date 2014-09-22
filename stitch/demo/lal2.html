@@ -110,22 +110,7 @@
 	var stat = new profiler();
 	var timeProcces = new profiler();
 	var table1 = document.getElementById('table1');
-	table1.style= "width:50%";
-					var tr = document.createElement('tr');
-			    var text1 = document.createTextNode('Image name');
-    			var text2 = document.createTextNode('Number of pts');
-    			var text3 = document.createTextNode('Process time');
-    			var td1 = document.createElement('td');
-    			var td2 = document.createElement('td');
-    			var td3 = document.createElement('td');
-			    td1.appendChild(text1);
-			    td2.appendChild(text2);
-			    td3.appendChild(text3);
-			    tr.appendChild(td1);
-			    tr.appendChild(td2);
-			    tr.appendChild(td3);
-
-			    table1.appendChild(tr);
+	table1.style= "width:100%";
 
 	function init() {
 
@@ -145,6 +130,7 @@
 		stat.add("matching");
 
 		var indx = 0;
+		updateTable('Image name: ', 'Number of pts: ', 'Process time: ');
 
 
 		computeFeatures(images[indx++]);
@@ -170,23 +156,8 @@
 				console.log("img done, nr pts", pts, "in:", srcImg);
 				//Img name | number of points | time to process
 				//log_pts.innerHTML += "Img name: " + srcImg + " Nr of pts: " +  pts + " in: " + "Process time: " + timeProcces.log(1) + " ms" + "<br>";	
-				
-				var tr = document.createElement('tr');
-			    var text1 = document.createTextNode(srcImg);
-    			var text2 = document.createTextNode(pts);
-    			var text3 = document.createTextNode(timeProcces.log(1));
-    			var td1 = document.createElement('td');
-    			var td2 = document.createElement('td');
-    			var td3 = document.createElement('td');
-			    td1.appendChild(text1);
-			    td2.appendChild(text2);
-			    td3.appendChild(text3);
-			    tr.appendChild(td1);
-			    tr.appendChild(td2);
-			    tr.appendChild(td3);
+				updateTable(srcImg, pts, timeProcces.log(1));
 
-			    table1.appendChild(tr);
-			    //div.appendChild(canvas);
 			    ///////////////////////////////////////
 				log.innerHTML = stat.log();
 
@@ -200,7 +171,26 @@
 
 			};
 
-		};	 	
+		};
+
+		function updateTable(txt1, txt2, text3) {
+
+			var tr = document.createElement('tr');
+		    var text1 = document.createTextNode(txt1);
+			var text2 = document.createTextNode(txt2);
+			var text3 = document.createTextNode(text3);
+			var td1 = document.createElement('td');
+			var td2 = document.createElement('td');
+			var td3 = document.createElement('td');
+		    td1.appendChild(text1);
+		    td2.appendChild(text2);
+		    td3.appendChild(text3);
+		    tr.appendChild(td1);
+		    tr.appendChild(td2);
+		    tr.appendChild(td3);
+		    table1.appendChild(tr);
+		};
+
 	};
 
 ////////////////////////////////////////////////////////////////
