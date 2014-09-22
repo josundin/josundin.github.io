@@ -74,6 +74,7 @@
 				</div>
 				<div class="col-md-4">
 					Matching time
+					<div id="matchingTime" class="alert alert-info"></div>
 				</div>
 			
 		</div>
@@ -104,21 +105,24 @@
 	    this.descriptor_radius = 8;
 	    this.corner_threshold = 45;
 	    this.lowe_criterion = 0.8;
+	   	this.ransac_iter = 1500;
+	    this.ransac_inlier_threshold = 3 * 0.01;
 	}
 	var myDescriptors = [];
 	var my_opt = new pipe_opt();
 	var stat = new profiler();
 	var timeProcces = new profiler();
+	var statMatch = new profiler();
 	var table1 = document.getElementById('table1');
 	table1.style= "width:100%";
 
 	function init() {
 
 		var log = document.getElementById('log');
-		var log_pts = document.getElementById('log_pts');
+		var matchingTime = document.getElementById('matchingTime');
 		var canvas = loadCanvas("divStitched");
-		var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-		//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+		//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+		var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 		//var images = ["../imgs/P112.jpg"];
 
 		timeProcces.add("T1");
@@ -127,7 +131,7 @@
 		stat.add("fast corners");
 		stat.add("gradientVectors");
 		stat.add("descriptors");
-		stat.add("matching");
+		statMatch.add("matching");
 
 		var indx = 0;
 		updateTable('Image name: ', 'Number of pts: ', 'Process time: ');
@@ -197,7 +201,7 @@
 
 
 function doneComputeFeatures(){
-	stat.start("matching");
+	statMatch.start("matching");
 	console.log("done computeFeatures !!!!!!!!!!!!!!");
 	var baseImageDesc = myDescriptors[0];
 	var restImageDesc = [];
@@ -212,9 +216,14 @@ function doneComputeFeatures(){
     matching.set(baseImageDesc, restImageDesc[0], whenMatchinDone);
 
     function whenMatchinDone(argument) {
-    	console.log("dine", argument);
-    	stat.stop("matching");
-    	log.innerHTML = stat.log();
+
+    	console.log("The matches", argument);
+    	statMatch.stop("matching");
+    	matchingTime.innerHTML = statMatch.log();
+
+	  	//RASAC to find a good model
+      	var homography = ransac(argument, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
+      	homographies.push(homography);
     }
  
 };
