@@ -1,7 +1,8 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Demo</title>
 <style>
 	.selectedFiles img {
@@ -11,6 +12,18 @@
 		margin-bottom:10px;
 		margin-left:10px;
 	}
+
+	table, th, td {
+	    border: 1px solid black;
+	    border-collapse: collapse;
+	}
+	th, td {
+	    padding: 5px;
+	}
+	th {
+	    text-align: left;
+	}
+
 </style>
 
 	
@@ -33,7 +46,7 @@
 
 	<script type="text/javascript" src="../js/imgfeatures.js"></script>
 	<script type="text/javascript" src="../js/bruteForceMatching.js"></script>
-	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
 </head>
 <body>
 <div class="container">
@@ -48,8 +61,30 @@
 			<h2>3 Stitch</h2>
 			<p>
 				Stitch the two example images together to one and the same image.
-				Number of interest points: <div id="log_pts" ></div>. 
-				<div id="log" class="alert alert-info"></div>
+				Number of interest points: 
+			</p>
+ 
+				<div class="col-md-4">
+					<!--div id="log_pts" ></div-->
+					<div id="table1"class="alert alert-info" ></div>
+
+				</div>
+				<div class="col-md-4">
+					<div id="log" class="alert alert-info"></div>
+				</div>
+				<div class="col-md-4">
+					Matching time
+				</div>
+			
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class="span12">
+			<h2>2 Stitch</h2>
+			<p>
+				Stitch the two example images together to one and the same image
 			</p>
 
 			<div id="divStitched"></div>
@@ -73,6 +108,25 @@
 	var myDescriptors = [];
 	var my_opt = new pipe_opt();
 	var stat = new profiler();
+	var timeProcces = new profiler();
+	var table1 = document.getElementById('table1');
+	table1.style= "width:50%";
+					var tr = document.createElement('tr');
+			    var text1 = document.createTextNode('Image name');
+    			var text2 = document.createTextNode('Number of pts');
+    			var text3 = document.createTextNode('Process time');
+    			var td1 = document.createElement('td');
+    			var td2 = document.createElement('td');
+    			var td3 = document.createElement('td');
+			    td1.appendChild(text1);
+			    td2.appendChild(text2);
+			    td3.appendChild(text3);
+			    tr.appendChild(td1);
+			    tr.appendChild(td2);
+			    tr.appendChild(td3);
+
+			    table1.appendChild(tr);
+
 	function init() {
 
 		var log = document.getElementById('log');
@@ -80,9 +134,9 @@
 		var canvas = loadCanvas("divStitched");
 		var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 		//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
-		
+		//var images = ["../imgs/P112.jpg"];
 
-		stat.add("whole procedure");
+		timeProcces.add("T1");
 
 		stat.add("load image into browser");
 		stat.add("fast corners");
@@ -90,21 +144,22 @@
 		stat.add("descriptors");
 		stat.add("matching");
 
-
-		stat.start("whole procedure");
-
 		var indx = 0;
 
 
 		computeFeatures(images[indx++]);
 
 		function computeFeatures(img){
+			timeProcces.start("T1");
 
 		 	var test_img = myPowerConstructor(img, stat);	
 		 	test_img.set(canvas, my_opt, whenDataReady);
 
 			function whenDataReady() {
-				stat.stop("whole procedure");
+				//
+
+				//
+				timeProcces.stop("T1");
 				var pts = test_img.getNuberOfPoints();
 				var srcImg = test_img.getSrc();
 				var lastIndex = srcImg.lastIndexOf("/");
@@ -113,7 +168,26 @@
 
 				srcImg = srcImg.substring(srcImg.length, lastIndex +1);
 				console.log("img done, nr pts", pts, "in:", srcImg);
-				log_pts.innerHTML += pts + " in: " + srcImg + "<br>";	
+				//Img name | number of points | time to process
+				//log_pts.innerHTML += "Img name: " + srcImg + " Nr of pts: " +  pts + " in: " + "Process time: " + timeProcces.log(1) + " ms" + "<br>";	
+				
+				var tr = document.createElement('tr');
+			    var text1 = document.createTextNode(srcImg);
+    			var text2 = document.createTextNode(pts);
+    			var text3 = document.createTextNode(timeProcces.log(1));
+    			var td1 = document.createElement('td');
+    			var td2 = document.createElement('td');
+    			var td3 = document.createElement('td');
+			    td1.appendChild(text1);
+			    td2.appendChild(text2);
+			    td3.appendChild(text3);
+			    tr.appendChild(td1);
+			    tr.appendChild(td2);
+			    tr.appendChild(td3);
+
+			    table1.appendChild(tr);
+			    //div.appendChild(canvas);
+			    ///////////////////////////////////////
 				log.innerHTML = stat.log();
 
 				if(indx < (images.length)){

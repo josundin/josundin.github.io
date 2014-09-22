@@ -71,7 +71,7 @@ var profiler = (function() {
     var count_frames = 0;
     var ringbuff = new ring_buffer(20);
     function profiler() {
-        this.fps = 0.0; // yeah float
+        //this.fps = 0.0; // yeah float
         this.timers = [];
         //this.names = [];
         this.frame_timer = new stopwatch();
@@ -98,7 +98,7 @@ var profiler = (function() {
             for(i = 0; i < size; ++i) {
                 sum += ringbuff.get(i);
             }
-            this.fps = size / sum * 1000;
+            //this.fps = size / sum * 1000;
             this.frame_timer.start();
         }
     }
@@ -125,15 +125,20 @@ var profiler = (function() {
         task[1].stop();
     }
 
-    profiler.prototype.log = function() {
+    profiler.prototype.log = function(single) {
         var n = this.timers.length | 0;
         var i = 0;
-        var str = "Ändra denna senare"//<strong>FPS: " + this.fps.toFixed(2) + "</strong>";
-        for(i = 0; i < n; ++i) {
-            var pair = this.timers[i];
-            str += "<br/>" + pair[0] + ": " + pair[1].get_runtime() + "ms";
+        var str = ""//<strong>FPS: " + this.fps.toFixed(2) + "</strong>";
+        if(!single){
+            for(i = 0; i < n; ++i) {
+                var pair = this.timers[i];
+                str +=  pair[0] + ": " + pair[1].get_runtime() + "ms" + "<br/>";
+            }
+            return str;
         }
-        return str;
+        else{
+            return this.timers[0][1].get_runtime();
+        }
     }
 
     return profiler;
