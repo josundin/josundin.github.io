@@ -47,7 +47,7 @@
 
 	<script type="text/javascript" src="../js/imgfeatures.js"></script>
 	<script type="text/javascript" src="../js/bruteForceMatching.js"></script>
-	<script type="text/javascript" src="../js/ransac.js"></script>
+	<script type="text/javascript" src="../js/ransac1.js"></script>
 	<script type="text/javascript" src="../js/imagewarp.js"></script>
 	<script type="text/javascript" src="../js/layout.js"></script>
 	<link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
@@ -77,8 +77,6 @@
 					<div id="log" class="alert alert-info"></div>
 				</div>
 				<div class="col-md-4">
-					Matching time
-					<div id="matchingTime" class="alert alert-info"></div>
 					<div id="table3"class="alert alert-info" ></div>
 				</div>
 			
@@ -118,21 +116,21 @@
 	var stat = new profiler();
 	var timeProcces = new profiler();
 	var statMatch = new profiler();
+	var statRansac = new profiler();
 	var table1 = document.getElementById('table1');
 	table1.style= "width:100%";
 	var table3 = document.getElementById('table3');
 	table3.style= "width:100%";
 	var indx = 0;
 	var homographies = [];
-	// var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-	var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+	var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 	//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images = ["../imgs/P112.jpg"];
 
 	function init() {
 
 		var log = document.getElementById('log');
-		var matchingTime = document.getElementById('matchingTime');
 		var canvas = loadCanvas("divStitched");
 
 		timeProcces.add("T1");
@@ -142,9 +140,10 @@
 		stat.add("gradientVectors");
 		stat.add("descriptors");
 		statMatch.add("matching");
+		statRansac.add("ransac");
 
 		updateTable(table1 ,'Image name: ', 'Number of pts: ', 'Process time: ');
-		updateTable(table3 ,'Image pair: ', 'Number of matches : ', 'Time: ');
+		updateTable2(table3 ,'Image pair: ', 'Number of matches : ', 'Matching time: ', "Ransac good matches", "Ransac time");
 
 
 		computeFeatures(images[indx++]);
@@ -201,16 +200,18 @@ function doneComputeFeatures(){
     	statMatch.stop("matching");
     	var theMatches = matching.getMatches();
 
-    	table3 = document.getElementById('table3');
-    	updateTable(table3, " par 1 - 2", theMatches.length, statMatch.log(1));
-    	
+    	//updateTable2(table3, " par 1 - 2", theMatches.length, statMatch.log(1), " ", "");
+    	statRansac.start("ransac");
 	  	//RASAC to find a good model
-      	//ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter,whenRANSACDone);
-		//whenRANSACDone("TESTING");      	
+      	var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
+      	myRansac.getHomographie(whenRANSACDone);
 
-      	//function whenRANSACDone(homography) {
-      		//homographies.push(homography);
-      		//console.log("hello done", homography);
+      	function whenRANSACDone(homography) {
+      		
+			statRansac.stop("ransac");
+      		updateTable2(table3, " par 1 - 2", theMatches.length, statMatch.log(1), myRansac.getBestinlier(), statRansac.log(1));
+      		homographies.push(homography);
+      		
       		if(++indx < (images.length)){
       			console.log("Compute next pair 0-2 osv ", indx);
       			doneComputeFeatures();
@@ -218,9 +219,9 @@ function doneComputeFeatures(){
       		else{
       			console.log("The list should be empty ", indx);	
       			console.log(homographies);
-      			//warp_App("divStitched", homographies, images);
+      			warp_App("divStitched", homographies, images);
       		}
-      	//}
+      	}
     }
  
 };
@@ -240,6 +241,32 @@ function updateTable(id, txt1, txt2, text3) {
     tr.appendChild(td1);
     tr.appendChild(td2);
     tr.appendChild(td3);
+    id.appendChild(tr);
+};
+
+function updateTable2(id, txt1, txt2, txt3, txt4, txt5) {
+
+	var tr = document.createElement('tr');
+    var text1 = document.createTextNode(txt1);
+	var text2 = document.createTextNode(txt2);
+	var text3 = document.createTextNode(txt3);
+	var text4 = document.createTextNode(txt4);
+	var text5 = document.createTextNode(txt5);
+	var td1 = document.createElement('td');
+	var td2 = document.createElement('td');
+	var td3 = document.createElement('td');
+	var td4 = document.createElement('td');
+	var td5 = document.createElement('td');
+    td1.appendChild(text1);
+    td2.appendChild(text2);
+    td3.appendChild(text3);
+    td4.appendChild(text4);
+    td5.appendChild(text5);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tr.appendChild(td5);
     id.appendChild(tr);
 };
 
