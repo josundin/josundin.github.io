@@ -48,7 +48,12 @@
 		</div>
 	</div>
 
-
+	<div class="row">
+		<div id="cadre" style="width=100%;height=100%;">
+		    <input type="button" value="Executer" onclick="launch();"/>
+		    <div id="result" ></div>
+		</div>
+	</div>
 </div>
 
 
@@ -72,12 +77,35 @@
 
 
 	function init() {
-		
+		launch();		
 		//var selDiv1 = document.querySelector("#selectedF1");		
 		//placeimgs(images1, selDiv1);
 	 	start_stitch(images1);	
 
 	}
+
+	function launch() {
+		var inc = 0;
+		var max = 100;//9999;
+		var delay = 10; // 100 milliseconds
+
+
+	  function timeoutLoop() {
+	      document.getElementById('result').innerHTML = inc;
+	      if (++inc < max)
+	         setTimeout(timeoutLoop, delay);
+	   }
+
+	   setTimeout(timeoutLoop, delay);
+
+
+		// var iID = setInterval(function() {
+		// 	document.getElementById('result').innerHTML = inc;
+		// 	if (++inc >= max)
+		// 		clearInterval(iID);
+		// 	},
+		// delay);
+	};
 
 
 	function placeimgs(images, wdiv){
@@ -114,13 +142,6 @@
         return d1.promise();
     }
 
-    // function shortfunctionsecond(){
-    //     var d = new $.Deferred();
-    //     warp_App("divStitched", homographies.H, images1);
-
-    //     d.resolve();
-    //     return d.promise();
-    // }
 
 	function shortfunctionsecond(){
 

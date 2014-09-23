@@ -3,16 +3,24 @@
 (function(_this){
 "use strict";
 
+	var desObj = function(descriptors1, descriptors2){
+		this.descriptors1 = descriptors1;
+		this.descriptors2 = descriptors2;
+	    this.matches = [];
+
+	   	this.img = new Image();
+	    this.img.src = "../imgs/favicon.ico";
+		}
+
 	//function myPowerConstructor(x){
-	_this['bruteForceMatching'] = function(threshold){
+	_this['bruteForceMatching'] = function(descriptors1, descriptors2, threshold){
+
+		var that = new desObj(descriptors1, descriptors2);
 
 		var lowe_criterion = threshold;
-		var dists = [];
-		var test = [];
-		var dista = [];
-		var imgdata = [];
-		var matches = [];
-		var dists = 0;
+
+		//var matches = [];
+		//var dists = 0;
 
 		//Computes the Squared Eucledian distance between the vectors
 		function computeVectorDistance(p ,q){
@@ -32,15 +40,19 @@
 			return 0;
 		}
 
-		return {
-			set: function(descriptors1, descriptors2, callback) {
+		function computeDescriptor() {
 
-			for (var i = 0; i < descriptors1.length; i++) {
+			var dists = [];
+			var test = [];
+			var dista = [];
+			var imgdata = [];
+
+			for (var i = 0; i < that.descriptors1.length; i++) {
 				dists = [];
 				test = [];
-				for(var j = 0; j < descriptors2.length; j++) {
-				dista = computeVectorDistance(descriptors1[i][1], descriptors2[j][1]);
-				imgdata = [descriptors2[j][0], dista];
+				for(var j = 0; j < that.descriptors2.length; j++) {
+				dista = computeVectorDistance(that.descriptors1[i][1], that.descriptors2[j][1]);
+				imgdata = [that.descriptors2[j][0], dista];
 				dists.push(imgdata);
 				test.push(dista);
 			}
@@ -48,15 +60,31 @@
 			dists.sort(byDist);
 			//Lowe criterion with threshold for these descriptors
 			if((dists[0][1] / dists[1][1] ) < lowe_criterion)
-			matches.push([descriptors1[i][0] ,dists[0][0]]);
+			that.matches.push([that.descriptors1[i][0] ,dists[0][0]]);
 			   
 			}  
 
-			console.log(matches.length);
+			console.log(that.matches.length);
 
-			callback(matches);
-			return ;
 			}
+
+		return {
+			set: function( callback) {
+
+				that.img.onload = function() {
+
+					computeDescriptor();
+
+					console.log( "2 gang", that.matches.length);
+
+					callback();
+				}
+				return ;
+			},
+        	getMatches: function() {
+        		//var npts = that.count;
+        		 return that.matches;
+        	}
 		};
 	}
 }(this));

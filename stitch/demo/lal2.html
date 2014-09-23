@@ -120,6 +120,8 @@
 	var statMatch = new profiler();
 	var table1 = document.getElementById('table1');
 	table1.style= "width:100%";
+	var table3 = document.getElementById('table3');
+	table3.style= "width:100%";
 	var indx = 0;
 	var homographies = [];
 	// var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
@@ -190,23 +192,25 @@
 
 function doneComputeFeatures(){
 	statMatch.start("matching");
-    var matching = bruteForceMatching(my_opt.lowe_criterion);
+    var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], my_opt.lowe_criterion);
 
-    matching.set(myDescriptors[0], myDescriptors[indx], whenMatchinDone);
+    matching.set(whenMatchinDone);
 
-    function whenMatchinDone(theMatches) {
-
+    function whenMatchinDone() {
+		console.log("Matches computed ", indx);
     	statMatch.stop("matching");
-    	//matchingTime.innerHTML += statMatch.log(1);
+    	var theMatches = matching.getMatches();
 
+    	table3 = document.getElementById('table3');
     	updateTable(table3, " par 1 - 2", theMatches.length, statMatch.log(1));
+    	
 	  	//RASAC to find a good model
       	//ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter,whenRANSACDone);
-		whenRANSACDone("TESTING");      	
+		//whenRANSACDone("TESTING");      	
 
-      	function whenRANSACDone(homography) {
-      		homographies.push(homography);
-      		console.log("hello done", homography);
+      	//function whenRANSACDone(homography) {
+      		//homographies.push(homography);
+      		//console.log("hello done", homography);
       		if(++indx < (images.length)){
       			console.log("Compute next pair 0-2 osv ", indx);
       			doneComputeFeatures();
@@ -214,9 +218,9 @@ function doneComputeFeatures(){
       		else{
       			console.log("The list should be empty ", indx);	
       			console.log(homographies);
-      			warp_App("divStitched", homographies, images);
+      			//warp_App("divStitched", homographies, images);
       		}
-      	}
+      	//}
     }
  
 };
