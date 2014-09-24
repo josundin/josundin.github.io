@@ -51,32 +51,24 @@
 				dists = [];
 				test = [];
 				for(var j = 0; j < that.descriptors2.length; j++) {
-				dista = computeVectorDistance(that.descriptors1[i][1], that.descriptors2[j][1]);
-				imgdata = [that.descriptors2[j][0], dista];
-				dists.push(imgdata);
-				test.push(dista);
+					dista = computeVectorDistance(that.descriptors1[i][1], that.descriptors2[j][1]);
+					imgdata = [that.descriptors2[j][0], dista];
+					dists.push(imgdata);
+					test.push(dista);
+				}
+				//sort
+				dists.sort(byDist);
+				//Lowe criterion with threshold for these descriptors
+				if((dists[0][1] / dists[1][1] ) < lowe_criterion)
+				that.matches.push([that.descriptors1[i][0] ,dists[0][0]]);	   
 			}
-			//sort
-			dists.sort(byDist);
-			//Lowe criterion with threshold for these descriptors
-			if((dists[0][1] / dists[1][1] ) < lowe_criterion)
-			that.matches.push([that.descriptors1[i][0] ,dists[0][0]]);
-			   
-			}  
-
-			console.log(that.matches.length);
-
-			}
+		}
 
 		return {
 			set: function( callback) {
 
 				that.img.onload = function() {
-
 					computeDescriptor();
-
-					console.log( "2 gang", that.matches.length);
-
 					callback();
 				}
 				return ;

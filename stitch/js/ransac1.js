@@ -22,7 +22,7 @@ _this['ransac'] = function(non_norm_pairs, ransac_threshold, ransac_iter){
 			{
 				//Make a sample     
 				var sample = _.sample(pairs, 5);
-				 
+				
 				//////////////////////////////////
 				//create a new H from the samples
 				//var H = Solve_8X8(sample);
@@ -59,8 +59,6 @@ _this['ransac'] = function(non_norm_pairs, ransac_threshold, ransac_iter){
 				}
 
 			}
-
-			console.log("best inliers", bestinliers.length);
 
 			if(bestinliers.length >= 7) {
 		

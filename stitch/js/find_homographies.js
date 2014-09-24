@@ -81,7 +81,7 @@ function find_homographies(images, dp){
 			var done1 = new $.Deferred();
 			
    			computeTheStuff(baseImage, computeDetectors);
-   			console.log("First", baseImage.img.src, baseImage.count);
+   			console.log("First", images[0], baseImage.count);
 			done1.resolve();
         	return done1.promise();
     	}
@@ -98,7 +98,7 @@ function find_homographies(images, dp){
 
 		    	var matches = [];
 		      	computeMatches(baseImage, imagesList[i], matches);
-		      	console.log("IMG:", i, imagesList[i].img.src, imagesList[i].count);
+		      	console.log("IMG:", i, images[i], imagesList[i].count);
 		      	console.log(imagesList[i].descriptors[0][1]);
 
 		      	console.log("num matches", matches.length);
