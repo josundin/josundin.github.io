@@ -46,7 +46,6 @@
 			var test = [];
 			var dista = [];
 			var imgdata = [];
-
 			for (var i = 0; i < that.descriptors1.length; i++) {
 				dists = [];
 				test = [];

@@ -20,18 +20,22 @@
 	var table3 = document.getElementById('table3');
 	//table3.style= "width:100%";
 	var indx = 0;
+	var imgNameIndx = 0;
 	var homographies = [];
 	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-	var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 	//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
-	//var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+	var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 	//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images = ["../imgs/P112.jpg"];
-
+	var imgNames = [];
+	
 	function init() {
 
 		var log = document.getElementById('log');
+		var detInfo = document.getElementById('detInfo');
 		var canvas = loadCanvas("divStitched");
+		
 
 		timeProcces.add("T1");
 
@@ -70,6 +74,8 @@
 
 			    ///////////////////////////////////////
 				log.innerHTML = stat.log();
+				detInfo.innerHTML = "<strong> Detailed info :   " + srcImg + " </strong>";
+				imgNames.push(srcImg);
 
 				if(indx < (images.length)){
 					computeFeatures(images[indx++]);
@@ -108,7 +114,7 @@ function doneComputeFeatures(){
 	      	myRansac.getHomographie(whenRANSACDone);	
     	}
     	else{
-    		updateTable2(table3, " par 1 - 2", theMatches.length, statMatch.log(1), 0, 0);
+    		updateTable2(table3, imgNames[0] + " -" + imgNames[++imgNameIndx] , theMatches.length, statMatch.log(1), 0, 0);
     		//pop imdx in image list
     		images.splice(indx, 1);
     		myDescriptors.splice(indx, 1);
@@ -122,7 +128,7 @@ function doneComputeFeatures(){
       	function whenRANSACDone(homography) {
       		
 			statRansac.stop("ransac");
-      		updateTable2(table3, " par 1 - 2", theMatches.length, statMatch.log(1), myRansac.getBestinlier(), statRansac.log(1));
+      		updateTable2(table3, imgNames[0] + " -" + imgNames[++imgNameIndx], theMatches.length, statMatch.log(1), myRansac.getBestinlier(), statRansac.log(1));
       		homographies.push(homography);
       		++indx;
       		computeNext();

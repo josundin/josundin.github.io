@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Demo</title>
+<title>Timing test</title>
 <style>
 	.selectedFiles img {
 		max-width: 250;
@@ -65,14 +65,17 @@
 			</p>
  
 				<div class="col-md-4">
-					<!--div id="log_pts" ></div-->
+					<strong>Processed images (time in ms)</strong>
 					<div id="table1"class="alert alert-info" ></div>
 
 				</div>
 				<div class="col-md-4">
+					<!--strong>Detailed info :</strong-->
+					<div id = "detInfo" ></div>
 					<div id="log" class="alert alert-info"></div>
 				</div>
 				<div class="col-md-4">
+					<strong>Matching and RANSAC times in ms</strong>
 					<div id="table3"class="alert alert-info" ></div>
 				</div>
 			
@@ -88,7 +91,7 @@
 			</p>
 
 			<div id="divStitched"></div>
-		
+
 		</div>
 	</div>
 
