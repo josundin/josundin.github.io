@@ -25,18 +25,20 @@
 	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 	//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
-	var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
-	//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	//var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+	var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images = ["../imgs/P112.jpg"];
 	var imgNames = [];
 	
+	var log = document.getElementById('log');
+	var detInfo = document.getElementById('detInfo');
+	
+	var startedOver = 1;
+	var canvasDiv = "divStitched";
+	var canvas = loadCanvas(canvasDiv);
+
 	function init() {
-
-		var log = document.getElementById('log');
-		var detInfo = document.getElementById('detInfo');
-		var canvas = loadCanvas("divStitched");
-		
-
+	
 		timeProcces.add("T1");
 
 		stat.add("load image into browser");
@@ -51,45 +53,45 @@
 
 
 		computeFeatures(images[indx++]);
+	};
 
-		function computeFeatures(img){
-			timeProcces.start("T1");
+	function computeFeatures(img){
+		timeProcces.start("T1");
 
-		 	var test_img = myPowerConstructor(img, stat);	
-		 	test_img.set(canvas, my_opt, whenDataReady);
+	 	var test_img = myPowerConstructor(img, stat);	
+	 	test_img.set(canvas, my_opt, whenDataReady);
 
-			function whenDataReady() {
-				console.log("Features computed ", indx);
-				timeProcces.stop("T1");
-				var pts = test_img.getNuberOfPoints();
-				var srcImg = test_img.getSrc();
-				var lastIndex = srcImg.lastIndexOf("/");
+		function whenDataReady() {
+			console.log("Features computed ", indx);
+			timeProcces.stop("T1");
+			var pts = test_img.getNuberOfPoints();
+			var srcImg = test_img.getSrc();
+			var lastIndex = srcImg.lastIndexOf("/");
 
-				myDescriptors.push(test_img.getDescriptor());
+			myDescriptors.push(test_img.getDescriptor());
 
-				srcImg = srcImg.substring(srcImg.length, lastIndex +1);
-				//Img name | number of points | time to process
-				//log_pts.innerHTML += "Img name: " + srcImg + " Nr of pts: " +  pts + " in: " + "Process time: " + timeProcces.log(1) + " ms" + "<br>";	
-				updateTable(table1, srcImg, pts, timeProcces.log(1));
+			srcImg = srcImg.substring(srcImg.length, lastIndex +1);
+			//Img name | number of points | time to process
+			//log_pts.innerHTML += "Img name: " + srcImg + " Nr of pts: " +  pts + " in: " + "Process time: " + timeProcces.log(1) + " ms" + "<br>";	
+			updateTable(table1, srcImg, pts, timeProcces.log(1));
 
-			    ///////////////////////////////////////
-				log.innerHTML = stat.log();
-				detInfo.innerHTML = "<strong> Detailed info :   " + srcImg + " </strong>";
-				imgNames.push(srcImg);
+		    ///////////////////////////////////////
+			log.innerHTML = stat.log();
+			detInfo.innerHTML = "<strong> Detailed info :   " + srcImg + " </strong>";
+			imgNames.push(srcImg);
 
-				if(indx < (images.length)){
-					computeFeatures(images[indx++]);
-				}
-				else{
-					indx = 1;
-					canvas.width = 0;
-	    			canvas.height = 0;
-					doneComputeFeatures();
-				}
-
-			};
+			if(indx < (images.length)){
+				computeFeatures(images[indx++]);
+			}
+			else{
+				indx = 1;
+				canvas.width = 0;
+    			canvas.height = 0;
+				doneComputeFeatures();
+			}
 
 		};
+
 	};
 
 ////////////////////////////////////////////////////////////////
@@ -129,6 +131,7 @@ function doneComputeFeatures(){
       		
 			statRansac.stop("ransac");
       		updateTable2(table3, imgNames[0] + " -" + imgNames[++imgNameIndx], theMatches.length, statMatch.log(1), myRansac.getBestinlier(), statRansac.log(1));
+      		table3.scrollIntoView(true);
       		homographies.push(homography);
       		++indx;
       		computeNext();
@@ -140,14 +143,47 @@ function doneComputeFeatures(){
       			doneComputeFeatures();
       		}
       		else{
+      			var el = document.getElementById(canvasDiv);
+    			el.scrollIntoView(true);
       			console.log("The list should be empty ", indx);	
       			console.log(homographies);
-      			warp_App("divStitched", homographies, images);
+      			warp_App(canvasDiv, homographies, images);
+      			startOver();
       		}
       	}
     }
  
 };
+
+
+function startOver(){
+	if(startedOver === 1){
+		startedOver = 2;
+		canvasDiv = "divStitched2";
+		canvas = loadCanvas("divStitched2");
+		images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+		reset();
+	
+	}
+	else if(startedOver === 2){
+		startedOver = 0;
+		canvasDiv = "divStitched3";
+		canvas = loadCanvas("divStitched3");
+		images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+		console.log("Start start over Last time");
+		reset();
+	}
+
+	function reset(){
+		indx = 0;
+		imgNameIndx = 0;
+		homographies = [];
+		imgNames = [];
+		myDescriptors = [];
+		computeFeatures(images[indx++]);	
+	}
+}
+
 
 function updateTable(id, txt1, txt2, text3) {
 
