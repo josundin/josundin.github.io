@@ -1,0 +1,45 @@
+<html>
+<head>
+<script type="text/javascript">
+    function launchPiWebWorker() {
+    console.log("Start from html script");
+    var worker = new Worker('pi.js');
+    worker.onmessage = function(e) {
+        var data = e.data;
+        console.log("done", data.type);
+        switch (data.type) {
+            case 'error':
+              var msg = 'Input Error: '
+              switch (data.code) {
+                case 'errInvalidNumber':
+                  msg += 'Invalid number.';
+                  break;
+                case 'errNegativeNumber':
+                  msg += 'Input must be positive.';
+                  break;
+              }
+              alert(msg);
+              break;
+            case 'data':
+              document.getElementById("PiValue").innerHTML = data.PiValue;
+              break;
+          }
+    };
+
+    //start the worker
+    worker.postMessage({'cmd':   'CalculatePi', 
+                        'value': document.getElementById("loop").value
+                      });
+    }
+
+</script>
+</head>
+<body>
+<label for="loop">Enter the number of cycles:</label>
+<input id="loop" type="number" value="100" />
+<input type="button" onclick="launchPiWebWorker()" value="Calculate Pi" />
+<br>
+<br>
+<div id="PiValue">PI value appears here</div>
+</body>
+</html>
