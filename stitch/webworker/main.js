@@ -14,21 +14,25 @@ function pipe_opt(){
 var myDescriptors = [];
 var my_opt = new pipe_opt();
 var stat = new profiler();
+var statMatch = new profiler();
 
-var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
-//var images = ["../imgs/P112.jpg", "../imgs/P111.jpg"];
+// var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+// var images = ["../imgs/P112.jpg", "../imgs/P111.jpg"];
+// var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 var canvasDiv = "divStitched";
 var canvas = loadCanvas(canvasDiv);
 var indx = 0;
+var pending_workers = images.length - 1; 
 
 function init() {
-
-	// timeProcces.add("T1");
 
 	stat.add("load image into browser");
 	stat.add("fast corners");
 	stat.add("gradientVectors");
 	stat.add("descriptors");
+
+	statMatch.add("matching");
 
 	computeFeatures(images[indx++]);
 };
@@ -55,6 +59,7 @@ function computeFeatures(img){
 			indx = 1;
 			canvas.width = 0;
 			canvas.height = 0;
+			statMatch.start("matching");
 			doneComputeFeatures();
 		}
 	};
@@ -64,16 +69,32 @@ function computeFeatures(img){
 
 function doneComputeFeatures(){
 
-console.log("dine features");
-//console.log("descriptors", myDescriptors[0], myDescriptors[1]);
+	
+	//console.log("descriptors", myDescriptors[0], myDescriptors[1]);
 
-//JSON
-var descJSON = {'desc1': myDescriptors[0], 'desc2': myDescriptors[1], 'thresh' : my_opt.lowe_criterion, 'id': 0};
+	//JSON
+	var descJSON = {'desc1': myDescriptors[0], 'desc2': myDescriptors[indx], 'thresh' : my_opt.lowe_criterion, 'id': indx -1 };
+	launchMatchingWebWorker(descJSON);
 
-console.log(descJSON);
-launchMatchingWebWorker(descJSON);
+	++indx;
+	computeNext();
  
 };
+      	
+
+function computeNext(){
+	if(indx < (images.length)){
+		console.log("Compute next", images[indx]);
+		doneComputeFeatures();
+	}
+	else{
+		console.log("The list should be empty ", indx);	
+		//console.log(homographies);
+		//warp_App(canvasDiv, homographies, images);
+		//startOver();
+	}
+}
+
 
 // console.log("start");
 
@@ -84,25 +105,38 @@ var sendJSON = {'value': document.getElementById("loop").value};
 console.log("Start from html script");
 var worker = new Worker('matchingWorker.js');
 worker.onmessage = function(e) {
-    var data = e.data;
-    console.log("done", data.matches.length, data.id);
-    switch (data.type) {
-        case 'error':
-          var msg = 'Input Error: '
-          switch (data.code) {
-            case 'errInvalidNumber':
-              msg += 'Invalid number.';
-              break;
-            case 'errNegativeNumber':
-              msg += 'Input must be positive.';
-              break;
-          }
-          alert(msg);
-          break;
-        case 'data':
-          //document.getElementById("PiValue").innerHTML = data.PiValue;
-          break;
-      }
+    var data = e.data;   
+	console.log("done", data.matches.length, data.id);
+
+
+
+	pending_workers	-= 1;
+  	if (pending_workers <= 0){
+  		console.log("Done w matches");
+		statMatch.stop("matching");
+		log_pts.innerHTML += statMatch.log(1) + "ms" + "<br>";
+		
+  	}
+    // switch (data.type) {
+    //     case 'error':
+    //       var msg = 'Input Error: '
+    //       switch (data.code) {
+    //         case 'errInvalidNumber':
+    //           msg += 'Invalid number.';
+    //           break;
+    //         case 'errNegativeNumber':
+    //           msg += 'Input must be positive.';
+    //           break;
+    //       }
+    //       alert(msg);
+    //       break;
+    //     case 'data':
+    //     	console.log("done", data.matches.length, data.id);
+    //     	console.log("do ransac");
+    //     	statMatch.stop("matching");
+    //     	log_pts.innerHTML += statMatch.log(1) + "ms" + "<br>";
+    //       break;
+    //   }
 };
 
 //start the worker
