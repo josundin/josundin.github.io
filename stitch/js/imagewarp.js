@@ -18,10 +18,8 @@ function warp_App(id, homographies,images) {
 
     var imageW = 0;
     var imageH = 0;
-    //This is the base image, create object and then remove element from images
-    //var baseImage = new imgOpt(images.shift());
+    //This is the base image
     var baseImage = new imgOpt(images[0])
-
 
     // This is the warp images, loop and pusch them to the ImageList
     var imagesList = [];
@@ -38,6 +36,8 @@ function warp_App(id, homographies,images) {
         //Kan ta bort en av variablerna???
         imageW = canvasWidth = baseImage.img.width * scale |0;;  //640;//892;
         imageH = canvasHeight = baseImage.img.height * scale |0;;  //480;//642;
+        canvasWidth = baseImage.img.width * scale |0;;  //640;//892;
+        canvasHeight = baseImage.img.height * scale |0;;  //480;//642;
                    
         applyWarp(id, imagesList);
 
@@ -119,7 +119,7 @@ function warp_App(id, homographies,images) {
         }
 
         // Draw the base image at the offset
-        ctx2.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH);
+        ctx2.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH, imageW, imageH);
 
         //hide the first canvas
         canvas.width = 0;

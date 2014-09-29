@@ -32,4 +32,3 @@ function CalculatePi(loop)
 //e is the event and e.data contains the JSON object
 self.onmessage = function(e) {
   CalculatePi(e.data.value);
-}

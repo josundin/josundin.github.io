@@ -1127,7 +1127,7 @@ function stitch_color(bestH){
     for(var i =0; i < p.length; i++)
       d += Math.pow(p[i] - q[i], 2);
 
-    return Math.sqrt(d);
+    return d;//Math.sqrt(d);
  
   }
 

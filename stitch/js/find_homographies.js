@@ -47,14 +47,12 @@ function find_homographies(images, dp){
 	//baseImage is the first image 
 	var baseImage = new imgObj(images[0]);
 	console.log(baseImage);
-	console.log("First img:" , images[0]);
-   
+	
    	// these are the rest of the images
     var imagesList = [];
     for (var i=0; i<images.length - 1; i++)
     {
         imagesList.push(new imgObj(images[i + 1]));
-        console.log("img:" , i + 1, images[i + 1]);
     }
     
 	var canvas_find = createcanvas();
@@ -81,8 +79,7 @@ function find_homographies(images, dp){
 			var done1 = new $.Deferred();
 			
    			computeTheStuff(baseImage, computeDetectors);
-   			console.log("First", images[0], baseImage.count);
-			done1.resolve();
+   			done1.resolve();
         	return done1.promise();
     	}
 
@@ -98,9 +95,7 @@ function find_homographies(images, dp){
 
 		    	var matches = [];
 		      	computeMatches(baseImage, imagesList[i], matches);
-		      	console.log("IMG:", i, images[i], imagesList[i].count);
-		      	console.log(imagesList[i].descriptors[0][1]);
-
+		    
 		      	console.log("num matches", matches.length);
 
 		      	//RASAC to find a good model
