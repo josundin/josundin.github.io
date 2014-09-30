@@ -23,10 +23,10 @@
 	var imgNameIndx = 0;
 	var homographies = [];
 	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-	//var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+	var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 	//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 	//var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
-	var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images = ["../imgs/P112.jpg"];
 	var imgNames = [];
 	
@@ -107,9 +107,10 @@ function doneComputeFeatures(){
 		console.log("Matches computed ", indx);
     	statMatch.stop("matching");
     	var theMatches = matching.getMatches();
+    	console.log(theMatches.length);
 
     	//updateTable2(table3, " par 1 - 2", theMatches.length, statMatch.log(1), " ", "");
-    	if(theMatches.length > 5){
+    	if(theMatches.length > 27){
 	    	statRansac.start("ransac");
 		  	//RASAC to find a good model
 	      	var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
@@ -120,7 +121,7 @@ function doneComputeFeatures(){
     		//pop imdx in image list
     		images.splice(indx, 1);
     		myDescriptors.splice(indx, 1);
-    		//console.log("Images", images);
+    		console.log("NO matching" , indx , " Images", images);
 
     		computeNext();
 

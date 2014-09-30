@@ -16,10 +16,11 @@ var my_opt = new pipe_opt();
 var stat = new profiler();
 var statMatch = new profiler();
 
-// var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 // var images = ["../imgs/P112.jpg", "../imgs/P111.jpg"];
 // var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
+//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 var canvasDiv = "divStitched";
 var canvas = loadCanvas(canvasDiv);
 var indx = 0;
@@ -100,43 +101,18 @@ function computeNext(){
 
 function launchMatchingWebWorker(sendData) {
 
-var sendJSON = {'value': document.getElementById("loop").value};
-
 console.log("Start from html script");
 var worker = new Worker('matchingWorker.js');
 worker.onmessage = function(e) {
     var data = e.data;   
 	console.log("done", data.matches.length, data.id);
-
-
-
 	pending_workers	-= 1;
   	if (pending_workers <= 0){
   		console.log("Done w matches");
 		statMatch.stop("matching");
-		log_pts.innerHTML += statMatch.log(1) + "ms" + "<br>";
+		log_pts.innerHTML += "<br>" + "Matching time: " + statMatch.log(1) + "ms" ;
 		
   	}
-    // switch (data.type) {
-    //     case 'error':
-    //       var msg = 'Input Error: '
-    //       switch (data.code) {
-    //         case 'errInvalidNumber':
-    //           msg += 'Invalid number.';
-    //           break;
-    //         case 'errNegativeNumber':
-    //           msg += 'Input must be positive.';
-    //           break;
-    //       }
-    //       alert(msg);
-    //       break;
-    //     case 'data':
-    //     	console.log("done", data.matches.length, data.id);
-    //     	console.log("do ransac");
-    //     	statMatch.stop("matching");
-    //     	log_pts.innerHTML += statMatch.log(1) + "ms" + "<br>";
-    //       break;
-    //   }
 };
 
 //start the worker

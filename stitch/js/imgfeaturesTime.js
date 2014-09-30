@@ -13,7 +13,8 @@
 		}
 
 	//function myPowerConstructor(x){
-	_this['myPowerConstructor'] = function(x){
+	_this['myPowerConstructor'] = function(x, stat){
+		stat.start("load image into browser");
 		var that = new imgOpt(x);
 
 		var myCtx;
@@ -59,7 +60,11 @@
 
 	    	var windowRadius = descriptor_radius;//my_opt.descriptor_radius;
 			var numout = 0;
+			stat.start("gradientVectors");
 			var vectors = processing.gradientVectors(this_canvas);
+			stat.stop("gradientVectors");
+
+			stat.start("descriptors");
 
 			var desc = new Array(that.count);
 			for(var i =0; i < that.count; i++)
@@ -68,6 +73,8 @@
 				var ypos = that.corners[i].y;
 				that.descriptors[i] = [[xpos, ypos], extractHistogramsFromWindow(xpos,ypos,windowRadius, vectors)];
 			}
+
+			stat.stop("descriptors");
 		 };
 
 	    function extractHistogramsFromWindow(x,y, radius, vectors){
@@ -157,7 +164,12 @@
 					this_canvas.height = myImageH;
 					myCtx = this_canvas.getContext('2d');
 			 		myCtx.drawImage(this, 0, 0);
+			 		stat.stop("load image into browser");
+			 		stat.start("fast corners");
+
 					setupFastkeypointdetector(my_opt, computeFast);
+					stat.stop("fast corners");
+
 					computeDetectors(this_canvas, my_opt.descriptor_radius); 					
 					
 					callback();

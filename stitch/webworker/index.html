@@ -9,26 +9,17 @@
   <script type="text/javascript" src="../js/imgfeatures.js"></script>
 </head>
 <body>
-<label for="loop">Enter the number of cycles:</label>
-<input id="loop" type="number" value="100" />
-<input type="button" onclick="launchPiWebWorker()" value="Calculate Pi" />
-
-
 <!-- ===================================== -->
 <div class="container">
   <header>
-      <h1>Image Stitching - Demo</h1>
-      <p>To create a panoramic image a photographer can start by taking multiple photos of a scene. This can be done by putting the camera in continuous shoot mode or a similar setting on the specific device. A burst or a sequence of multiple images is a premises to this application.</p>
+      <h1>Descriptor Matching with Web Workers</h1>
+      <p>This test first computes the descriptors of three images, then it matches the first images descriptors to the second image in one worker, and then matches the first images descriptors with the third images descriptors in a second worker.</p>
   </header>
 
   <div class="row">
 
     <div class="span12">
-      <h2>2 Stitch</h2>
-      <p>
-        Stitch the two example images together to one and the same image
-      </p>
-
+      <h2>Status</h2>
       <div id="log_pts"></div>
       <div id="divStitched"></div>
     </div>

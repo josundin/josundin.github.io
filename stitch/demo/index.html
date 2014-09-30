@@ -14,19 +14,19 @@
 </style>
 
 	<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
-	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
-	<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
-	<script type="text/javascript" src="../ext_js/hog.js"></script>
-	<script type="text/javascript" src="../ext_js/norms.js"></script>
 	<script type="text/javascript" src="../ext_js/processing.js"></script>
-	<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="../ext_js/d3.min.js"></script>
+	<script type="text/javascript" src="../ext_js/profiler.js"></script>
+	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+	<script type="text/javascript" src="../ext_js/norms.js"></script>
 
-  	<script type="text/javascript" src="../js/layout.js"></script>
-	<script type="text/javascript" src="../js/find_homographies.js"></script>
-	<script type="text/javascript" src="../js/ransac.js"></script>
+	<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+
+	<script type="text/javascript" src="../js/imgfeatures.js"></script>
+	<script type="text/javascript" src="../js/bruteForceMatching.js"></script>
+	<script type="text/javascript" src="../js/ransac1.js"></script>
 	<script type="text/javascript" src="../js/imagewarp.js"></script>
-	<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+	<script type="text/javascript" src="../js/layout.js"></script>
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
 </head>
 <body>
 <div class="container">
@@ -81,7 +81,7 @@
 					This panorama will take a bit longer to compute since the images are bigger and they are more.
 				</p>
 				<p>
-				<button type="button" class="btn btn-primary" id="example-images">Stitch the images</button>
+				<button type="button"  onclick="launchNext()" class="btn btn-primary" id="example-images">Stitch the images</button>
 				</p>
 			</div>
 
@@ -119,155 +119,224 @@
 <script type="text/javascript">
 "use strict";
 
-	var imgOpt = function(imgsrc){
-	    this.warpData = 0;
-	    this.img = new Image();
-	    this.img.src = imgsrc;
-		}
+	function pipe_opt(){
+	    this.descriptor_radius = 8;
+	    this.corner_threshold = 45;
+	    this.lowe_criterion = 0.8;
+	   	this.ransac_iter = 1500;
+	    this.ransac_inlier_threshold = 3 * 0.01;
+	}
+	var myDescriptors = [];
+	var my_opt = new pipe_opt();
 
-
-
+	var indx = 0;
+	var canvasDiv = "divStitched";
+	var canvas = loadCanvas(canvasDiv);
 	var baseImage;
-	var images1 = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+	//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 	var images2 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 	//var images1 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
-	//var images1 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
+	var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0051.jpg", "../imgs/IMG_0053.jpg"];
 	var homographies = [];
 	document.addEventListener("DOMContentLoaded", init, false);
 
 
 	function init() {
-		
 		var selDiv1 = document.querySelector("#selectedF1");
 		
-		placeimgs(images1, selDiv1);
-
-		// var canvas = loadCanvas("divGameStage");
-	 //    var ctx = canvas.getContext('2d');
-	 //    ctx.drawImage(baseImage.img, 0, 0);
-
-	 	start_stitch(images1);
-
+		placeimgs(images, selDiv1);
+	 	computeFeatures(images[indx++]);
 
 		var selDiv2 = document.querySelector("#selectedF2");
 		placeimgs(images2, selDiv2);		
-
-	}
+	};
 
 
 	function placeimgs(images, wdiv){
-
 		var filesArr = Array.prototype.slice.call(images);
-
 		for (var i = 0; i < images.length; i++) 
 		{
 			baseImage = new imgOpt(images[i]);
-			
 			var image = new Image();
-			// Set path and alt properties
 			image.src = images[i];
-			//image.alt = alt;
-
-			// Add it to the DOM
 			wdiv.appendChild(image);
-
 		}
+	};
 
-	}
+
+	function computeFeatures(img){
+	 	var test_img = myPowerConstructor(img);	
+	 	test_img.set(canvas, my_opt, whenDataReady);
+
+		function whenDataReady() {
+			console.log("Features computed ", indx);
+			var pts = test_img.getNuberOfPoints();
+			var srcImg = test_img.getSrc();
+			var lastIndex = srcImg.lastIndexOf("/");
+
+			myDescriptors.push(test_img.getDescriptor());
+
+			srcImg = srcImg.substring(srcImg.length, lastIndex +1);
 
 
-	//To make sure functions are made in sequences, for the alignment
-    function start_stitch(stitch_imgs){
-        var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
-    }
+			if(indx < (images.length)){
+				computeFeatures(images[indx++]);
+			}
+			else{
+				indx = 1;
+				canvas.width = 0;
+    			canvas.height = 0;
+				doneComputeFeatures();
+			}
 
-    function longfunctionfirst(stitch_imgs){
-         var d = new $.Deferred();
-         homographies = new find_homographies(images1, d);
+		};
 
-        //d.resolve();
-        return d.promise();
-    }
+	};
 
-    // function shortfunctionsecond(){
-    //     var d = new $.Deferred();
-    //     warp_App("divStitched", homographies.H, images1);
 
-    //     d.resolve();
-    //     return d.promise();
-    // }
+	function doneComputeFeatures(){
+	    var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], my_opt.lowe_criterion);
 
-	function shortfunctionsecond(){
+	    matching.set(whenMatchinDone);
 
-		var d = new $.Deferred();
+	    function whenMatchinDone() {
+			console.log("Matches computed ", indx);
+	    	var theMatches = matching.getMatches();
+	    	if(theMatches.length > 27){
+			  	//RASAC to find a good model
+		      	var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
+		      	myRansac.getHomographie(whenRANSACDone);	
+	    	}
+	    	else{
+	    		//pop imdx in image list
+	    		images.splice(indx, 1);
+	    		myDescriptors.splice(indx, 1);
+	    		//console.log("Images", images);
 
-		if(homographies.H == -1){
-			console.log("no Goood");
+	    		computeNext();
 
-			var para = document.createElement("h2");
-			var node = document.createTextNode("Could not fit a Homography");
-			para.appendChild(node);
+	    	}
+	    	
 
-			var element = document.getElementById("divStitched");
-			element.appendChild(para);
+	      	function whenRANSACDone(homography) {
+	      		homographies.push(homography);
+	      		++indx;
+	      		computeNext();
+	      	}
 
+	      	function computeNext(){
+	      		if(indx < (images.length)){
+	      			console.log("Compute next pair 0-2 osv ", images[indx]);
+	      			doneComputeFeatures();
+	      		}
+	      		else{
+	      			var el = document.getElementById(canvasDiv);
+	    			el.scrollIntoView(true);
+	      			console.log("The list should be empty ", indx);	
+	      			console.log(homographies);
+	      			warp_App(canvasDiv, homographies, images);
+	      		}
+	      	}
+	    }
+	 
+	};
+
+	function launchNext(){
+		if(indx < (images.length)){
+			console.log("Compute next pair 0-2 osv ", images[indx]);
+			doneComputeFeatures();
 		}
-
 		else{
-		warp_App("divStitched", homographies.H, images1);
-
+			var el = document.getElementById(canvasDiv);
+		el.scrollIntoView(true);
+			console.log("The list should be empty ", indx);	
+			console.log(homographies);
+			warp_App(canvasDiv, homographies, images);
+			startOver();
 		}
-
-		d.resolve();
-		return d.promise();
 	}
 
+	function loadCanvas(id){
 
-    function loadCanvas(id){
+	    var canvas = document.createElement('canvas');
+	    var div = document.getElementById(id); 
+	    canvas.id     = "calculateDecriptors";
+	    div.appendChild(canvas);
 
-        var canvas = document.createElement('canvas');
-        var div = document.getElementById(id); 
-        canvas.id     = "CursorLayer";
-        canvas.width  = 500;
-        canvas.height = 400;
-        canvas.style.zIndex   = 8;
-        canvas.style.position = "absolute";
-        canvas.style.border   = "1px solid";
-        div.appendChild(canvas);
+	    return canvas;
+	};
 
-        return canvas;
-    }
+/////////////////////////////////////////////////////////////////////////////////////
+	// //To make sure functions are made in sequences, for the alignment
+ //    function start_stitch(stitch_imgs){
+ //        var promise = longfunctionfirst(stitch_imgs).then(shortfunctionsecond);
+ //    }
+
+ //    function longfunctionfirst(stitch_imgs){
+ //         var d = new $.Deferred();
+ //         homographies = new find_homographies(images1, d);
+
+ //        //d.resolve();
+ //        return d.promise();
+ //    }
 
 
-	$('#example-images').click(function(){
+	// function shortfunctionsecond(){
 
-		console.log("Do the Stuff");
-		start_stitch2();
+	// 	var d = new $.Deferred();
 
-		return false;
-	});
+	// 	if(homographies.H == -1){
+	// 		console.log("no Goood");
 
-	//To make sure functions are made in sequences, for the alignment
-    function start_stitch2(){
-        var promise = longfunctionfirst2().then(shortfunctionsecond2);
-    }
+	// 		var para = document.createElement("h2");
+	// 		var node = document.createTextNode("Could not fit a Homography");
+	// 		para.appendChild(node);
 
-    function longfunctionfirst2(){
-         var d = new $.Deferred();
-         homographies = new find_homographies(images2, d);
+	// 		var element = document.getElementById("divStitched");
+	// 		element.appendChild(para);
 
-        //d.resolve();
-        return d.promise();
-    }
+	// 	}
 
-    function shortfunctionsecond2(){
-        var d = new $.Deferred();
-        $('#stitching').show();
-        warp_App("divStitched2", homographies.H, images2);
-        document.getElementById( 'divStitched2' ).scrollIntoView();
-        d.resolve();
-        return d.promise();
-    }
+	// 	else{
+	// 	warp_App("divStitched", homographies.H, images1);
+
+	// 	}
+
+	// 	d.resolve();
+	// 	return d.promise();
+	// }
+// ///////////////////////////////////////////////////////////////////////////////
+
+	// $('#example-images').click(function(){
+
+	// 	console.log("Do the Stuff");
+	// 	start_stitch2();
+
+	// 	return false;
+	// });
+
+	// //To make sure functions are made in sequences, for the alignment
+ //    function start_stitch2(){
+ //        var promise = longfunctionfirst2().then(shortfunctionsecond2);
+ //    }
+
+ //    function longfunctionfirst2(){
+ //         var d = new $.Deferred();
+ //         homographies = new find_homographies(images2, d);
+
+ //        //d.resolve();
+ //        return d.promise();
+ //    }
+
+ //    function shortfunctionsecond2(){
+ //        var d = new $.Deferred();
+ //        $('#stitching').show();
+ //        warp_App("divStitched2", homographies.H, images2);
+ //        document.getElementById( 'divStitched2' ).scrollIntoView();
+ //        d.resolve();
+ //        return d.promise();
+ //    }
 
 </script>
 </body>

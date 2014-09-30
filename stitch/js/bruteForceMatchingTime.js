@@ -7,7 +7,10 @@
 		this.descriptors1 = descriptors1;
 		this.descriptors2 = descriptors2;
 	    this.matches = [];
-	}
+
+	   	this.img = new Image();
+	    this.img.src = "../imgs/favicon.ico";
+		}
 
 	//function myPowerConstructor(x){
 	_this['bruteForceMatching'] = function(descriptors1, descriptors2, threshold){
@@ -62,8 +65,11 @@
 
 		return {
 			set: function( callback) {
-				computeDescriptor();
-				callback();
+
+				that.img.onload = function() {
+					computeDescriptor();
+					callback();
+				}
 				return ;
 			},
         	getMatches: function() {
