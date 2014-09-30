@@ -51,17 +51,17 @@
 <body>
 <div class="container">
 	<header>
-	    <h1>Image Stitching - Demo</h1>
-	    <p>To create a panoramic image a photographer can start by taking multiple photos of a scene. This can be done by putting the camera in continuous shoot mode or a similar setting on the specific device. A burst or a sequence of multiple images is a premises to this application.</p>
+	    <h1>Timing</h1>
+	    <p>Tables over all the steps in the stitching pipeline to see where most execution time is spent. This is of course different from system to system and from browser to browser, still it is interesting to see the performance difference.
+	    </p>
 	</header>
 
 	<div class="row">
 
 		<div class="span12">
-			<h2>3 Stitch</h2>
+			<h2>Stitch</h2>
 			<p>
-				Stitch the two example images together to one and the same image.
-				Number of interest points: 
+Because the javascript is single threaded, execution and page rendering are done in the same execution thread, which means that while the RANSAC or matching code is executing the browser will not be redrawing the page. It will lock up, and interfere with the user interface. Even if I redraw the page within the for loop (of RANSAC or the matching) it will not be updated until the loop terminates. I have created a test where I force the page to be updated dynamically but every time this occurrence we lose abut 200ms (from the matching or ransac execution). And to implement this inside a loop wold not be very nice. A solution to this could be webworkers. 
 			</p>
  
 				<div class="col-md-4">

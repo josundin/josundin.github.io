@@ -15,7 +15,6 @@
 
 	<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
 	<script type="text/javascript" src="../ext_js/processing.js"></script>
-	<script type="text/javascript" src="../ext_js/profiler.js"></script>
 	<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
 	<script type="text/javascript" src="../ext_js/norms.js"></script>
 
@@ -82,7 +81,7 @@
 					This panorama will take a bit longer to compute since the images are bigger and they are more.
 				</p>
 				<p>
-				<button type="button"  onclick="launchNext()" class="btn btn-primary" id="example-images">Stitch the images</button>
+				<button type="button"  onclick="launchNext()" class="btn btn-primary" id="example-images">Stitch the above images</button>
 				</p>
 			</div>
 
@@ -171,7 +170,7 @@
 	 	test_img.set(canvas, my_opt, whenDataReady);
 
 		function whenDataReady() {
-			console.log("Features computed ", indx);
+			//console.log("Features computed ", indx);
 			var pts = test_img.getNuberOfPoints();
 			var srcImg = test_img.getSrc();
 			var lastIndex = srcImg.lastIndexOf("/");
@@ -190,9 +189,7 @@
     			canvas.height = 0;
 				doneComputeFeatures();
 			}
-
 		};
-
 	};
 
 
@@ -202,7 +199,7 @@
 	    matching.set(whenMatchinDone);
 
 	    function whenMatchinDone() {
-			console.log("Matches computed ", indx);
+			//console.log("Matches computed ", indx);
 	    	var theMatches = matching.getMatches();
 	    	if(theMatches.length > 27){
 			  	//RASAC to find a good model
@@ -228,14 +225,13 @@
 
 	      	function computeNext(){
 	      		if(indx < (images.length)){
-	      			console.log("Compute next pair 0-2 osv ", images[indx]);
 	      			doneComputeFeatures();
 	      		}
 	      		else{
 	      			var el = document.getElementById(canvasDiv);
 	    			el.scrollIntoView(true);
-	      			console.log("The list should be empty ", indx, images);	
-	      			console.log(homographies);
+	      			// console.log("The list should be empty ", indx, images);	
+	      			// console.log(homographies);
 	      			warp_App(canvasDiv, homographies, images);
 	      		}
 	      	}

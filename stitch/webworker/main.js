@@ -16,15 +16,15 @@ var my_opt = new pipe_opt();
 var stat = new profiler();
 var statMatch = new profiler();
 
-var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
-// var images = ["../imgs/P112.jpg", "../imgs/P111.jpg"];
-// var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
+//var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
+//var images = ["../imgs/IMG_0050.jpg" ,"../imgs/IMG_0051.jpg" ,"../imgs/IMG_0053.jpg"];
 var images = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 //var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 var canvasDiv = "divStitched";
 var canvas = loadCanvas(canvasDiv);
 var indx = 0;
 var pending_workers = images.length - 1; 
+var ww = false;
 
 function init() {
 
@@ -35,7 +35,8 @@ function init() {
 
 	statMatch.add("matching");
 
-	computeFeatures(images[indx++]);
+	//if(0 === ww)
+		computeFeatures(images[indx++]);
 };
 
 function computeFeatures(img){
@@ -69,10 +70,6 @@ function computeFeatures(img){
 
 
 function doneComputeFeatures(){
-
-	
-	//console.log("descriptors", myDescriptors[0], myDescriptors[1]);
-
 	//JSON
 	var descJSON = {'desc1': myDescriptors[0], 'desc2': myDescriptors[indx], 'thresh' : my_opt.lowe_criterion, 'id': indx -1 };
 	launchMatchingWebWorker(descJSON);
@@ -85,7 +82,6 @@ function doneComputeFeatures(){
 
 function computeNext(){
 	if(indx < (images.length)){
-		console.log("Compute next", images[indx]);
 		doneComputeFeatures();
 	}
 	else{
@@ -110,15 +106,14 @@ worker.onmessage = function(e) {
   	if (pending_workers <= 0){
   		console.log("Done w matches");
 		statMatch.stop("matching");
-		log_pts.innerHTML += "<br>" + "Matching time: " + statMatch.log(1) + "ms" ;
-		
+		log_pts.innerHTML += "<br>" + "Matching time with two web workers: " + statMatch.log(1) + "ms" ;
+		indx = 1;
+		statMatch.start("matching");
+		startUImatch();
   	}
 };
 
 //start the worker
-// worker.postMessage({'cmd':   'CalculatePi', 
-//                     'value': document.getElementById("loop").value
-//                   });
 worker.postMessage(sendData);
 }
 
@@ -132,3 +127,34 @@ function loadCanvas(id){
 
     return canvas;
 };
+
+///////////// User Interfase thread Matching ////////////////////////////////////////////////////////////////////////////
+function startUImatch(){
+	//console.log("startUImatch");
+	var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], 0.8);
+	matching.set(whenMatchinDone);
+
+
+	function whenMatchinDone() {
+		//console.log("Matches computed ", indx);
+		var theMatches = matching.getMatches();
+		console.log("done matching " , indx , theMatches.length);
+
+		++indx;
+		computeNextMatch();
+
+	  	function computeNextMatch(){
+	  		if(indx < (images.length)){
+	  			startUImatch();
+	  		}
+	  		else{
+	  			console.log("The Matching list should be empty ", indx);	
+	  			statMatch.stop("matching");
+				log_pts.innerHTML += "<br>" + "Matching time in the UI thread: " + statMatch.log(1) + "ms" ;
+	  		}
+	  	}
+	}
+
+}
+
+
