@@ -151,12 +151,14 @@
 
 				//initialize the image resolution
 			    that.img.onload = function() {
-			        myImageW = that.img.width;  
-					myImageH = that.img.height;
+			    	var scale = findScale(that.img.width, that.img.height);
+			        
+			        myImageW = that.img.width * scale |0;  
+					myImageH = that.img.height * scale |0;
 					this_canvas.width = myImageW;
 					this_canvas.height = myImageH;
 					myCtx = this_canvas.getContext('2d');
-			 		myCtx.drawImage(this, 0, 0);
+			 		myCtx.drawImage(this, 0, 0, myImageW, myImageH);
 					setupFastkeypointdetector(my_opt, computeFast);
 					computeDetectors(this_canvas, my_opt.descriptor_radius); 					
 					

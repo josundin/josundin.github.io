@@ -296,6 +296,7 @@
       var lastIndex = srcImg.lastIndexOf("/");
 
       myDescriptors.push(test_img.getDescriptor());
+      // console.log("Length:", test_img.getDescriptor().length);
 
       srcImg = srcImg.substring(srcImg.length, lastIndex +1);
 
@@ -350,8 +351,7 @@
           else{
             var el = document.getElementById(canvasDiv);
             el.scrollIntoView(true);
-            console.log("The list should be empty ", indx);  
-            // console.log(homographies);
+            //console.log("The list should be empty ", indx); 
             $('#stitching').hide();
             detInfo.innerHTML = "<h2> Result:</h2>";
             warp_App(canvasDiv, homographies, imgSrcs);
