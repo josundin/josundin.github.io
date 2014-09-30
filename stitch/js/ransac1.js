@@ -76,10 +76,13 @@ _this['ransac'] = function(non_norm_pairs, ransac_threshold, ransac_iter){
 				if(callback)
 					callback(Hbest);
 
-				return Hbest;
+				//return Hbest;
 			}
-		else
-			return -1;
+			else{
+				if(callback)
+					callback(-1);
+				//return -1;
+			}
 
 		},
 		getBestinlier: function (){

@@ -314,51 +314,61 @@
   };
 
 
-  function doneComputeFeatures(){
+function doneComputeFeatures(){
     var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], my_opt.lowe_criterion);
 
     matching.set(whenMatchinDone);
 
     function whenMatchinDone() {
-      console.log("Matches computed ", indx);
       var theMatches = matching.getMatches();
       if(theMatches.length > 27){
         //RASAC to find a good model
           var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
-          myRansac.getHomographie(whenRANSACDone);  
+          myRansac.getHomographie(whenRANSACDone); 
       }
       else{
         //pop imdx in image list
         imgSrcs.splice(indx, 1);
         myDescriptors.splice(indx, 1);
-        //console.log("Images", images);
-
         computeNext();
 
       }
-      
 
-        function whenRANSACDone(homography) {
+      function whenRANSACDone(homography) {
+        if(-1 === homography){
+          imgSrcs.splice(indx, 1);
+          myDescriptors.splice(indx, 1);
+          computeNext();
+        }
+        else{
           homographies.push(homography);
           ++indx;
           computeNext();
         }
+      }
 
-        function computeNext(){
-          if(indx < (imgSrcs.length)){
-            doneComputeFeatures();
-          }
-          else{
+      function computeNext(){
+        if(indx < (imgSrcs.length)){
+          doneComputeFeatures();
+        }
+        else{
+          if(homographies.length > 0){
             var el = document.getElementById(canvasDiv);
             el.scrollIntoView(true);
-            //console.log("The list should be empty ", indx); 
+            console.log("The list should be empty ", indx, homographies.length); 
             $('#stitching').hide();
             detInfo.innerHTML = "<h2> Result:</h2>";
-            warp_App(canvasDiv, homographies, imgSrcs);
+            warp_App(canvasDiv, homographies, imgSrcs);  
           }
+          else{
+            console.log("NO FOUND");
+            $('#stitching').hide();
+            detInfo.innerHTML = "<h2> <strong> SORRY! </strong> <br> Could not fit a homography</h2>";
+          }
+          
         }
+      }
     }
- 
 };
 
 
