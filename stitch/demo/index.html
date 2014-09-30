@@ -96,19 +96,25 @@
 
 		<div class="span12">
 			<div id="stitching" style="display:none;">
+	          <div id="detinfo"></div>
+		      <p>
+		        Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern. <br> 
+		        <strong>Please notice </strong> that the user interface will frozen during matching and ransac execution Because the javascript is single threaded, execution and page rendering are done in the same execution thread.
+		      </p>
+				<div id="divStitched2"></div>
+				<div id="results" style="display:none;">
 				<h2> Result </h2>
 				<p>
 					You can see that the size of the stitched common image increase with the number of images. The common stitched size is calculated with help of the corners of the transformed images.
 				</p>
 
-				<div id="divStitched2"></div>
 
 				<p>
 					<strong>Try it for yourself with the
 					<a href="../app/">App</a>
 					</strong>
 				</p>
-			
+				</div>
 			</div>
 		</div>
 	</div>
@@ -133,6 +139,7 @@
 	var canvasDiv = "divStitched";
 	var canvas = loadCanvas(canvasDiv);
 	var baseImage;
+	var detInfo = document.getElementById("detinfo");
 	var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 	//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 	var images2 = ["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
@@ -228,11 +235,11 @@
 	      			doneComputeFeatures();
 	      		}
 	      		else{
-	      			var el = document.getElementById(canvasDiv);
-	    			el.scrollIntoView(true);
-	      			// console.log("The list should be empty ", indx, images);	
-	      			// console.log(homographies);
 	      			warp_App(canvasDiv, homographies, images);
+	      			$('#results').show();
+	      			detInfo.innerHTML = "<h2> Done Stitching!</h2>";
+	      			var lasts = document.getElementById("results");
+	    			lasts.scrollIntoView(true);
 	      		}
 	      	}
 	    }
@@ -240,9 +247,11 @@
 	};
 
 	function launchNext(){
-		$('#stitching').show( 0,whenShown); //.show();
-		
-		function whenShown(){
+		detInfo.innerHTML = "<h2> Now Stitching!</h2>";
+		$('#stitching').show();//.show( 0,whenShown); //
+	    var el = document.getElementById("stitching");
+    	el.scrollIntoView(true);
+	//	function whenShown(){
 			images =images2; //["../imgs/P112.jpg", "../imgs/P110.jpg", "../imgs/P111.jpg"];
 			homographies = [];
 			myDescriptors = [];
@@ -250,7 +259,7 @@
 			canvasDiv = "divStitched2";
 			canvas = loadCanvas(canvasDiv);
 			computeFeatures(images[indx++]);
-		}
+	//	}
 	}
 
 	function loadCanvas(id){
@@ -266,3 +275,5 @@
 </script>
 </body>
 </html>
+
+style="display:none;">

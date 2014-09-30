@@ -28,18 +28,19 @@
   </style>
 
   <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
-  <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
-  <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
-  <script type="text/javascript" src="../ext_js/hog.js"></script>
-  <script type="text/javascript" src="../ext_js/norms.js"></script>
   <script type="text/javascript" src="../ext_js/processing.js"></script>
-  <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+  <script type="text/javascript" src="../ext_js/norms.js"></script>
 
-  <script type="text/javascript" src="../js/layout.js"></script>
-  <script type="text/javascript" src="../js/find_homographies.js"></script>
-  <script type="text/javascript" src="../js/ransac.js"></script>
+  <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+
+  <script type="text/javascript" src="../js/imgfeatures.js"></script>
+  <script type="text/javascript" src="../js/bruteForceMatching.js"></script>
+  <script type="text/javascript" src="../js/ransac1.js"></script>
   <script type="text/javascript" src="../js/imagewarp.js"></script>
-  <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+  <script type="text/javascript" src="../js/layout.js"></script>
+  <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+  <link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
 
 
   <div class="container">
@@ -69,12 +70,9 @@
     <div class="row">
       <div class="span12">
         <div id="pre-stitch" style="display:none;">
-          <h2>1 What is this?</h2>
+          <h2>1 Selected images</h2>
           <p>
-            1.1 Resemble.js analyses and compares images with HTML5 canvas and JavaScript.
-          </p>
-          <p>
-            <strong>Try it for yourself.</strong>
+
           </p>
         </div>
         <div id="selectedFiles" class="selectedFiles"></div>
@@ -114,8 +112,8 @@
         </div>  
 
         <div id="stitched" style="display:none;">
-          <h2>Result:</h2>
-
+          <!--h2>Result:</h2-->
+          <div id="result"></div>
           <div id="the_canvas"></div>
         </div>
       </div>
@@ -129,11 +127,25 @@
   <script>
   "use strict";
 
+    function pipe_opt(){
+      this.descriptor_radius = 8;
+      this.corner_threshold = 45;
+      this.lowe_criterion = 0.8;
+      this.ransac_iter = 1500;
+      this.ransac_inlier_threshold = 3 * 0.01;
+  }
+  var myDescriptors = [];
+  var my_opt = new pipe_opt();
+  var indx = 0;
+  var canvasDiv = "the_canvas";
+  var canvas = loadCanvas(canvasDiv);
   var imageWt = 0, imageHt = 0; 
 
   var imgSrcs =[];
   var selDiv = "";
   var homographies = [];
+
+  var detInfo = document.getElementById('result');
 
   var imgOpt = function(imgsrc){
     this.warpData = 0;
@@ -223,8 +235,7 @@
 
     var files = e.dataTransfer.files; 
     var filesArr = Array.prototype.slice.call(files);
-
-    console.log("fore");    
+   
     filesArr.forEach(function(f){
         if(!f.type.match("image.*")) {
           return;
@@ -259,7 +270,11 @@
 
   function start(){
     $('#stitching').show();
-    start_stitch();
+    //start_stitch();
+    $('#stitched').show();
+    var el = document.getElementById("stitching");
+    el.scrollIntoView(true);
+    computeFeatures(imgSrcs[indx++]);
     return false;
   }
 
@@ -270,54 +285,92 @@
       evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   }
 
+  function computeFeatures(img){
+    var test_img = myPowerConstructor(img); 
+    test_img.set(canvas, my_opt, whenDataReady);
 
-  function start_stitch()
-  { 
-    $('#stitching').show();
-    //console.log("imgs", imgNames);
-    start_stitching()
+    function whenDataReady() {
+      //console.log("Features computed ", indx);
+      var pts = test_img.getNuberOfPoints();
+      var srcImg = test_img.getSrc();
+      var lastIndex = srcImg.lastIndexOf("/");
 
-    function start_stitching(){
-        var promise = longfunctionfirst().then(shortfunctionsecond);
-    }
+      myDescriptors.push(test_img.getDescriptor());
 
-    function longfunctionfirst(){
+      srcImg = srcImg.substring(srcImg.length, lastIndex +1);
 
-         var d = new $.Deferred();
-         homographies = new find_homographies(imgSrcs, d);
 
-        //d.resolve();
-        return d.promise();
-    }
+      if(indx < (imgSrcs.length)){
+        computeFeatures(imgSrcs[indx++]);
+      }
+      else{
+        indx = 1;
+        canvas.width = 0;
+          canvas.height = 0;
+        doneComputeFeatures();
+      }
+    };
+  };
 
-    function shortfunctionsecond(){
 
-        var d = new $.Deferred();
-        $('#stitching').hide();
-        $('#stitched').show();
+  function doneComputeFeatures(){
+    var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], my_opt.lowe_criterion);
 
-        if(homographies.H == -1){
-          console.log("no Goood");
+    matching.set(whenMatchinDone);
 
-          var para = document.createElement("h2");
-          var node = document.createTextNode("Could not fit a Homography");
-          para.appendChild(node);
+    function whenMatchinDone() {
+      console.log("Matches computed ", indx);
+      var theMatches = matching.getMatches();
+      if(theMatches.length > 27){
+        //RASAC to find a good model
+          var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
+          myRansac.getHomographie(whenRANSACDone);  
+      }
+      else{
+        //pop imdx in image list
+        imgSrcs.splice(indx, 1);
+        myDescriptors.splice(indx, 1);
+        //console.log("Images", images);
 
-          var element = document.getElementById("the_canvas");
-          element.appendChild(para);
+        computeNext();
 
+      }
+      
+
+        function whenRANSACDone(homography) {
+          homographies.push(homography);
+          ++indx;
+          computeNext();
         }
 
-        else{
-        warp_App("the_canvas", homographies.H, imgSrcs);
-
+        function computeNext(){
+          if(indx < (imgSrcs.length)){
+            doneComputeFeatures();
+          }
+          else{
+            var el = document.getElementById(canvasDiv);
+            el.scrollIntoView(true);
+            console.log("The list should be empty ", indx);  
+            // console.log(homographies);
+            $('#stitching').hide();
+            detInfo.innerHTML = "<h2> Result:</h2>";
+            warp_App(canvasDiv, homographies, imgSrcs);
+          }
         }
-
-        d.resolve();
-        return d.promise();
     }
-  } 
+ 
+};
 
+
+function loadCanvas(id){
+
+    var canvas = document.createElement('canvas');
+    var div = document.getElementById(id); 
+    canvas.id     = "calculateDecriptors";
+    div.appendChild(canvas);
+
+    return canvas;
+};
 
   </script>
 
