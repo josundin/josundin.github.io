@@ -1288,7 +1288,13 @@ function stitch_color(bestH){
   */
   function extractHistogramsFromCell(x,y, cellradius, gradients, mult) 
   {
-
+    function zeros(size) {
+      var array = new Array(size);
+      for (var i = 0; i < size; i++) {
+      array[i] = 0;
+      }
+      return array;
+    };
     //console.log("cell ", x, y, mult);
 
     //from x-rad, y-rad till x,y
