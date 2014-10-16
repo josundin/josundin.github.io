@@ -247,7 +247,6 @@ function warp_App(id, homographies,images) {
         var dptr = 0;
         for(var i = 0; i < dst_height; ++i)
         {
-
             xs0 = m01 * i + m02,
             ys0 = m11 * i + m12,
             ws  = m21 * i + m22;
@@ -284,7 +283,7 @@ function warp_App(id, homographies,images) {
                     dst.data[((i*(dst.width*4)) + (j*4))+ 3]= 0;
             }
         }
-    }
+    };
 
 //return imageWarpData;
 
