@@ -551,7 +551,7 @@ function stitch_color(bestH){
 
     var gray_img = new jsfeat.matrix_t(width * 2, height+ height_offset, jsfeat.U8_t | jsfeat.C1_t);
     var gray_img_warp = new jsfeat.matrix_t(width * 2, height + height_offset, jsfeat.U8_t | jsfeat.C1_t);
-    jsfeat.imgproc.grayscale(img1Data.data, gray_img.data);
+    jsfeat.imgproc.grayscale(img1Data.data, width * 2, height+ height_offset, gray_img);
 
     var trans_offset = new jsfeat.matrix_t(3, 3, jsfeat.F32_t | jsfeat.C1_t);
 
@@ -592,7 +592,7 @@ function stitch_color(bestH){
         transform.data[i] = bestH[i];
       }
 
-      jsfeat.imgproc.grayscale(imageData.data, img_u8.data); 
+      jsfeat.imgproc.grayscale(imageData.data, width * 2, height + height_offset, img_u8); 
        //(source:matrix_t, dest:matrix_t,warp_mat:matrix_t, fill_value = 0);
       jsfeat.matmath.multiply(transform_dot, transform, trans_offset);
       jsfeat.imgproc.warp_perspective(img_u8, img_u8_warp, transform_dot, 0);
@@ -1141,7 +1141,7 @@ function stitch_color(bestH){
     corners = [];
     var i = width*height;
     while(--i >= 0) {
-        corners[i] = new jsfeat.point2d_t(0,0,0,0);
+        corners[i] = new jsfeat.keypoint_t(0,0,0,0);
     }
 
     threshold = thres;
@@ -1155,7 +1155,7 @@ function stitch_color(bestH){
       var border = my_opt.descriptor_radius; //is relative to the descriptor radius
       ctx.drawImage(image, xoffset, 0, width, height);
       var imageData = ctx.getImageData(xoffset, 0, width, height);
-      jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
+      jsfeat.imgproc.grayscale(imageData.data, width, height ,img_u8);
       prev_count = count;
       count = jsfeat.fast_corners.detect(img_u8, corners, border);
 
