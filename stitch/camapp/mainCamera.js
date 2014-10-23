@@ -56,11 +56,10 @@ $(window).load(function() {
 
     var ctx;
     var img_prev;
-    var sparIndx = 0, aIndx = 0, hIndx = 0;
-    var imgDatas = [];
-    var warpImgs = [];
+    var indx = 0, aIndx = 0, hIndx = 0;
+    var imgDatas = [], warpImgs = [];
     var orb = {};
-    var homographies = [];
+    var homographies = [], stitchImgs = [];;
 
     function takePhoto(){
         // prepare preview
@@ -70,8 +69,8 @@ $(window).load(function() {
         //    OBS
         //spar undan img_prev
         //////////////////////
-        imgDatas[sparIndx++] = img_prev;
-        warpImgs[aIndx ++] = canvas.toDataURL();
+        imgDatas[indx++] = img_prev;
+        warpImgs[aIndx++] = canvas.toDataURL();
 
         dispImg(img_prev, 640/4, 480/4);
 
@@ -80,29 +79,63 @@ $(window).load(function() {
     function stitchPhoto(){
         
 
-        if(sparIndx > 1){
+        if(indx > 1){
             console.log("Stitche them photo");
-            baseImg();
+            aIndx = 0;
+            baseImg(otherImg);
+            
         }
         else
             console.log("Need More than two photos");
     };
 
-    function baseImg(){
+    function baseImg(callback){
 
-        //stitchImgs.push(img.src);
-        var img = imgDatas[0]; 
+        stitchImgs.push(warpImgs[0]);
+        var img = imgDatas[aIndx++]; 
 
         var myImageW = img.width ;  
         var myImageH = img.height;
         orb = orbObj(myImageW, myImageH);
 
         orb.setOrbBase(img, myImageW, myImageH);
-        orb.setOrbOther(imgDatas[1], myImageW, myImageH);
-        homographies[hIndx++] = orb.getHomograph();
-        imagewarp("divStitched", homographies, warpImgs, blobStuff);
-        // callback();
+        // orb.setOrbOther(imgDatas[1], myImageW, myImageH);
+        // homographies[hIndx++] = orb.getHomograph();
+        // imagewarp("divStitched", homographies, warpImgs, blobStuff);
+        callback();
         
+    };
+
+    function otherImg(){
+        var img2 = imgDatas[aIndx];
+        var myImageW = img2.width ;  
+        var myImageH = img2.height;
+ 
+        orb.setOrbOther(img2, myImageW, myImageH);
+        if(orb.getNumMatches() > 10){
+            homographies[hIndx++] = orb.getHomograph();
+            stitchImgs.push(warpImgs[aIndx]);
+            // stitchImgs.push(images[aIndx]);
+            
+            console.log("homographies",homographies.length);
+        }
+        else{
+            console.log("nada", orb.getNumMatches());
+        }
+        // homographies[0] = orb.getHomograph();
+       
+        //check if done with imgLisst
+       if(aIndx < (warpImgs.length - 1)){
+            console.log("aIndx", aIndx, warpImgs.length);
+            ++aIndx;
+            otherImg();
+        }
+        else{
+            imagewarp("divStitched", homographies, stitchImgs, blobStuff);
+            //Återställ allt
+            // indx = 1;
+            // doneComputeFeatures();
+        }
     };
 
 /////////////////////////////////////////////////////////////
@@ -144,9 +177,10 @@ $(window).load(function() {
     }
 
     function blobStuff(){
-        // $('#results').show();
-        // var el = document.getElementById('results');
-        // el.scrollIntoView(true); 
+        $('#results').show();
+        var el = document.getElementById('divStitched');
+        el.scrollIntoView(true); 
+        $('#theBtns').hide();
         console.log("Now do the blob stuff")
     }
 
