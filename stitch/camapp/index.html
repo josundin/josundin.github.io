@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Image Stitch - Camera app.</title>
+
+        <link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
+
+                <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+        <script type="text/javascript" src="js/compatibility.js"></script>
+  
+        <script type="text/javascript" src="mainCamera.js"></script>
+        <script type="text/javascript" src="orbObj.js"></script>
+        <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+        <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+        <script type="text/javascript" src="js/imagewarp.js"></script>
+
+    </head>
+    <body>
+     <div class="container">
+        <div class="row">
+        <div class="col-xs-2"></div>
+
+        <div class="col-xs-8">
+
+            <video id="webcam" width="640" height="480" style="display:none;"></video>
+            <div style=" width:640px;height:480px;margin: 10px auto;">
+                <canvas id="canvas" width="640" height="480"></canvas>
+                <div id="no_rtc" class="alert alert-error" style="display:none;"></div>
+            </div>
+
+            </div>
+              <div class="col-xs-2"><br><br><br>
+                
+                    <div id="btn1"></div> 
+                    <br>
+                    <div id="btn2"></div> 
+                </div>    
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2"></div>
+
+
+            <div class="col-xs-8">
+                <div id="disp"></div> 
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+
+        <div id="divStitched" ></div>
+          
+    </div>
+
+
+   
+    </body>
+</html>
