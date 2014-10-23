@@ -33,7 +33,7 @@
 		    //set corners
 		    var i = myImageW*myImageH;
 		    while(--i >= 0) {
-		        that.corners[i] = new jsfeat.point2d_t(0,0,0,0);
+		        that.corners[i] = new jsfeat.keypoint_t(0,0,0,0);//jsfeat.point2d_t(0,0,0,0);
 		    }
 
 		    jsfeat.fast_corners.set_threshold(my_opt.corner_threshold);
@@ -46,7 +46,7 @@
 
 			var border = my_opt.descriptor_radius; //is relative to the descriptor radius
 			var imageData = myCtx.getImageData(xoffset, 0, myImageW, myImageH);
-			jsfeat.imgproc.grayscale(imageData.data, myImg_u8.data);
+			jsfeat.imgproc.grayscale(imageData.data, myImageW, myImageH, myImg_u8);
 			//prev_count = count;
 			that.count = jsfeat.fast_corners.detect(myImg_u8, that.corners, border);
 	  	};

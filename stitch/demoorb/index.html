@@ -1,0 +1,216 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ORB Stitch Demo - by using the JSFeat Orb descriptor</title>
+
+        <!--link rel="stylesheet" href="css/bootstrap.css"-->
+        <link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
+
+        <style>
+            html, body {
+                height: 100%;
+                background-color: #E3E9ED;
+            }
+
+            .selectedFiles img {
+                max-width: 250;
+                max-height: 250px;
+                float: left;
+                margin-bottom:10px;
+                margin-left:10px;
+            }
+        </style>
+
+
+     </head>
+    <body>
+  <div class="container">
+
+    <div class="row">
+        <div class="span12">
+            <h2>1 The images</h2>
+            <div >
+                <div id="selectedF1" class="selectedFiles"></div>
+            </div>        
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="span12">
+            <h2>2 Stitch</h2>
+            <!--div id="divStitched" style="display:none;"></div--> 
+            <div id="tmpCanvas" ></div>       
+            <div id="divStitched" ></div>        
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <h2>1 The images</h2>
+            <div >
+                <div id="selectedF2" class="selectedFiles"></div>
+            </div>        
+        </div>
+    </div>
+
+</div>
+
+        <!--script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script-->
+        <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+        <script type="text/javascript" src="../ext_js/profiler.js"></script>
+        <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+        <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+        <script type="text/javascript" src="js/imagewarp.js"></script>
+        <script type="text/javascript" src="js/layout.js"></script>
+        <script type="text/javascript" src="orbObj.js"></script>
+        <script type="text/javascript">
+
+        var images = ["../imgs/grafjpg/img5.jpg", "../imgs/grafjpg/img6.jpg", "../imgs/grafjpg/img4.jpg"];
+        var images2 = ["../imgs/grafjpg/img2.jpg", "../imgs/grafjpg/img3.jpg", "../imgs/grafjpg/img1.jpg"];
+
+        var stitch;
+        var homographies = [];
+        var stat2 = new profiler();
+            
+
+        $(window).load(function() {
+            "use strict";
+            stat2.add("features");           
+
+            // lets do some fun
+            var canvas = loadCanvas("tmpCanvas");//document.getElementById('canvas');
+            var orb = {};
+            var index = 0, hindex = 0;
+            var stitchImgs = [];
+            stat2.start("features");
+            init();
+            stat2.stop("features");
+            console.log("init done:", stat2.log(1), "ms");
+            // baseImg(otherImg);
+
+            function init() {
+                var selDiv1 = document.querySelector("#selectedF1");
+                
+                placeimgs(images, selDiv1);
+                baseImg(otherImg);
+
+                // console.log("number two");
+                // images = images2;
+
+                // var selDiv2 = document.querySelector("#selectedF2");
+                // placeimgs(images, selDiv2);        
+            };
+
+            function placeimgs(images, wdiv){
+                for (var i = 0; i < images.length; i++) 
+                {
+                    var image = new Image();
+                    image.src = images[i];
+                    wdiv.appendChild(image);
+                }
+            };
+
+
+            function baseImg(callback){
+
+                var img = new Image();
+                img.src = images[index++];
+                stitchImgs.push(img.src);
+                img.onload = function() {
+
+                    stat2.start("features");
+                    var scale = findScale(img.width, img.height);
+                    
+                    var myImageW = img.width * scale |0;  
+                    var myImageH = img.height * scale |0;
+                    orb = orbObj(myImageW, myImageH);
+
+                    canvas.width  = myImageW;
+                    canvas.height = myImageH;
+                    var ctx = canvas.getContext('2d');
+
+                    ctx.drawImage(this, 0, 0, myImageW, myImageH);
+                    var imageData = ctx.getImageData(0, 0, myImageW, myImageH);
+
+                    orb.setOrbBase(imageData, myImageW, myImageH);
+                    stat2.stop("features");
+                    console.log("features base img:", stat2.log(1), "ms");
+                    callback();
+                }
+            };
+
+            function otherImg(){
+
+                var img2 = new Image();
+                img2.src = images[index];
+                // console.log("features base img:", stat2.log(1), "ms. found", num_corners );
+                img2.onload = function() { 
+                    stat2.start("features");
+                  
+                    var scale = findScale(img2.width, img2.height);
+                    var myImageW = img2.width * scale |0;  
+                    var myImageH = img2.height * scale |0;
+
+                    canvas.width  = myImageW;
+                    canvas.height = myImageH;
+                    var ctx = canvas.getContext('2d');
+
+                    ctx.drawImage(this, 0, 0, myImageW, myImageH);
+                    var imageData = ctx.getImageData(0, 0, myImageW, myImageH);
+
+                    orb.setOrbOther(imageData, myImageW, myImageH);
+                    if(orb.getNumMatches() > 27){
+                        homographies[hindex++] = orb.getHomograph();
+                        stitchImgs.push(images[index]);
+                        
+                        console.log("homographies",homographies[0]);
+                    }
+                    else{
+                        console.log("nada", orb.getNumMatches());
+                    }
+                    // homographies[0] = orb.getHomograph();
+                    stat2.stop("features");
+                    console.log("features other img:", stat2.log(1), "ms");
+
+                    //check if done with imgLisst
+                   if(index < (images.length - 1)){
+                        console.log("index", index, images.length);
+                        ++index;
+                        otherImg();
+                    }
+                    else{
+                        stitch = imagewarp("divStitched", homographies, stitchImgs, blobStuff);
+                        // indx = 1;
+                        canvas.width = 0;
+                        canvas.height = 0;
+                        // doneComputeFeatures();
+                    }
+                }
+            };
+
+        });
+
+        function blobStuff(){console.log("Now do the blob stuff")}
+
+        // function findScale(){return 1};
+
+        function loadCanvas(id){
+            var canvas = document.createElement('canvas');
+            //canvas.style=("border:1px solid #000000;");
+            var div = document.getElementById(id); 
+            canvas.id     = "calculateDecriptors";
+            div.appendChild(canvas);
+
+            return canvas;
+        };
+
+        </script>
+        
+
+    </body>
+</html>
