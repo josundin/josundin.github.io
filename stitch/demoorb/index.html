@@ -32,6 +32,7 @@
     <div class="row">
         <div class="span12">
             <h2>1 The images</h2>
+            <p> These three images are from the Graffiti dataset </p>
             <div >
                 <div id="selectedF1" class="selectedFiles"></div>
             </div>        
@@ -44,16 +45,20 @@
             <h2>2 Stitch</h2>
             <!--div id="divStitched" style="display:none;"></div--> 
             <div id="tmpCanvas" ></div>       
-            <div id="divStitched" ></div>        
-        </div>
-    </div>
+            <div id="divStitched" ></div>
+            <div id="results" style="display:none;">
+                <h2> Result </h2>
+                <p>
+                    As we can observe from the stitched images the orb descriptors are invariant to viewpoint changes. It is also faster to compute the Orb matching than the floating point based HOG like descriptors
+                </p>
 
-    <div class="row">
-        <div class="span12">
-            <h2>1 The images</h2>
-            <div >
-                <div id="selectedF2" class="selectedFiles"></div>
-            </div>        
+
+                <p>
+                    <strong>Try it for yourself with the
+                    <a href="../app/">App</a>
+                    </strong>
+                </p>
+        </div>        
         </div>
     </div>
 
@@ -67,7 +72,7 @@
         <script type="text/javascript" src="../ext_js/underscore-min.js"></script>
         <script type="text/javascript" src="js/imagewarp.js"></script>
         <script type="text/javascript" src="js/layout.js"></script>
-        <script type="text/javascript" src="orbObj.js"></script>
+        <script type="text/javascript" src="../js/orbObj.js"></script>
         <script type="text/javascript">
 
         var images = ["../imgs/grafjpg/img5.jpg", "../imgs/grafjpg/img6.jpg", "../imgs/grafjpg/img4.jpg"];
@@ -97,13 +102,7 @@
                 var selDiv1 = document.querySelector("#selectedF1");
                 
                 placeimgs(images, selDiv1);
-                baseImg(otherImg);
-
-                // console.log("number two");
-                // images = images2;
-
-                // var selDiv2 = document.querySelector("#selectedF2");
-                // placeimgs(images, selDiv2);        
+                baseImg(otherImg);    
             };
 
             function placeimgs(images, wdiv){
@@ -195,7 +194,12 @@
 
         });
 
-        function blobStuff(){console.log("Now do the blob stuff")}
+        function blobStuff(){
+            $('#results').show();
+            var el = document.getElementById('results');
+            el.scrollIntoView(true); 
+            console.log("Now do the blob stuff")
+        }
 
         // function findScale(){return 1};
 
