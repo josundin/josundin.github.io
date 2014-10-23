@@ -1,5 +1,6 @@
 ##A web browser tool for Image Alignment and Stitching
 
+Please see:
 [**Image Alignment and Stitching**](http://josundin.github.io/stitch/) 
 
 ###Demo
