@@ -174,7 +174,7 @@ function blobStuff(){
 function loadCanvas(id){
 
     var canvas = document.createElement('canvas');
-    canvas.style=("border:1px solid #000000;");
+    // canvas.style=("border:1px solid #000000;");
     var div = document.getElementById(id); 
     canvas.id     = "calculateDecriptors";
     div.appendChild(canvas);

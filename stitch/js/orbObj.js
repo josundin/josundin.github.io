@@ -3,7 +3,7 @@
 "use strict";
 
     var demo_opt = function(){
-        this.blur_size = 9;
+        this.blur_size = 6;
         this.lap_thres = 10;//69;
         this.eigen_thres = 10;//35;
 
