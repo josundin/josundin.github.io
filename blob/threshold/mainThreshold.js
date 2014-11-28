@@ -11,8 +11,13 @@ var myDescriptors = [];
 var my_opt = new pipe_opt();
 
 var indx = 0;
-var canvasDiv = "divStitched";
-var canvas = loadCanvas(canvasDiv);
+var canvasDiv = 'CANVAS';
+
+//var canvas = loadCanvas(canvasDiv);
+var tcanvas = document.createElement('CANVAS');
+//canvas.width = vid.width;
+//canvas.height = vid.height; 
+
 var detInfo = document.getElementById("detinfo");
 // var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
 // var images = ["imgs/P1100328.jpg", "imgs/P1100329.jpg"];	
@@ -20,8 +25,8 @@ var detInfo = document.getElementById("detinfo");
 // var images = ["imgs/P112.jpg", "imgs/P110.jpg", "imgs/P111.jpg"];
 // var images = ["imgs/P110.jpg", "imgs/P111.jpg", "imgs/P112.jpg"];
 // var images = ["imgs/IMG_0050.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg"];
-var images = ["imgs/IMG_0050.jpg", "imgs/IMG_0053.jpg"];
-var homographies = [];
+var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
+var homographies = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457, 0.002029840601608157, 0.9665254354476929, 11.779176712036133, -0.00005650325692840852, -0.00007099410140654072, 0.9958619475364685]];
 var stitch = {};
 
 document.addEventListener("DOMContentLoaded", init, false);
@@ -29,8 +34,8 @@ function init() {
 	var selDiv1 = document.querySelector("#selectedF1");
 	
 	placeimgs(images, selDiv1);
- 	computeFeatures(images[indx++]);
-	
+    stitch = imagewarp(canvasDiv, homographies, images, blobStuff);
+    
 };
 
 
@@ -44,78 +49,6 @@ function placeimgs(images, wdiv){
 	}
 };
 
-//Denna är juh rekusiv
-function computeFeatures(img){
- 	var test_img = myPowerConstructor(img);	
- 	test_img.set(canvas, my_opt, whenDataReady);
-
-	function whenDataReady() {
-		//console.log("Features computed ", indx);
-		var pts = test_img.getNuberOfPoints();
-		var srcImg = test_img.getSrc();
-		var lastIndex = srcImg.lastIndexOf("/");
-
-		myDescriptors.push(test_img.getDescriptor());
-
-		srcImg = srcImg.substring(srcImg.length, lastIndex +1);
-
-
-		if(indx < (images.length)){
-			computeFeatures(images[indx++]);
-		}
-		else{
-			indx = 1;
-			canvas.width = 0;
-			canvas.height = 0;
-			doneComputeFeatures();
-		}
-	};
-};
-
-
-function doneComputeFeatures(){
-    var matching = bruteForceMatching(myDescriptors[0], myDescriptors[indx], my_opt.lowe_criterion);
-
-    matching.set(whenMatchinDone);
-
-    function whenMatchinDone() {
-		//console.log("Matches computed ", indx);
-    	var theMatches = matching.getMatches();
-    	if(theMatches.length > 27){
-		  	//RASAC to find a good model
-	      	var myRansac = ransac(theMatches, my_opt.ransac_inlier_threshold, my_opt.ransac_iter);
-	      	myRansac.getHomographie(whenRANSACDone);	
-    	}
-    	else{
-    		//pop imdx in image list
-    		images.splice(indx, 1);
-    		myDescriptors.splice(indx, 1);
-    		//console.log("Images", images);
-
-    		computeNext();
-
-    	}
-    	
-
-      	function whenRANSACDone(homography) {
-      		homographies.push(homography);
-      		++indx;
-      		computeNext();
-      	};
-
-      	function computeNext(){
-      		if(indx < (images.length)){
-      			doneComputeFeatures();
-      		}
-      		else{
-            // warp_App(canvasDiv, homographies, images);
-                console.log("homographies", homographies[0]);
-      			stitch = imagewarp(canvasDiv, homographies, images, blobStuff);
-      		}
-      	};
-    }; 
-};
-
 function blobStuff(){
     var overlapData = stitch.getOverlap();
     
@@ -124,16 +57,6 @@ function blobStuff(){
 
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
-
-    // console.log("base    W:", overlapBase.width, "H", overlapBase.height);
-    // console.log("overlap W:", overlap1.width, "H", overlap1.height);
-
-    var overlapCanvas = loadCanvas("overlap");
-    var overlapCtx = overlapCanvas.getContext("2d");
-
-    overlapCanvas.width = overlap1.width;
-    overlapCanvas.height = overlap1.height;
-    overlapCtx.putImageData(overlap1, 0, 0); 
 
     /////////////////////////////////////
     /////////////////////////////////////

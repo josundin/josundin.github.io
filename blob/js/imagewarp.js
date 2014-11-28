@@ -12,7 +12,7 @@ And some stuff
             this.img.src = imgsrc;
         };
 
-        var canvas, ctx,canvasWidth,canvasHeight, canvas;
+        var canvas, ctx,canvasWidth,canvasHeight;
 
         var imageW = 0;
         var imageH = 0;
@@ -41,12 +41,15 @@ And some stuff
         };
 
         function createcanvas(id){
-            var tmpCanvas = document.createElement('canvas');
-            tmpCanvas.style=("border:1px solid #000000;");
+            // var tmpCanvas = document.createElement('CANVAS');
+            // tmpCanvas.style=("border:1px solid #000000;");
+            // tmpCanvas.width = imageW;
+            // tmpCanvas.height = imageH;
+            // var div = document.getElementById(id); 
+            // div.appendChild(tmpCanvas);
+            var tmpCanvas = document.createElement('CANVAS');
             tmpCanvas.width = imageW;
-            tmpCanvas.height = imageH;
-            var div = document.getElementById(id); 
-            div.appendChild(tmpCanvas);
+            tmpCanvas.height = imageH; 
 
             return tmpCanvas;
         };
