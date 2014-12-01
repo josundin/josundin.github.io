@@ -6,7 +6,7 @@ var images = ["IMG_0050", "IMG_0053"];
 var homographies = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457, 0.002029840601608157, 0.9665254354476929, 11.779176712036133, -0.00005650325692840852, -0.00007099410140654072, 0.9958619475364685]];
 var stitch = {};
 
-var canvasDiv = "divStitched";//'CANVAS';
+var canvasDiv = 'CANVAS';
 var imagesReady = false;
 
 
@@ -43,8 +43,8 @@ for (var i = 0;i < images.length;i++) {
 		var elementId = obj.target.id;
 
 		// copy the images to canvases
-		// var imagecanvas = document.createElement('CANVAS');
-		var imagecanvas = loadCanvas("blobs");
+		var imagecanvas = document.createElement('CANVAS');
+		// var imagecanvas = loadCanvas("blobs");
 		imagecanvas.width = obj.target.width;
 		imagecanvas.height = obj.target.height;
 		imagecanvas.getContext('2d').drawImage(obj.target,0,0);

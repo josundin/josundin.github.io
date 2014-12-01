@@ -14,7 +14,7 @@ var indx = 0;
 var canvasDiv = "divStitched" ;//'CANVAS';
 
 //var canvas = loadCanvas(canvasDiv);
-// var tcanvas = document.createElement('CANVAS');
+var tcanvas = document.createElement('CANVAS');
 var detInfo = document.getElementById("detinfo");
 
 var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
