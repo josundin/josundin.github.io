@@ -77,11 +77,50 @@ function loadCanvas(id){
     return canvas;
 };
 
+function findScale(){
+	return 1;
+}
 
 function blobStuff(){
 	console.log("blobStuff");
 }
 
-function findScale(){
-	return 1;
+function blobStuff(){
+    var overlapData = stitch.getOverlap();
+    
+    var overlap1 = overlapData[1];
+    var overlapBase = overlapData[0];
+
+    var imgBaseChanels = getChanels(overlapBase);
+    var img1Chanels = getChanels(overlap1);
+    
+    ////// Go find them blobs /////////
+
+    var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
+    overlap1.blobs = myblobs1.getData();
+    blobMan(overlap1, "blobs");
+    var el = document.getElementById('blobs');
+    el.scrollIntoView(true); 
+
+    function getChanels(imageDatar){
+        var dptr=0, dptrSingle=0;
+        var imgR_f32 = new jsfeat.matrix_t(imageDatar.width, imageDatar.height, jsfeat.F32_t | jsfeat.C1_t);
+        var imgG_f32 = new jsfeat.matrix_t(imageDatar.width, imageDatar.height, jsfeat.F32_t | jsfeat.C1_t);
+        var imgB_f32 = new jsfeat.matrix_t(imageDatar.width, imageDatar.height, jsfeat.F32_t | jsfeat.C1_t);
+        var imgAlpha = new jsfeat.matrix_t(imageDatar.width, imageDatar.height, jsfeat.U8_t | jsfeat.C1_t);
+
+        for (var y = 0; y < imageDatar.height; y++) {
+            //lumas[y] = new Array(imagedata.width);
+            for (var x = 0; x < imageDatar.width; x++, dptr+=4, dptrSingle+=1) {
+                //var i = x * 4 + y * 4;
+                //console.log(dptr, dptrSingle);
+                imgR_f32.data[dptrSingle] = imageDatar.data[dptr];
+                imgG_f32.data[dptrSingle] = imageDatar.data[dptr + 1];
+                imgB_f32.data[dptrSingle] = imageDatar.data[dptr + 2];
+                imgAlpha.data[dptrSingle] = imageDatar.data[dptr + 3];
+            }
+        }
+
+        return [imgR_f32, imgG_f32, imgB_f32, imgAlpha];
+    };
 }
