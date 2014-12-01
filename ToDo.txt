@@ -59,5 +59,9 @@ Se till så att bilderna laddas korrekt, gör liknande face substiution, dvs:
 
 2. gör först så vi kan se canvasen
 
-3. testa på webben.
+3. gör om imagewarp så functionen tar emot imagedata dvs
+    var cc = element.getContext('2d');
+    var image = cc.getImageData(minx, miny, width, height);
+
+4. testa på webben.
 

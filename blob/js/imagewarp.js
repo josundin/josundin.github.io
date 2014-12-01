@@ -41,15 +41,15 @@ And some stuff
         };
 
         function createcanvas(id){
-            // var tmpCanvas = document.createElement('CANVAS');
-            // tmpCanvas.style=("border:1px solid #000000;");
-            // tmpCanvas.width = imageW;
-            // tmpCanvas.height = imageH;
-            // var div = document.getElementById(id); 
-            // div.appendChild(tmpCanvas);
             var tmpCanvas = document.createElement('CANVAS');
+            tmpCanvas.style=("border:1px solid #000000;");
             tmpCanvas.width = imageW;
-            tmpCanvas.height = imageH; 
+            tmpCanvas.height = imageH;
+            var div = document.getElementById(id); 
+            div.appendChild(tmpCanvas);
+            // var tmpCanvas = document.createElement('CANVAS');
+            // tmpCanvas.width = imageW;
+            // tmpCanvas.height = imageH; 
 
             return tmpCanvas;
         };

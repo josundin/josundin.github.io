@@ -7,35 +7,53 @@ var homographies = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457,
 var stitch = {};
 
 var canvasDiv = "divStitched";//'CANVAS';
+var imagesReady = false;
 
 
-document.addEventListener("DOMContentLoaded", init, false);
-function init() {
-	var selDiv1 = document.querySelector("#selectedF1");
-	
-	placeimgs(imagesRef, selDiv1);
+// document.addEventListener("DOMContentLoaded", init, false);
+// function init() {
 
-	var imageCanvases = {};
-	for (var i = 0;i < images.length;i++) {
-		$("#"+images[i]).load(function(obj) {
-			var elementId = obj.target.id;
 
-			// copy the images to canvases
-			// var imagecanvas = document.createElement('CANVAS');
-			var imagecanvas = loadCanvas("blobs");
-			imagecanvas.width = obj.target.width;
-			imagecanvas.height = obj.target.height;
-			imagecanvas.getContext('2d').drawImage(obj.target,0,0);
-			imageCanvases[elementId] = imagecanvas;
-			console.log(imageCanvases);
-		});
+//     //doStuff
+//     // stitch = imagewarp(canvasDiv, homographies, imageCanvases, blobStuff);
+// };
+var imageCanvases = {};
+function enablestart() {
+	if (imagesReady) {
+		// var startbutton = document.getElementById('startbutton');
+		// startbutton.value = "start";
+		// startbutton.disabled = null;
+		console.log("klar", imageCanvases);
+		stitch = imagewarp(canvasDiv, homographies, imagesRef, blobStuff);
 	}
-    
-	console.log(imageCanvases);
+}
 
-    //doStuff
-    // stitch = imagewarp(canvasDiv, homographies, imageCanvases, blobStuff);
-};
+$(window).load(function() {
+	imagesReady = true;
+	enablestart();
+});
+
+var selDiv1 = document.querySelector("#selectedF1");
+
+placeimgs(imagesRef, selDiv1);
+
+
+for (var i = 0;i < images.length;i++) {
+	$("#"+images[i]).load(function(obj) {
+		var elementId = obj.target.id;
+
+		// copy the images to canvases
+		// var imagecanvas = document.createElement('CANVAS');
+		var imagecanvas = loadCanvas("blobs");
+		imagecanvas.width = obj.target.width;
+		imagecanvas.height = obj.target.height;
+		imagecanvas.getContext('2d').drawImage(obj.target,0,0);
+		imageCanvases[elementId] = imagecanvas;
+		console.log(imageCanvases);
+	});
+}
+
+console.log(imageCanvases);
 
 function placeimgs(images, wdiv){
 	var filesArr = Array.prototype.slice.call(images);
