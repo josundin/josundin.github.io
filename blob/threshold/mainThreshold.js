@@ -11,20 +11,12 @@ var myDescriptors = [];
 var my_opt = new pipe_opt();
 
 var indx = 0;
-var canvasDiv = 'CANVAS';
+var canvasDiv = "divStitched" ;//'CANVAS';
 
 //var canvas = loadCanvas(canvasDiv);
-var tcanvas = document.createElement('CANVAS');
-//canvas.width = vid.width;
-//canvas.height = vid.height; 
-
+// var tcanvas = document.createElement('CANVAS');
 var detInfo = document.getElementById("detinfo");
-// var images = ["../imgs/left.jpg", "../imgs/right.jpg"];
-// var images = ["imgs/P1100328.jpg", "imgs/P1100329.jpg"];	
-//var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
-// var images = ["imgs/P112.jpg", "imgs/P110.jpg", "imgs/P111.jpg"];
-// var images = ["imgs/P110.jpg", "imgs/P111.jpg", "imgs/P112.jpg"];
-// var images = ["imgs/IMG_0050.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg"];
+
 var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
 var homographies = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457, 0.002029840601608157, 0.9665254354476929, 11.779176712036133, -0.00005650325692840852, -0.00007099410140654072, 0.9958619475364685]];
 var stitch = {};
@@ -35,9 +27,7 @@ function init() {
 	
 	placeimgs(images, selDiv1);
     stitch = imagewarp(canvasDiv, homographies, images, blobStuff);
-    
 };
-
 
 function placeimgs(images, wdiv){
 	var filesArr = Array.prototype.slice.call(images);
@@ -57,12 +47,8 @@ function blobStuff(){
 
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
-
-    /////////////////////////////////////
-    /////////////////////////////////////
-    ////// Go find them blobs //////////
-    ////////////////////////////////////
-    ///////////////////////////////////
+    
+    ////// Go find them blobs /////////
 
     var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
     overlap1.blobs = myblobs1.getData();
@@ -92,7 +78,6 @@ function blobStuff(){
         return [imgR_f32, imgG_f32, imgB_f32, imgAlpha];
     };
 }
-
 
 function loadCanvas(id){
 

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Demo</title>
+<style>
+	.selectedFiles img {
+		max-width: 200;
+		max-height: 200px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+	.masks {
+		display: none;
+	}
+</style>
+
+	<link rel="stylesheet" href="../libs/twitter-bootstrap/new_bootstrap.min.css">
+</head>
+<body>
+
+<img id="IMG_0050" class="masks" src="../imgs/IMG_0050.jpg"></img>
+<img id="IMG_0053" class="masks" src="../imgs/IMG_0053.jpg"></img>
+
+<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+<script type="text/javascript" src="../js/imagewarp.js"></script>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>			
+
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<p>1 The images</p>			
+			<div id="selectedF1" class="selectedFiles"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="span12">
+			<p>2 The fuond blobs</p>			
+			<div id="blobs"></div>
+			<div id="divStitched" ></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="main2.js"></script>
+
+</body>
+</html>
