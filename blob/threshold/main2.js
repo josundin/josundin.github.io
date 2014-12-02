@@ -108,7 +108,7 @@ function blobStuff(){
         ////// Go find them blobs /////////
         var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
         overlap1.blobs = myblobs1.getData();
-        blobMan(overlap1, "blobs", blobCanvas);
+        blobMan(overlap1, overlapBase, blobCanvas);
 
         /** gui options*/
         var options = new demo_opt();
@@ -135,13 +135,13 @@ function blobStuff(){
         thresholdfunc.onFinishChange(function(value) {
           // Fires when a controller loses focus.
             overlap1.blobs = myblobs1.compareToThres(value);
-            blobMan(overlap1, "blobs", blobCanvas);
+            blobMan(overlap1, overlapBase, blobCanvas);
         });
 
         train_p.onFinishChange(function(value) {
           // Fires when a controller loses focus.
             overlap1.blobs = myblobs1.getData();
-            blobMan(overlap1, "blobs", blobCanvas);
+            blobMan(overlap1, overlapBase, blobCanvas);
         });
 
         // overlap1.blobs = myblobs1.getData();
