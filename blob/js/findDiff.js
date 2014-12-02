@@ -9,7 +9,7 @@
 	_this['findDiff'] = function(img1, img2, myImageW, myImageH){
 
 		
-		var myBlobs = computeGaussians();
+		// var myBlobs = computeGaussians();
 		// dispImg(img2.imageData);
 
 		// callback();
@@ -43,11 +43,11 @@
 
 			//OBS olika resultat med olika datatyper
 			console.log("skillnad mellan olika datatyper");
-			var diff_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
-			var diffGaus_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
+			// var diff_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
+			// var diffGaus_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
 
-			// var diff_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
-			// var diffGaus_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
+			var diff_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
+			var diffGaus_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
 
 			diff_u8.data = numeric.floor(diff.data);
 			
@@ -71,6 +71,7 @@
 		
 		return{
         	getData: function() {
+        		var myBlobs = computeGaussians();
 				return myBlobs;
         	}
 		};

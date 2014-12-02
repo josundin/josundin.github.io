@@ -9,21 +9,12 @@ var stitch = {};
 var canvasDiv = 'CANVAS';
 var imagesReady = false;
 
-
-// document.addEventListener("DOMContentLoaded", init, false);
-// function init() {
-
-
-//     //doStuff
-//     // stitch = imagewarp(canvasDiv, homographies, imageCanvases, blobStuff);
-// };
 var imageCanvases = {};
 function enablestart() {
 	if (imagesReady) {
 		// var startbutton = document.getElementById('startbutton');
 		// startbutton.value = "start";
 		// startbutton.disabled = null;
-		console.log("klar", imageCanvases);
 		stitch = imagewarp(canvasDiv, homographies, imagesRef, blobStuff);
 	}
 }
@@ -49,11 +40,8 @@ for (var i = 0;i < images.length;i++) {
 		imagecanvas.height = obj.target.height;
 		imagecanvas.getContext('2d').drawImage(obj.target,0,0);
 		imageCanvases[elementId] = imagecanvas;
-		console.log(imageCanvases);
 	});
 }
-
-console.log(imageCanvases);
 
 function placeimgs(images, wdiv){
 	var filesArr = Array.prototype.slice.call(images);
@@ -82,10 +70,6 @@ function findScale(){
 }
 
 function blobStuff(){
-	console.log("blobStuff");
-}
-
-function blobStuff(){
     var overlapData = stitch.getOverlap();
     
     var overlap1 = overlapData[1];
@@ -93,14 +77,17 @@ function blobStuff(){
 
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
-    
-    ////// Go find them blobs /////////
 
-    var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
-    overlap1.blobs = myblobs1.getData();
-    blobMan(overlap1, "blobs");
-    var el = document.getElementById('blobs');
-    el.scrollIntoView(true); 
+    findBlobs();
+
+    function findBlobs(){
+        ////// Go find them blobs /////////
+        var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
+        overlap1.blobs = myblobs1.getData();
+        blobMan(overlap1, "blobs");
+        var el = document.getElementById('blobs');
+        el.scrollIntoView(true); 
+    }    
 
     function getChanels(imageDatar){
         var dptr=0, dptrSingle=0;
