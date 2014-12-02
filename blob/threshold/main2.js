@@ -24,24 +24,8 @@ $(window).load(function() {
 	enablestart();
 });
 
-
-    var demo_opt = function(){
-        this.blur_size = 5;
-        this.lap_thres = 30;
-        this.eigen_thres = 25;
-        this.match_threshold = 48;
-
-        this.train_pattern = function() {
-            console.log("hoi");
-        };
-    }
-
-
-
 var selDiv1 = document.querySelector("#selectedF1");
-
 placeimgs(imagesRef, selDiv1);
-
 
 for (var i = 0;i < images.length;i++) {
 	$("#"+images[i]).load(function(obj) {
@@ -83,7 +67,18 @@ function findScale(){
 	return 1;
 }
 
+function loadCanvas(id){
+    var canvas = document.createElement('canvas');
+    var div = document.getElementById(id); 
+    canvas.id     = id;
+    div.appendChild(canvas);
+
+    return canvas;
+};
+
+
 function blobStuff(){
+    var blobCanvas = loadCanvas("blobs");
     var overlapData = stitch.getOverlap();
     
     var overlap1 = overlapData[1];
@@ -96,28 +91,61 @@ function blobStuff(){
     // findBlobs();
 
     function findBlobs(){
+
+        var demo_opt = function(){
+            this.pre_blur_size = 5;
+            this.pre_sigma = 0.5;
+            this.post_blur_size = 161;
+            this.post_sigma = 20;
+            this.threshold = 10;
+
+            this.train_pattern = function() {
+                // console.log("hoi");
+            };
+            this.message = 'to compute blobs';
+        }
+
         ////// Go find them blobs /////////
         var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
         overlap1.blobs = myblobs1.getData();
-        blobMan(overlap1, "blobs");
+        blobMan(overlap1, "blobs", blobCanvas);
 
         /** gui options*/
         var options = new demo_opt();
         var options1 = new demo_opt();
-        // var gui = new dat.GUI();
         
         var gui = new dat.GUI({ autoPlace: false });
         var customContainer = document.getElementById('thresblobs');
         customContainer.appendChild(gui.domElement);
 
-        gui.add(options, "blur_size", 3, 9).step(1);
-        gui.add(options, "lap_thres", 1, 100);
-        gui.add(options, "train_pattern");
+        var el = document.getElementById('blobs');
+
+        gui.add(options, "pre_blur_size", 3, 9).step(1);
+        gui.add(options, "pre_sigma", 0, 2);
+        gui.add(options, "post_blur_size", 100, 200).step(10);
+        gui.add(options, "post_sigma", 10, 40);
+        var thresholdfunc = gui.add(options, "threshold", 5, 20).step(1);
+        var train_p = gui.add(options, "train_pattern");
+        gui.add(options, 'message');
+
+        // thresholdfunc.onChange(function(value) {
+        //   // Fires on every change, drag, keypress, etc.
+        // });
+
+        thresholdfunc.onFinishChange(function(value) {
+          // Fires when a controller loses focus.
+            overlap1.blobs = myblobs1.compareToThres(value);
+            blobMan(overlap1, "blobs", blobCanvas);
+        });
+
+        train_p.onFinishChange(function(value) {
+          // Fires when a controller loses focus.
+            overlap1.blobs = myblobs1.getData();
+            blobMan(overlap1, "blobs", blobCanvas);
+        });
 
         // overlap1.blobs = myblobs1.getData();
         // blobMan(overlap1, "blobs");
-
-        var el = document.getElementById('blobs');
         el.scrollIntoView(true); 
     }    
 

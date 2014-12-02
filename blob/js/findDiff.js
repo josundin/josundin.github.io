@@ -1,18 +1,14 @@
 //findDiff.js
 // Input the two images
 
-
 (function(_this){
 "use strict";
 
-	// _this['findDiff'] = function(img1, im2, canvas, callback){
 	_this['findDiff'] = function(img1, img2, myImageW, myImageH){
 
-		
-		// var myBlobs = computeGaussians();
-		// dispImg(img2.imageData);
-
-		// callback();
+		var gGauss;
+		var gW = myImageW;
+		var gH = myImageH;
 
 		function computeGaussians(){
 
@@ -65,6 +61,7 @@
 
 			var blobs = findBlobs(diffGaus_u8.data, myImageW, myImageH, 10);
 			console.log("blob nrs", blobs.numberOfUnique);
+			gGauss = diffGaus_u8.data;
 
 			return blobs;
 
@@ -74,6 +71,12 @@
         	getData: function() {
         		var myBlobs = computeGaussians();
 				return myBlobs;
+        	},
+        	compareToThres: function(cmpThreshold) {
+
+        		var tblobs = findBlobs(gGauss, gW, gH, cmpThreshold);
+				console.log("blob nrs found", cmpThreshold,tblobs.numberOfUnique);
+				return tblobs;
         	}
 		};
 	};
