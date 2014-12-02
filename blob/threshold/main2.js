@@ -24,6 +24,20 @@ $(window).load(function() {
 	enablestart();
 });
 
+
+    var demo_opt = function(){
+        this.blur_size = 5;
+        this.lap_thres = 30;
+        this.eigen_thres = 25;
+        this.match_threshold = 48;
+
+        this.train_pattern = function() {
+            console.log("hoi");
+        };
+    }
+
+
+
 var selDiv1 = document.querySelector("#selectedF1");
 
 placeimgs(imagesRef, selDiv1);
@@ -79,12 +93,30 @@ function blobStuff(){
     var img1Chanels = getChanels(overlap1);
 
     findBlobs();
+    // findBlobs();
 
     function findBlobs(){
         ////// Go find them blobs /////////
         var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
         overlap1.blobs = myblobs1.getData();
         blobMan(overlap1, "blobs");
+
+        /** gui options*/
+        var options = new demo_opt();
+        var options1 = new demo_opt();
+        // var gui = new dat.GUI();
+        
+        var gui = new dat.GUI({ autoPlace: false });
+        var customContainer = document.getElementById('thresblobs');
+        customContainer.appendChild(gui.domElement);
+
+        gui.add(options, "blur_size", 3, 9).step(1);
+        gui.add(options, "lap_thres", 1, 100);
+        gui.add(options, "train_pattern");
+
+        // overlap1.blobs = myblobs1.getData();
+        // blobMan(overlap1, "blobs");
+
         var el = document.getElementById('blobs');
         el.scrollIntoView(true); 
     }    

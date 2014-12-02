@@ -20,6 +20,7 @@
 			var sigmaPre = 0.5;
 			var kernelSizePost = 161;
 			var sigmaPost = 20;
+			//************************
 			// var kernelSizePost = 9;
 			// var sigmaPost = 1;
 	        
