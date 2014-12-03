@@ -1,0 +1,12 @@
+
+pipeline 
+
+Börja med att representera bilderna som select view interface utan jquerry.
+
+Integrera med övrig kod
+
+****
+
+Fixa så det går att se igenom blob
+
+

@@ -17,7 +17,8 @@ And some stuff
         var imageW = 0;
         var imageH = 0;
         //This is the base image
-        var baseImage = new imgOpt(images[0])
+        var baseImage = new imgOpt(images[0]);
+        var baseImageMosaic;
 
         // This is the warp images, loop and pusch them to the ImageList
         var imagesList = [];
@@ -41,15 +42,15 @@ And some stuff
         };
 
         function createcanvas(id){
-            // var tmpCanvas = document.createElement('CANVAS');
-            // tmpCanvas.style=("border:1px solid #000000;");
-            // tmpCanvas.width = imageW;
-            // tmpCanvas.height = imageH;
-            // var div = document.getElementById(id); 
-            // div.appendChild(tmpCanvas);
             var tmpCanvas = document.createElement('CANVAS');
+            tmpCanvas.style=("border:1px solid #000000;");
             tmpCanvas.width = imageW;
-            tmpCanvas.height = imageH; 
+            tmpCanvas.height = imageH;
+            var div = document.getElementById(id); 
+            div.appendChild(tmpCanvas);
+            // var tmpCanvas = document.createElement('CANVAS');
+            // tmpCanvas.width = imageW;
+            // tmpCanvas.height = imageH; 
 
             return tmpCanvas;
         };
@@ -115,6 +116,12 @@ And some stuff
             ctx2.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH, imageW, imageH);
             overlapList[0] = ctx2.getImageData(- canvasOffset.minW , - canvasOffset.minH, imageW,imageH);
 
+            canvas.width = canvasOffset.maxW;//max_img_size[0];
+            canvas.height= canvasOffset.maxH;//max_img_size[1];
+
+            ctx.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH, imageW, imageH);
+            baseImageMosaic = ctx.getImageData(0, 0, canvasOffset.maxW, canvasOffset.maxH);
+            
             //hide the first canvas
             canvas.width = 0;
             canvas.height = 0;
@@ -227,7 +234,7 @@ And some stuff
             },
             getMosaic: function() {
                 //return the mosaic data
-                return [baseImage, imagesList];
+                return [baseImageMosaic, imagesList];
             }
         };
     };
