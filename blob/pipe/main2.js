@@ -134,7 +134,7 @@ console.log(blobCanvas.width, blobCanvas.height,mosaic[0]);
         var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
         overlap1.blobs = myblobs1.getData();
         blobMan(overlap1, overlapBase, blobCanvas);
-
+        
         /** gui options*/
         var options = new demo_opt();
         var options1 = new demo_opt();
