@@ -91,6 +91,7 @@ function blobStuff(){
     var overlapBase = overlapData[0];
 
     var mosaic = stitch.getMosaic();
+    var mosaic2 = stitch.getMosaic2();
 
 ///////////////////////////////
     var b1 = loadCanvas("bild1");
@@ -112,8 +113,9 @@ console.log(blobCanvas.width, blobCanvas.height,mosaic[0]);
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
 
+    // selectview([mosaic[0],mosaic[1][0].warpData]);
+    selectview(mosaic2);
     findBlobs();
-    // findBlobs();
 
     function findBlobs(){
 

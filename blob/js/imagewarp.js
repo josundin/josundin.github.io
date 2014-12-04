@@ -19,6 +19,7 @@ And some stuff
         //This is the base image
         var baseImage = new imgOpt(images[0]);
         var baseImageMosaic;
+        var mosaicImgs = new Array(2);
 
         // This is the warp images, loop and pusch them to the ImageList
         var imagesList = [];
@@ -98,6 +99,7 @@ And some stuff
 
                 // Update the context with newly-modified data
                 ctx.putImageData(warpImages[i].warpData, 0, 0);
+                mosaicImgs[1] = canvas.toDataURL();
                 //ctx.putImageData(warpImages[i].warpData, 0, 0, imageW, imageH, imageW, imageH);
                 //ctx.putImageData(imgData,x,y,dirtyX,dirtyY,dirtyWidth,dirtyHeight);
 
@@ -121,7 +123,8 @@ And some stuff
 
             ctx.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH, imageW, imageH);
             baseImageMosaic = ctx.getImageData(0, 0, canvasOffset.maxW, canvasOffset.maxH);
-            
+            mosaicImgs[0] = canvas.toDataURL();
+
             //hide the first canvas
             canvas.width = 0;
             canvas.height = 0;
@@ -235,6 +238,10 @@ And some stuff
             getMosaic: function() {
                 //return the mosaic data
                 return [baseImageMosaic, imagesList];
+            },
+            getMosaic2: function() {
+                //return the mosaic data
+                return mosaicImgs;
             }
         };
     };
