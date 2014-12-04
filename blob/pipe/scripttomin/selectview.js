@@ -13,8 +13,7 @@ function selectview(arrayImages){
 		.attr("height", imageHeight)
 		.attr("id","selectView")
 		.call(d3.behavior.zoom()
-	  	.on("zoom", function(d) 
-	  	{
+	  	.on("zoom", function(d){
 	  	//console.log(d3.event.sourceEvent);
 		if ((d3.event.sourceEvent.deltaY || d3.event.sourceEvent.wheelDelta) > 0 && scrollValue < (arrayImages.length -1) ){
 				//Scroll in one direction
@@ -31,10 +30,8 @@ function selectview(arrayImages){
 		.append("g");
 
 	//Default img Scene
-	(function start(scene)
-	{
+	(function start(scene){
 		console.log("scene :", scene);
-
 		// arrayImages = ["allignedbaseImageMosaic.png", "allignedImage1mosaic.png"];
 		selectView.selectAll("image").remove();
 		for(var i = 0; i < arrayImages.length; i++)
@@ -42,14 +39,12 @@ function selectview(arrayImages){
 	}());
 
 	// The mouse wheel is scrolled The highligted is put on top
-	function createImageObjects(val)
-	{
+	function createImageObjects(val){
 	//Remove all the images.
 	selectView.selectAll("image").remove();
 
 	//For all the images which are not the selected one.
-	for (var i = 0; i < arrayImages.length; i++)
-		{
+	for (var i = 0; i < arrayImages.length; i++){
 		if (i != val)
 			{
 			var imageName = arrayImages[i];
@@ -73,15 +68,12 @@ function selectview(arrayImages){
 		.attr("opacity", 1)
 		//.attr("transform", function(d) { return "translate("+(xpos - (imageWidth/2))+","+(ypos -(imageHeight/2))+")"; })
 		.attr("class", "image")
-		.on("click", function()
-			{
+		.on("click", function(){
 				console.log("clicked id : " + val);
 			});
-		
 	}
 
 	function imageOncanvas(elementName){
-
 		selectView.append("image")
 		.attr("xlink:href", elementName)
 		.attr("width", imageWidth)
