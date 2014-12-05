@@ -15,13 +15,17 @@ var homographiesBird = [[1.0095304250717163, -0.016554025933146477, 8.9532785415
 // 28-29
 var homographiesSiencePark = [[1.3479026556015015, 0.008745760656893253, -210.18344116210938, 0.15344436466693878, 1.1760369539260864, -84.88064575195312, 0.0006413722294382751, 0.00006606439274037257, 0.896777331829071]];
 
-var images = imagesSiencePark;
-var imagesRef = imagesRefSiencePark; 
-var homographies = homographiesSiencePark;
+// var images = imagesSiencePark;
+// var imagesRef = imagesRefSiencePark; 
+// var homographies = homographiesSiencePark;
 
 // var images = imagesBird;
 // var imagesRef = imagesRefBird; 
 // var homographies = homographiesBird;
+
+var images = imagesBike;
+var imagesRef = imagesRefBike; 
+var homographies = homographiesBike;
 
 var stitch = {};
 
@@ -104,16 +108,17 @@ function blobStuff(){
 
     var b1ctx = b1.getContext("2d");
     var b2ctx = b2.getContext("2d");
-console.log(blobCanvas.width, blobCanvas.height,mosaic[0]);
 
     b1ctx.putImageData(mosaic[0], 0, 0);
     b2ctx.putImageData(mosaic[1][0].warpData, 0, 0);
-///////////////////////////
 
+    selectview2('bild2');
+    document.getElementById('bild2').scrollIntoView(true);  
+///////////////////////////
+    // selectview([mosaic[0],mosaic[1][0].warpData]);
+    //stopppa TMP
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
-
-    // selectview([mosaic[0],mosaic[1][0].warpData]);
     selectview(mosaic2);
     findBlobs();
 

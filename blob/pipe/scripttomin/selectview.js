@@ -40,6 +40,7 @@ function selectview(arrayImages){
 
 	// The mouse wheel is scrolled The highligted is put on top
 	function createImageObjects(val){
+		console.log("val",val);
 	//Remove all the images.
 	selectView.selectAll("image").remove();
 

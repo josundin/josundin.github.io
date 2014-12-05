@@ -39,7 +39,7 @@
 			numeric.diveq(diff.data, 3);
 
 			//OBS olika resultat med olika datatyper
-			console.log("skillnad mellan olika datatyper");
+			// console.log("skillnad mellan olika datatyper");
 			// var diff_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
 			// var diffGaus_u8 = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.U8_t | jsfeat.C1_t);
 
@@ -60,7 +60,6 @@
 	        jsfeat.imgproc.gaussian_blur(diff_u8, diffGaus_u8, kernelSizePost, sigmaPost);  	
 
 			var blobs = findBlobs(diffGaus_u8.data, myImageW, myImageH, 10);
-			console.log("blob nrs", blobs.numberOfUnique);
 			gGauss = diffGaus_u8.data;
 
 			return blobs;
@@ -70,6 +69,7 @@
 		return{
         	getData: function() {
         		var myBlobs = computeGaussians();
+        		console.log("blob nrs", myBlobs.numberOfUnique);
 				return myBlobs;
         	},
         	compareToThres: function(cmpThreshold) {
@@ -81,5 +81,4 @@
 		};
 	};
 }(this));
-
 
