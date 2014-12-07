@@ -99,12 +99,18 @@ And some stuff
 
                 // Update the context with newly-modified data
                 ctx.putImageData(warpImages[i].warpData, 0, 0);
-                mosaicImgs[1] = canvas.toDataURL();
-                //ctx.putImageData(warpImages[i].warpData, 0, 0, imageW, imageH, imageW, imageH);
-                //ctx.putImageData(imgData,x,y,dirtyX,dirtyY,dirtyWidth,dirtyHeight);
+                // mosaicImgs[1] = canvas.toDataURL();
 
+                var imagecanvas = document.createElement('CANVAS');
+                        imagecanvas.width = canvas.width;
+                        imagecanvas.height = canvas.height;
+                        imagecanvas.getContext('2d').drawImage(ctx.canvas,0,0);
+                        mosaicImgs[1] = imagecanvas;
+
+                // ctx2.globalAlpha = 0.5;
                 // Draw the image data in final canvas
                 ctx2.drawImage(ctx.canvas,0,0); // Eventuellt pusha ctx.canvas för senare bruk
+                // ctx2.globalAlpha = 1;
 
                 // // OBS Spar denna i eget object
                 var test = ctx.getImageData(- canvasOffset.minW , - canvasOffset.minH, imageW,imageH);
@@ -123,7 +129,12 @@ And some stuff
 
             ctx.drawImage( baseImage.img, - canvasOffset.minW , - canvasOffset.minH, imageW, imageH);
             baseImageMosaic = ctx.getImageData(0, 0, canvasOffset.maxW, canvasOffset.maxH);
-            mosaicImgs[0] = canvas.toDataURL();
+            // mosaicImgs[0] = canvas.toDataURL();
+            var imagecanvas = document.createElement('CANVAS');
+            imagecanvas.width = canvas.width;
+            imagecanvas.height = canvas.height;
+            imagecanvas.getContext('2d').drawImage(ctx.canvas,0,0);
+            mosaicImgs[0] = imagecanvas;
 
             //hide the first canvas
             canvas.width = 0;
