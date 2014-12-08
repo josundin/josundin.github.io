@@ -96,27 +96,9 @@ function blobStuff(){
 
     var mosaic = stitch.getMosaic();
     var mosaic2 = stitch.getMosaic2();
-    console.log("mosaic2", mosaic2);
+    console.log("mosaic2", mosaic2[0].width);
 
-///////////////////////////////
-    var b1 = loadCanvas("bild1");
-    var b2 = loadCanvas("bild2");
-
-    b2.width=mosaic[1][0].warpData.width;
-    b2.height=mosaic[1][0].warpData.height;
-    // b1.width = b2.width;
-    // b1.height = b2.height;
-
-    // var b1ctx = b1.getContext("2d");
-    var b2ctx = b2.getContext("2d");
-    b2ctx.globalAlpha = 0.5;
-    b2ctx.drawImage(mosaic2[1],0,0);
-    b2ctx.globalAlpha = 1;
-    b2ctx.drawImage(mosaic2[0],0,0);
-    // b2ctx.putImageData(mosaic[0], 0, 0);
-    // b2ctx.putImageData(mosaic[1][0].warpData, 0, 0);
-
-    // selectview2('bild2');
+    selectview2('bild2', mosaic2);
     document.getElementById('bild2').scrollIntoView(true);  
 ///////////////////////////
     // selectview([mosaic[0],mosaic[1][0].warpData]);

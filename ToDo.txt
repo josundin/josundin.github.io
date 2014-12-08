@@ -65,3 +65,10 @@ Se till så att bilderna laddas korrekt, gör liknande face substiution, dvs:
 
 4. testa på webben.
 
+-----------------------------------------------------------
+
+Göra interface för canvas select view.
+
+
+Minifiera find blob
+
