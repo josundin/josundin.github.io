@@ -1,15 +1,19 @@
 "use strict";
 
 var imagesRefBike = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
+var imagesRefBike2 = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg", "../imgs/IMG_0051.jpg"];
 var imagesRefSiencePark = ["../imgs/P1100328.jpg", "../imgs/P1100329.jpg"];
 var imagesRefBird = ["../imgs/P1.jpg", "../imgs/P2.jpg"];
 
 var imagesBike = ["IMG_0050", "IMG_0053"];
+var imagesBike2 = ["IMG_0050", "IMG_0053", "IMG_0051"];
 var imagesSiencePark = ["P1100328","P1100329"];
 var imagesBird = ["P1","P2"];
 
 // 50-53
 var homographiesBike = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457, 0.002029840601608157, 0.9665254354476929, 11.779176712036133, -0.00005650325692840852, -0.00007099410140654072, 0.9958619475364685]];
+// 50-53-51
+var homographiesBike2 = [[0.9562448859214783, -0.04059208929538727, 55.0452766418457, 0.002029840601608157, 0.9665254354476929, 11.779176712036133, -0.00005650325692840852, -0.00007099410140654072, 0.9958619475364685],[1.020303726196289, -0.010079147294163704, -42.59284591674805, -0.008457145653665066, 0.9905731081962585, -6.965245246887207, 0.00004839357643504627, -0.00012295154738239944, 0.9988846778869629]]; 
 //bird
 var homographiesBird = [[1.0095304250717163, -0.016554025933146477, 8.953278541564941, 0.03932776674628258, 1.01807701587677, -168.96636962890625, -0.000007351650765485829, 0.00010901226050918922, 0.9818366169929504]];
 // 28-29
@@ -23,9 +27,9 @@ var homographiesSiencePark = [[1.3479026556015015, 0.008745760656893253, -210.18
 // var imagesRef = imagesRefBird; 
 // var homographies = homographiesBird;
 
-var images = imagesBike;
-var imagesRef = imagesRefBike; 
-var homographies = homographiesBike;
+var images = imagesBike2;
+var imagesRef = imagesRefBike2; 
+var homographies = homographiesBike2;
 
 var stitch = {};
 
@@ -96,7 +100,7 @@ function blobStuff(){
 
     var mosaic = stitch.getMosaic();
     var mosaic2 = stitch.getMosaic2();
-    console.log("mosaic2", mosaic2[0].width);
+    console.log("mosaic2", mosaic2[0].width, mosaic2.length);
 
     selectview2('bild2', mosaic2);
     document.getElementById('bild2').scrollIntoView(true);  

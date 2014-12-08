@@ -19,7 +19,7 @@ And some stuff
         //This is the base image
         var baseImage = new imgOpt(images[0]);
         var baseImageMosaic;
-        var mosaicImgs = new Array(2);
+        var mosaicImgs = new Array(images.length);
 
         // This is the warp images, loop and pusch them to the ImageList
         var imagesList = [];
@@ -105,7 +105,7 @@ And some stuff
                         imagecanvas.width = canvas.width;
                         imagecanvas.height = canvas.height;
                         imagecanvas.getContext('2d').drawImage(ctx.canvas,0,0);
-                        mosaicImgs[1] = imagecanvas;
+                        mosaicImgs[i+1] = imagecanvas;
 
                 // ctx2.globalAlpha = 0.5;
                 // Draw the image data in final canvas

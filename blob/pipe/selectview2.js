@@ -77,9 +77,8 @@ var setupOverlay2 = (function(){
 
 
 var b2, b2ctx;
-function selectview2(id, mosaic){
-
-    mosaics = mosaic;
+function selectview2(id, mosaicin){
+    mosaics = mosaicin;
     viewMosaic(mosaics);
 
     setupOverlay2('#bild2',function(){
@@ -96,9 +95,13 @@ function viewMosaic(mosaic){
     
     b2ctx = b2.getContext("2d");
     b2ctx.globalAlpha = 0.5;
-    b2ctx.drawImage(mosaic[1],0,0);
-    b2ctx.globalAlpha = 1;
-    b2ctx.drawImage(mosaic[0],0,0);
+
+    for (var i = 0; i < mosaics.length; i++){
+        b2ctx.drawImage(mosaics[i],0,0);
+    }
+
+    // b2ctx.drawImage(mosaic[1],0,0);
+    // b2ctx.drawImage(mosaic[0],0,0);
 }
 
 function putMosaic(val){

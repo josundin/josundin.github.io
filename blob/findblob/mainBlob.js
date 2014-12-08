@@ -19,8 +19,8 @@ var detInfo = document.getElementById("detinfo");
 //var images = ["../imgs/P112.jpg","../imgs/IMG_0051.jpg", "../imgs/P110.jpg", "../imgs/IMG_0050.jpg" ,"../imgs/IMG_0053.jpg","../imgs/P111.jpg", ];
 // var images = ["imgs/P112.jpg", "imgs/P110.jpg", "imgs/P111.jpg"];
 // var images = ["imgs/P110.jpg", "imgs/P111.jpg", "imgs/P112.jpg"];
-// var images = ["imgs/IMG_0050.jpg", "imgs/IMG_0053.jpg", "imgs/IMG_0051.jpg"];
-var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
+var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg", "../imgs/IMG_0051.jpg"];
+// var images = ["../imgs/IMG_0050.jpg", "../imgs/IMG_0053.jpg"];
 var homographies = [];
 var stitch = {};
 
