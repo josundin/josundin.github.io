@@ -4,7 +4,7 @@ var mosaics = [];
 var scrollValue = 0;
 //upp minus, ner pluss
 
-var setupOverlay2 = (function(){
+var setupOverlaySelectView = (function(){
 
     console.log("setupOverlay2");
 
@@ -77,11 +77,11 @@ var setupOverlay2 = (function(){
 
 
 var b2, b2ctx;
-function selectview2(id, mosaicin){
+function selectview(id, mosaicin){
     mosaics = mosaicin;
     viewMosaic(mosaics);
 
-    setupOverlay2('#bild2',function(){
+    setupOverlaySelectView('#bild2',function(){
     	console.log("selectview2");
     });
 }

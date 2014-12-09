@@ -1,10 +1,12 @@
 //findDiff.js
-// Input the two images
+// Input the base image and the rest of the images
 
 (function(_this){
 "use strict";
 
 	_this['findDiff'] = function(img1, img2, myImageW, myImageH){
+
+		console.log("img2", img2);
 
 		var gGauss;
 		var gW = myImageW;

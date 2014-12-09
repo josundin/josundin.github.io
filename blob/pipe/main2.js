@@ -98,19 +98,16 @@ function blobStuff(){
     var overlap1 = overlapData[1];
     var overlapBase = overlapData[0];
 
-    var mosaic = stitch.getMosaic();
     var mosaic2 = stitch.getMosaic2();
     console.log("mosaic2", mosaic2[0].width, mosaic2.length);
 
-    selectview2('bild2', mosaic2);
+    selectview('bild2', mosaic2);
     document.getElementById('bild2').scrollIntoView(true);  
 ///////////////////////////
-    // selectview([mosaic[0],mosaic[1][0].warpData]);
     //stopppa TMP
     var imgBaseChanels = getChanels(overlapBase);
     var img1Chanels = getChanels(overlap1);
-    // selectview(mosaic2);
-    // findBlobs();
+    findBlobs();
 
     function findBlobs(){
 
@@ -142,23 +139,25 @@ function blobStuff(){
 
         var el = document.getElementById('blobs');
 
-        gui.add(options, "pre_blur_size", 3, 9).step(1);
-        gui.add(options, "pre_sigma", 0, 2);
-        gui.add(options, "post_blur_size", 100, 200).step(10);
-        gui.add(options, "post_sigma", 10, 40);
+        // gui.add(options, "pre_blur_size", 3, 9).step(1);
+        // gui.add(options, "pre_sigma", 0, 2);
+        // gui.add(options, "post_blur_size", 100, 200).step(10);
+        // gui.add(options, "post_sigma", 10, 40);
         var thresholdfunc = gui.add(options, "threshold", 5, 20).step(1);
         var train_p = gui.add(options, "train_pattern");
         gui.add(options, 'message');
 
-        // thresholdfunc.onChange(function(value) {
-        //   // Fires on every change, drag, keypress, etc.
-        // });
-
-        thresholdfunc.onFinishChange(function(value) {
-          // Fires when a controller loses focus.
+        thresholdfunc.onChange(function(value) {
+          // Fires on every change, drag, keypress, etc.
             overlap1.blobs = myblobs1.compareToThres(value);
             blobMan(overlap1, overlapBase, blobCanvas);
         });
+
+        // thresholdfunc.onFinishChange(function(value) {
+        //   // Fires when a controller loses focus.
+        //     overlap1.blobs = myblobs1.compareToThres(value);
+        //     blobMan(overlap1, overlapBase, blobCanvas);
+        // });
 
         train_p.onFinishChange(function(value) {
           // Fires when a controller loses focus.
@@ -166,8 +165,6 @@ function blobStuff(){
             blobMan(overlap1, overlapBase, blobCanvas);
         });
 
-        // overlap1.blobs = myblobs1.getData();
-        // blobMan(overlap1, "blobs");
         el.scrollIntoView(true); 
     }    
 
