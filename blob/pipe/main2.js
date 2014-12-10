@@ -35,6 +35,7 @@ var stitch = {};
 
 var canvasDiv = "divStitched";//'CANVAS';
 var imagesReady = false;
+var result_canvas;  
 
 var imageCanvases = {};
 function enablestart() {
@@ -92,60 +93,87 @@ function loadCanvas(id){
 };
 
 function blobStuff(){
-    var blobCanvas = loadCanvas("blobs");
-    var overlapData = stitch.getOverlap();
-    
-    var overlap1 = overlapData[1];
-    var overlapBase = overlapData[0];
-
-    var mosaic2 = stitch.getMosaic2();
-    console.log("mosaic2", mosaic2[0].width, mosaic2.length);
-
-    selectview('bild2', mosaic2);
-    document.getElementById('bild2').scrollIntoView(true);  
-///////////////////////////
-    //stopppa TMP
-    var imgBaseChanels = getChanels(overlapBase);
-    var img1Chanels = getChanels(overlap1);
-    findBlobs();
-
-    function findBlobs(){
 
         var demo_opt = function(){
-            this.pre_blur_size = 5;
-            this.pre_sigma = 0.5;
-            this.post_blur_size = 161;
-            this.post_sigma = 20;
             this.threshold = 10;
-
-            this.train_pattern = function() {
-                // console.log("hoi");
-            };
-            this.message = 'to compute blobs';
         }
 
-        ////// Go find them blobs /////////
-        var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
-        overlap1.blobs = myblobs1.getData();
-        blobMan(overlap1, overlapBase, blobCanvas);
-        
-        /** gui options*/
-        var options = new demo_opt();
-        var options1 = new demo_opt();
-        
-        var gui = new dat.GUI({ autoPlace: false });
-        var customContainer = document.getElementById('thresblobs');
-        customContainer.appendChild(gui.domElement);
+    var blobCanvas = loadCanvas("blobs");
+    var mosaic2 = stitch.getMosaic2();
+    selectview('bild2', mosaic2);
+    document.getElementById('bild2').scrollIntoView(true);
 
-        var el = document.getElementById('blobs');
+    var globalNumberOfUnique = 0;
+    var overlapData = stitch.getOverlap();
+    console.log("Length of overlap data ", overlapData.length);
+///////////////////////////
+    
 
+    // var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap1.width, overlap1.height);
+    // overlap1.blobs = myblobs1.getData();
+
+    ////// Go find them blobs /////////
+    var overlapBase = overlapData[0];
+    var imgBaseChanels = getChanels(overlapBase);
+    var blobMaps = [];
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (var xii = 1; xii < images.length; xii++){
+        console.log("h från stack", xii); 
+
+        //Denna ska loopa igenom alla element
+        var overlap = overlapData[xii];
+        var img1Chanels = getChanels(overlap);
+
+        ////// Go find them blobs //////////
+        var myblobs1 = findDiff(imgBaseChanels, img1Chanels, overlap.width, overlap.height);
+        overlap.blobs = myblobs1.getData();
+
+        // Separate the aryes
+        for (var y = 0; y < overlap.blobs.numberOfUnique; y++){
+            
+            var currentblobindx = y + 1;
+            var blobtmp = zeros(overlap.blobs.data.length);
+            for (var x = 0; x < overlap.blobs.data.length; x++){
+                if(currentblobindx === overlap.blobs.data[x]){
+                    blobtmp[x] = currentblobindx + globalNumberOfUnique;
+                }
+            }
+            // print(blobtmp, 10);
+            blobMaps.push([blobtmp, xii]);
+        }
+        globalNumberOfUnique += overlap.blobs.numberOfUnique;
+        console.log(globalNumberOfUnique, overlap.blobs.numberOfUnique,"--------------------------------restart--------------------------------------------");
+    }
+
+     console.log("blobMaps length", blobMaps.length , blobMaps);
+    // print(blobMaps[0], 10);
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    result_canvas = loadCanvas("blobs");
+    redrawScrean(blobMaps, overlapData);
+    // blobMan(overlap1, "blobs", overlapData[0]);
+    var el = document.getElementById('blobs');
+    el.scrollIntoView(true); 
+
+    
+    /** gui options*/
+    var options = new demo_opt();
+    
+    var gui = new dat.GUI({ autoPlace: false });
+    var customContainer = document.getElementById('thresblobs');
+    customContainer.appendChild(gui.domElement);
+
+    var el = document.getElementById('blobs');
+/////////////////////////////////////////////////////
         // gui.add(options, "pre_blur_size", 3, 9).step(1);
         // gui.add(options, "pre_sigma", 0, 2);
         // gui.add(options, "post_blur_size", 100, 200).step(10);
         // gui.add(options, "post_sigma", 10, 40);
         var thresholdfunc = gui.add(options, "threshold", 5, 20).step(1);
-        var train_p = gui.add(options, "train_pattern");
-        gui.add(options, 'message');
+        // var train_p = gui.add(options, "train_pattern");
+        // gui.add(options, 'message');
 
         thresholdfunc.onChange(function(value) {
           // Fires on every change, drag, keypress, etc.
@@ -159,14 +187,14 @@ function blobStuff(){
         //     blobMan(overlap1, overlapBase, blobCanvas);
         // });
 
-        train_p.onFinishChange(function(value) {
-          // Fires when a controller loses focus.
-            overlap1.blobs = myblobs1.getData();
-            blobMan(overlap1, overlapBase, blobCanvas);
-        });
-
+        // train_p.onFinishChange(function(value) {
+        //   // Fires when a controller loses focus.
+        //     overlap1.blobs = myblobs1.getData();
+        //     blobMan(overlap1, overlapBase, blobCanvas);
+        // });
+///////////////////////////////////////////////////////
         el.scrollIntoView(true); 
-    }    
+        
 
     function getChanels(imageDatar){
         var dptr=0, dptrSingle=0;

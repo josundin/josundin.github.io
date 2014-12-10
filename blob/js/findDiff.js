@@ -5,9 +5,6 @@
 "use strict";
 
 	_this['findDiff'] = function(img1, img2, myImageW, myImageH){
-
-		console.log("img2", img2);
-
 		var gGauss;
 		var gW = myImageW;
 		var gH = myImageH;
@@ -25,8 +22,7 @@
 	        var diff = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
 
 			//diff per channel, normalized by 3
-			for (var i = 0; i < 3; i++)
-			{
+			for (var i = 0; i < 3; i++){
 				var img1GaussBlur = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
 				var img2GaussBlur = new jsfeat.matrix_t(myImageW, myImageH, jsfeat.F32_t | jsfeat.C1_t);
 		        
@@ -61,7 +57,7 @@
 			//Post blur
 	        jsfeat.imgproc.gaussian_blur(diff_u8, diffGaus_u8, kernelSizePost, sigmaPost);  	
 
-			var blobs = findBlobs(diffGaus_u8.data, myImageW, myImageH, 10);
+			var blobs = findBlobs(diffGaus_u8.data, myImageW, myImageH, 11);
 			gGauss = diffGaus_u8.data;
 
 			return blobs;
@@ -71,7 +67,6 @@
 		return{
         	getData: function() {
         		var myBlobs = computeGaussians();
-        		console.log("blob nrs", myBlobs.numberOfUnique);
 				return myBlobs;
         	},
         	compareToThres: function(cmpThreshold) {
@@ -83,4 +78,3 @@
 		};
 	};
 }(this));
-

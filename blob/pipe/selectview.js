@@ -5,9 +5,6 @@ var scrollValue = 0;
 //upp minus, ner pluss
 
 var setupOverlaySelectView = (function(){
-
-    console.log("setupOverlay2");
-
     function $(selector){
         var c = selector.charAt(0);
         if( c === '#' ){
