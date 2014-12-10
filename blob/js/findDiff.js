@@ -5,6 +5,7 @@
 "use strict";
 
 	_this['findDiff'] = function(img1, img2, myImageW, myImageH){
+
 		var gGauss;
 		var gW = myImageW;
 		var gH = myImageH;
@@ -59,9 +60,8 @@
 
 			var blobs = findBlobs(diffGaus_u8.data, myImageW, myImageH, 11);
 			gGauss = diffGaus_u8.data;
-
+			
 			return blobs;
-
 		};
 		
 		return{
@@ -72,7 +72,6 @@
         	compareToThres: function(cmpThreshold) {
 
         		var tblobs = findBlobs(gGauss, gW, gH, cmpThreshold);
-				console.log("blob nrs found", cmpThreshold,tblobs.numberOfUnique);
 				return tblobs;
         	}
 		};

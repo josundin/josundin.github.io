@@ -1,7 +1,6 @@
 //blobMan.js
 function redrawScrean(maps, odata, blobCanvas){
     var baseImgData = odata[0];
-	console.log(baseImgData.width, baseImgData.height);
 
 	result_canvas.width = baseImgData.width;
     result_canvas.height = baseImgData.height;
