@@ -72,3 +72,17 @@ Göra interface för canvas select view.
 
 Minifiera find blob
 
+
+
+var fizzyText = new FizzyText();
+var gui = new dat.GUI();
+
+gui.add(fizzyText, 'noiseStrength', 0, 100).listen();
+
+var update = function() {
+  requestAnimationFrame(update);
+  fizzyText.noiseStrength = Math.random();
+};
+
+update();
+
