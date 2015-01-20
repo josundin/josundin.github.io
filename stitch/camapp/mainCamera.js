@@ -77,13 +77,10 @@ $(window).load(function() {
     }
 
     function stitchPhoto(){
-        
-
         if(indx > 1){
             console.log("Stitche them photo");
             aIndx = 0;
-            baseImg(otherImg);
-            
+            baseImg(otherImg);       
         }
         else
             console.log("Need More than two photos");
