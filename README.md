@@ -1,6 +1,6 @@
 ##magcut 
 
-magcut is a Photo alignment with a magical cut tool. Uses HTML5 canvas and JavaScript.
+Magcut is an Interactive Photo editing tool that differences in aligned images. Uses HTML5 canvas and JavaScript.
 Please see the [**Demo page**](http://josundin.github.io/magcut/) and/or the [**Source code**](https://github.com/josundin/magcut)
 
 ##A web browser tool for Image Alignment and Stitching

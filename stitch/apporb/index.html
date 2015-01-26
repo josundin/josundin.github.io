@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html>
+<head>
+
+<meta charset="utf-8" />
+  <title>ORB STITCH APP</title>
+  <style>
+    #drop_zone {
+      border: 2px dashed #bbb;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 25px;
+      text-align: center;
+      font: 20pt bold 'Vollkorn';
+      color: #bbb;
+    }
+
+  #selectedFiles img {
+    max-width: 250px;
+    max-height: 250px;
+    float: left;
+    margin-bottom:10px;
+    margin-left:10px;
+  }
+
+  </style>
+    <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+  </head>
+<body>
+
+
+<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+<script type="text/javascript" src="../ext_js/norms.js"></script>
+<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+<script type="text/javascript" src="../js/imagewarp_v2.js"></script>
+<script type="text/javascript" src="../js/layout.js"></script>
+<script type="text/javascript" src="../js/orbObj.js"></script>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../ext_js/profiler.js"></script>
+
+  <div class="container">
+
+    <header>
+      <div class="page-header">
+          <h1>Image Stitching - Web-tool (ORB Descriptors)</h1>
+      </div>
+      <!--h1>Image Stitching - Web-tool</h1-->
+      <p>If you are new to this app or to panoramas and you have not yet seen the demo please do see the <strong> <a href="../demoorb/">Demo</a>
+        </strong> first. <br>
+        <a href="../">Back to index</a>
+    </header>
+
+    <div class="row">
+      <div class="span12">
+        <p>
+          Stitch two or more images by File Browse: <input type="file" id="files" name="files" multiple accept="image/*"><br/>
+        </p>
+        <p>
+          or Drop the images on the following box. The results will show up when computed.
+        </p>
+      </div>
+
+    </div>
+  
+  <div id="drop_zone">Drop images here</div>
+
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch" style="display:none;">
+          <h2>1 Selected images</h2>
+          <p>
+
+          </p>
+        </div>
+        <div id="selectedFiles" class="selectedFiles"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch2" style="display:none;">
+          <p>
+            <strong>You have selected the above images. Run the algorithm to <button type="button" onclick="start();" class="btn btn-primary" id="example-images">stitch the images</button>
+            </strong> Or Select new ones. 
+          </p>
+        </div>
+      </div> 
+    </div>
+
+    <div class="row">
+
+      <div class="span12">
+
+        <div id="stitching" style="display:none;">
+          <h2>Now stitching! :</h2>
+          <p>
+            Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern.
+          </p>
+        </div>  
+
+        <!--div id="stitched" style="display:none;">
+          <div id="result"></div>
+          <div id="the_canvas"></div>
+        </div-->
+      </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class="span12">
+          <h2>2 Stitch</h2>
+            <!--div id="divStitched" style="display:none;"></div--> 
+          <div id="tmpCanvas" ></div>       
+          <div id="divStitched" ></div>
+          <div id="results" style="display:none;">
+                <h2> Result </h2>
+
+                <p>
+                    <strong>Try it for yourself with the
+                    <a href="../camapp/">CamApp</a>
+                    </strong> <br>
+                    <a href="../">Back to index</a>
+                </p>
+          </div>        
+        </div>
+    </div>
+
+  </div>
+<script type="text/javascript" src="mainApp.js"></script>
+</body>
+</html>
