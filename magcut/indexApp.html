@@ -1,0 +1,155 @@
+<!doctype html>
+
+<html>
+<head>
+
+<meta charset="utf-8" />
+  <title>STITCH APP</title>
+  <style>
+    #drop_zone {
+      border: 2px dashed #bbb;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 25px;
+      text-align: center;
+      font: 20pt bold 'Vollkorn';
+      color: #bbb;
+    }
+
+  #selectedFiles img {
+    max-width: 250px;
+    max-height: 250px;
+    float: left;
+    margin-bottom:10px;
+    margin-left:10px;
+  }
+
+  </style>
+    <link rel="stylesheet" href="bootstrap.min.css">
+  </head>
+<body>
+
+<!--script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+<script type="text/javascript" src="../ext_js/dat.gui.min.js"></script>
+<script type="text/javascript" src="../js/findBlobs.js"></script>
+<script type="text/javascript" src="../js/findDiff.js"></script>
+<script type="text/javascript" src="../js/imagewarp.js"></script>
+<script type="text/javascript" src="../js/blobMan.js"></script>
+<script type="text/javascript" src="../js/interactMouse.js"></script>
+<script type="text/javascript" src="../js/poisson.js"></script> 
+<script type="text/javascript" src="../js/layout.js"></script>
+<script type="text/javascript" src="../js/orbObj.js"></script>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../ext_js/profiler.js"></script-->
+
+<script src="magcutApp.min.js" type="text/javascript"></script>
+
+  <div class="container">
+
+    <header>
+      <h1>Image Stitching - Web-tool</h1>
+      <p>If you are new to this app or to panoramas and you have not yet seen the demo please do see the <strong> <a href="../demo/">Demo</a>
+        </strong> first. <br>
+        <a href="../">Back to index</a>
+    </header>
+
+    <div class="row">
+      <div class="span12">
+        <p>
+          Stitch two or more images by File Browse: <input type="file" id="files" name="files" multiple accept="image/*"><br/>
+        </p>
+        <p>
+          or Drop the images on the following box. The results will show up when computed.
+        </p>
+      </div>
+
+    </div>
+  
+  <div id="drop_zone">Drop images here</div>
+
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch" style="display:none;">
+          <h2>1 Selected images</h2>
+          <p>
+
+          </p>
+        </div>
+        <div id="selectedFiles" class="selectedFiles"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch2" style="display:none;">
+          <p>
+            <strong>You have selected the above images. Run the algorithm to <button type="button" onclick="start();" class="btn btn-primary" id="example-images">stitch the images</button>
+            </strong> Or Select new ones. 
+          </p>
+        </div>
+      </div> 
+    </div>
+
+    <div class="row" id="stitching" style="display:none;">
+
+      <div class="span12">
+
+        <h2>Now stitching! :</h2>
+        <p>
+          Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern.
+        </p>
+      </div>
+    </div>
+
+  <div class="row" id="poststitch" style="display:none;">
+    <div class="col-md-8">
+        <div id="tmpCanvas" ></div> 
+        <h2>Select reference view</h2>
+        <div id="selectViewContainer"></div>
+    </div>
+    <div class="col-md-4">
+      Scroll inside the images to select a reference view
+      <div id="ComputingBlobs" style="display:none;">
+        <h2>Computing Differences: </h2>  
+      </div>
+    </div>
+  </div>
+
+  <!-------------------------------------------------------------->
+  <div id="blobInterface" class="row" style="display:none;">
+    <div class="col-md-8">
+      <p>The fuond blobs</p> <br>
+      Select the colored regions by click them to blend
+      <div id="blobs"></div>
+    </div>
+
+    <div class="col-md-4">
+      <p>Threshold interface</p>
+      <div id="thresblobs"></div>
+      <br> <br>
+            When the regions are selected, click 
+        <button name="adjustBtn" onclick="blend()">HERE</button>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div id="final-canvas"></div> 
+    </div>
+    <div class="col-md-4">
+      <div id="btn1"></div>
+    </div>
+  </div>
+
+  </div>
+<!--script type="text/javascript" src="../js/selectview.js" ></script>
+<script type="text/javascript" src="mainApp.js"></script>
+<script type="text/javascript" src="../js/blobObj.js" ></script-->
+<script type="text/javascript">
+"use strict";function selectview(a,b){mosaics=b,viewMosaic(mosaics),setupOverlaySelectView("#selectViewContainer",function(){})}function viewMosaic(a){b2=loadCanvas("selectViewContainer"),b2.width=a[0].width,b2.height=a[0].height,b2ctx=b2.getContext("2d"),b2ctx.globalAlpha=.7;for(var b=0;b<mosaics.length;b++)b2ctx.drawImage(mosaics[b],0,0)}function putMosaic(a){b2.width=mosaics[0].width,b2.height=mosaics[0].height,b2ctx.globalAlpha=.5;for(var b=0;b<mosaics.length;b++)b!=a&&b2ctx.drawImage(mosaics[b],0,0);b2ctx.globalAlpha=1,b2ctx.drawImage(mosaics[a],0,0)}function init(){var a=document.getElementById("drop_zone");a.addEventListener("dragover",handleDragOver,!1),a.addEventListener("drop",handleFileSelect,!1),document.querySelector("#files").addEventListener("change",handleFileSelectButton,!1),selDiv=document.querySelector("#selectedFiles")}function handleFileSelectButton(a){if(a.target.files&&window.FileReader){selDiv.innerHTML="",imgSrcs=[];var b=a.target.files;console.log("the files:",b);var c=Array.prototype.slice.call(b);console.log("fore"),c.forEach(function(a){if(a.type.match("image.*")){var b=new FileReader;b.onload=function(b){var c='<img src="'+b.target.result+'">';selDiv.innerHTML+=c,console.log("URL:",a.name),imgSrcs.push(b.target.result)},b.readAsDataURL(a)}}),showStuff()}}function handleFileSelect(a){selDiv.innerHTML="",imgSrcs=[],a.stopPropagation(),a.preventDefault();var b=a.dataTransfer.files,c=Array.prototype.slice.call(b);c.forEach(function(a){if(a.type.match("image.*")){var b=new FileReader;b.onload=function(b){var c='<img src="'+b.target.result+'">';selDiv.innerHTML+=c,console.log("URL:",a.name),imgSrcs.push(b.target.result)},b.readAsDataURL(a)}}),showStuff()}function showStuff(){$("#pre-stitch").show(),$("#pre-stitch2").show()}function start(){stitchImgs=[],$("#stitching").show();var a=document.getElementById("stitching");if(a.scrollIntoView(!0),console.log("LENGTH OF IMAGES",imgSrcs.length),isEmpty(computedHs)){imagesRef=imgSrcs.slice();for(var b=0;b<imgSrcs.length;b++)computedHs[b]={val:!1,bool:!1,H:[]}}return orbImages=imgSrcs.slice(),baseImg(otherImg),!1}function isEmpty(a){for(var b in a)if(a.hasOwnProperty(b))return!1;return!0}function handleDragOver(a){a.stopPropagation(),a.preventDefault(),a.dataTransfer.dropEffect="copy"}function baseImg(a){var b=new Image;b.src=orbImages[index++],stitchImgs.push(b.src),b.onload=function(){stat2.start("features");var c=findScale(b.width,b.height),d=b.width*c|0,e=b.height*c|0;orb=orbObj(d,e),canvas.width=d,canvas.height=e;var f=canvas.getContext("2d");f.drawImage(this,0,0,d,e);var g=f.getImageData(0,0,d,e);orb.setOrbBase(g,d,e),stat2.stop("features"),console.log("features base img:",stat2.log(1),"ms"),a()}}function otherImg(){var a=new Image;a.src=orbImages[index],a.onload=function(){stat2.start("features");var b=findScale(a.width,a.height),c=a.width*b|0,d=a.height*b|0;canvas.width=c,canvas.height=d;var e=canvas.getContext("2d");e.drawImage(this,0,0,c,d);var f=e.getImageData(0,0,c,d);orb.setOrbOther(f,c,d),orb.getNumMatches()>27?(homographies[hindex++]=orb.getHomograph(),stitchImgs.push(orbImages[index]),console.log("homographies",homographies)):console.log("nada",orb.getNumMatches()),stat2.stop("features"),console.log("features other img:",stat2.log(1),"ms"),index<orbImages.length-1?(++index,otherImg()):(computedHs[0].bool?(console.log("INIT DONE"),hComputed()):(console.log("INIT NOT DONE"),stitch=imagewarp("CANVAS",homographies,stitchImgs,selView)),canvas.width=0,canvas.height=0)}}function selView(){computedHs[0]={val:!1,bool:!0,H:homographies.slice()};var a=stitch.getMosaic2();selectview("canvas",a),$("#stitching").hide(),$("#poststitch").show();var b=document.getElementById("selectViewContainer");b.scrollIntoView(!0)}function hComputed(){for(var a=0;a<imgSrcs.length;a++)computedHs[a].val?computedHs[a]={val:!0,bool:!0,H:homographies.slice()}:computedHs[a].val=!1;stitch=imagewarp("CANVAS",homographies,stitchImgs,blobStuff)}function loadCanvas(a){var b=document.createElement("canvas"),c=document.getElementById(a);return b.id=a,c.appendChild(b),b}function createImgObj(a){var b=new Array(imagesRef.length),c=0;if(computedHs[a].val)console.log("VAL else");else{b[c++]=imagesRef[a],computedHs[a].val=!0;for(var d=0;d<imagesRef.length;d++)d!=a&&(b[c++]=imagesRef[d],computedHs[d].val=!1);imgSrcs=b.slice(),computedHs[a].bool?stitch=imagewarp("CANVAS",computedHs[a].H,b,blobStuff):(console.log("!bool"),index=0,hindex=0,start())}}function blobStuff(){blob?(blob.remove(),blob.createBlobView()):(blob=blobObj(),blob.createBlobView())}var mosaics=[],scrollValue=0,setupOverlaySelectView=function(){function a(a){var b=a.charAt(0);if("#"===b)var c=document.getElementById(a.slice(1,a.length));else var c=document.getElementById(a);var d={},e=function(a,b){var e,f=a.split(" "),g=f.length;for(e=0;g>e;e+=1)c.attachEvent?c.attachEvent("on"+f[e],b):c.addEventListener(f[e],b,!1);return d};return d.on=e,d.element=c,d}var b=null;return function(c,d){!function(a){return function(){a()}}(d);b=a(c);var e=document.getElementById("ComputingBlobs");b.on("touchstart mousedown",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1),console.log("down, scrollValue:",scrollValue),e.style.display="block"}).on("touchend mouseup",function(){e.scrollIntoView(!0),console.log("upp, call function in main"),createImgObj(scrollValue)}).on("DOMMouseScroll mousewheel",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1);var b=a.wheelDelta?a.wheelDelta/40:a.detail?-a.detail:0;b>0&&scrollValue<mosaics.length-1?(scrollValue+=1,putMosaic(scrollValue)):0>b&&scrollValue>0&&(scrollValue-=1,putMosaic(scrollValue))})}}(),b2,b2ctx,canvas=loadCanvas("tmpCanvas"),imgSrcs=[],orbImages=[],imagesRef=[],selDiv="",index=0,hindex=0,homographies=[],orb={},stitch={},stitchImgs=[],computedHs={},stat2=new profiler,result_canvas;stat2.add("features"),document.addEventListener("DOMContentLoaded",init,!1);var blob,finalcanvas=loadCanvas("final-canvas"),mouse={};!function(a){a.blobObj=function(){function a(){o=0;var a=j[0],d=c(a);n=[];for(var e={},h=1;h<imagesRef.length;h++)e[h]=11;for(var h=1;h<imagesRef.length;h++){var m=new i(h);f[h]=g.add(m,"threshold",5,20).step(1),f[h].onChange(function(a){e[this.object.blobMap]=a,b(e)});var p=j[h],q=c(p);k[h]=findDiff(d,q,p.width,p.height),p.blobs=k[h].getData();for(var r=0;r<p.blobs.numberOfUnique;r++){for(var s=r+1,t=zeros(p.blobs.data.length),u=0;u<p.blobs.data.length;u++)s===p.blobs.data[u]&&(t[u]=s+o);n.push([t,h])}o+=p.blobs.numberOfUnique}console.log("globalNumberOfUnique",o);for(var h=0;o>h;h++)l[h+1]=!1;return n}function b(a){o=0,n=[];for(var b=1;b<imagesRef.length;b++){var c=j[b];c.blobs=k[b].compareToThres(a[b]);for(var d=0;d<c.blobs.numberOfUnique;d++){for(var e=d+1,f=zeros(c.blobs.data.length),g=0;g<c.blobs.data.length;g++)e===c.blobs.data[g]&&(f[g]=e+o);n.push([f,b])}o+=c.blobs.numberOfUnique}l={};for(var b=0;o>b;b++)l[b+1]=!1;mouse.setNblobs(n,j,l),redrawScrean(n,j,l,mouse.getOffset())}function c(a){for(var b=0,c=0,d=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),e=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),f=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),g=new jsfeat.matrix_t(a.width,a.height,jsfeat.U8_t|jsfeat.C1_t),h=0;h<a.height;h++)for(var i=0;i<a.width;i++,b+=4,c+=1)d.data[c]=a.data[b],e.data[c]=a.data[b+1],f.data[c]=a.data[b+2],g.data[c]=a.data[b+3];return[d,e,f,g]}function d(){var a=document.createElement("input");a.type="button",a.className="btn btn-primary",a.value="reset",a.onclick=e;var b=document.getElementById("btn1");b.appendChild(a)}function e(){finalcanvas.width=0,finalcanvas.height=0,$("#btn1").hide();for(var a=0;a<_.size(l);a++)l[a+1]=!1;redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");b.scrollIntoView(!0)}var f={},g=new dat.GUI({autoPlace:!1}),h=document.getElementById("thresblobs");h.appendChild(g.domElement);var i=function(a){this.threshold=11,this.blobMap=a},j={},k=[],l={},m={},n=[];$("#btn1").hide(),d();var o=0;return{createBlobView:function(){result_canvas=loadCanvas("blobs"),j=stitch.getOverlap(),console.log("Length of overlap data ",j.length),m=a(),$("#ComputingBlobs").hide(),$("#blobInterface").show(),mouse=interactMouse(m,j,l,j[0].width,j[0].height),mouse.setup(),redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");return b.scrollIntoView(!0),1},getData:function(){return 1},remove:function(){for(var a=1;a<imagesRef.length;a++)console.log("REMOVE:",a),f[a]&&g.remove(f[a]);var b=document.getElementById("blobs");return b.children.blobs.remove(),result_canvas={},l={},j={},k=[],m={},n=[],1}}}}(this);
+</script>
+</body>
+</html>

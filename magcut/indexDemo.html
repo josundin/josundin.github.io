@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Demo</title>
+<style>
+	.selectedFiles img {
+		max-width: 100;
+		max-height: 100px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+	.masks {
+		display: none;
+	}
+</style>
+
+<link rel="stylesheet" href="bootstrap.min.css">
+
+</head>
+<body>
+
+<!--img id="IMG_0050" class="masks" src="../imgs/IMG_0050.jpg"></img>
+<img id="IMG_0053" class="masks" src="../imgs/IMG_0053.jpg"></img>
+<img id="IMG_0051" class="masks" src="../imgs/IMG_0051.jpg"></img>
+
+<img id="P1100328" class="masks" src="../imgs/P1100328.jpg"></img>
+<img id="P1100329" class="masks" src="../imgs/P1100329.jpg"></img>
+
+<img id="P1" class="masks" src="../imgs/P1.jpg"></img>
+<img id="P2" class="masks" src="../imgs/P2.jpg"></img-->
+
+<!--script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+<script type="text/javascript" src="../ext_js/underscore_dev.js"></script-->
+
+<!--script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+
+<script type="text/javascript" src="../js/extracted.js"></script>
+<script type="text/javascript" src="../ext_js/dat.gui.min.js"></script>
+<script type="text/javascript" src="../js/findBlobs.js"></script>
+<script type="text/javascript" src="../js/findDiff.js"></script>
+<script type="text/javascript" src="../js/imagewarp.js"></script>
+<script type="text/javascript" src="../js/blobMan.js"></script>	
+<script type="text/javascript" src="../js/interactMouse.js"></script>	
+<script type="text/javascript" src="../js/poisson.js"></script>	
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script-->
+
+<!--script type="text/javascript" src="../dist/magcut.js"></script-->	
+
+<script src="magcut.min.js" type="text/javascript"></script>
+
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<p>The images</p>			
+			<div id="selectedF1" class="selectedFiles"></div>
+		</div>
+	</div>
+
+    <div class="row">
+	  <div class="col-md-8">
+      	<h2>Select reference view</h2>
+		<div id="selectViewContainer"></div>
+	  </div>
+	  <div class="col-md-4">
+	  Scroll inside the images to select a reference view
+		<div id="ComputingBlobs" style="display:none;">
+			<h2>Computing Differences: </h2>  
+		</div>
+	  </div>
+	</div>
+
+	<!--div id="ComputingBlobs" class="row" style="display:none;">
+
+		<h2>Computing Differences: </h2>
+	  
+	</div-->
+
+	<div id="blobInterface" class="row" style="display:none;">
+	  <div class="col-md-8">
+		  <p>The fuond blobs</p> <br>
+		  Select the colored regions by click them to blend
+		  <div id="blobs"></div>
+	  </div>
+
+	  <div class="col-md-4">
+		  <p>Threshold interface</p>
+		  <div id="thresblobs"></div>
+		  <br> <br>
+	  		    When the regions are selected, click 
+		    <button name="adjustBtn" onclick="blend()">HERE</button>.		    
+	  </div>
+	</div>
+
+	<div class="row">
+	  <div class="col-md-8">
+	  	<div id="final-canvas"></div> 
+	  </div>
+	  <div class="col-md-4">
+	  	<div id="btn1"></div>
+	  </div>
+	</div>
+</div>
+<!--script type="text/javascript" src="../js/selectview.js" ></script>
+<script type="text/javascript" src="mainDemo.js"></script>
+<script type="text/javascript" src="../js/blobObj.js" ></script-->
+<script type="text/javascript">
+"use strict";function selectview(a,b){mosaics=b,viewMosaic(mosaics),setupOverlaySelectView("#selectViewContainer",function(){})}function viewMosaic(a){b2=loadCanvas("selectViewContainer"),b2.width=a[0].width,b2.height=a[0].height,b2ctx=b2.getContext("2d"),b2ctx.globalAlpha=.7;for(var b=0;b<mosaics.length;b++)b2ctx.drawImage(mosaics[b],0,0)}function putMosaic(a){b2.width=mosaics[0].width,b2.height=mosaics[0].height,b2ctx.globalAlpha=.5;for(var b=0;b<mosaics.length;b++)b!=a&&b2ctx.drawImage(mosaics[b],0,0);b2ctx.globalAlpha=1,b2ctx.drawImage(mosaics[a],0,0)}function enablestart(){if(imagesReady){for(var a=0;a<imagesRef.length;a++)computedHs[a]={val:!1,bool:!1,H:allHomographies[a]};stitch=imagewarp(canvasDiv,allHomographies[0],imagesRef,selView)}}function placeimgs(a,b){for(var c=(Array.prototype.slice.call(a),0);c<a.length;c++){var d=new Image;d.src=a[c],b.appendChild(d)}}function findScale(){return 1}function loadCanvas(a){var b=document.createElement("canvas"),c=document.getElementById(a);return b.id=a,c.appendChild(b),b}function selView(){localStorage.getItem("num")?console.log("number",localStorage.getItem("num")):console.log("Non set",localStorage.getItem("num"));var a=stitch.getMosaic2();selectview("canvas",a)}function createImgObj(a){var b=new Array(imagesRef.length),c=0;if(!computedHs[a].val){b[c++]=imagesRef[a],computedHs[a].val=!0;for(var d=0;d<imagesRef.length;d++)d!=a&&(b[c++]=imagesRef[d],computedHs[d].val=!1);console.log(b,"Create img ooobj:",computedHs[a].H),stitch=imagewarp(canvasDiv,computedHs[a].H,b,blobStuff)}}function blobStuff(){blob?(blob.remove(),blob.createBlobView()):(blob=blobObj(),blob.createBlobView())}var mosaics=[],scrollValue=0,setupOverlaySelectView=function(){function a(a){var b=a.charAt(0);if("#"===b)var c=document.getElementById(a.slice(1,a.length));else var c=document.getElementById(a);var d={},e=function(a,b){var e,f=a.split(" "),g=f.length;for(e=0;g>e;e+=1)c.attachEvent?c.attachEvent("on"+f[e],b):c.addEventListener(f[e],b,!1);return d};return d.on=e,d.element=c,d}var b=null;return function(c,d){!function(a){return function(){a()}}(d);b=a(c);var e=document.getElementById("ComputingBlobs");b.on("touchstart mousedown",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1),console.log("down, scrollValue:",scrollValue),e.style.display="block"}).on("touchend mouseup",function(){e.scrollIntoView(!0),console.log("upp, call function in main"),createImgObj(scrollValue)}).on("DOMMouseScroll mousewheel",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1);var b=a.wheelDelta?a.wheelDelta/40:a.detail?-a.detail:0;b>0&&scrollValue<mosaics.length-1?(scrollValue+=1,putMosaic(scrollValue)):0>b&&scrollValue>0&&(scrollValue-=1,putMosaic(scrollValue))})}}(),b2,b2ctx,homographiesBike=[[.9562448859214783,-.04059208929538727,55.0452766418457,.002029840601608157,.9665254354476929,11.779176712036133,-5650325692840852e-20,-7099410140654072e-20,.9958619475364685]],homographiesBike2H1=[[1.020303726196289,-.010079147294163704,-42.59284591674805,-.008457145653665066,.9905731081962585,-6.965245246887207,4839357643504627e-20,-.00012295154738239944,.9988846778869629],[.9562448859214783,-.04059208929538727,55.0452766418457,.002029840601608157,.9665254354476929,11.779176712036133,-5650325692840852e-20,-7099410140654072e-20,.9958619475364685]],homographiesBike2H2=[[.9660865664482117,-.008302299305796623,45.14383316040039,.005773747805505991,.9849867820739746,9.751049995422363,-490144120703917e-19,6797895184718072e-20,.9983599185943604],[.8957809209823608,-.025373294949531555,98.51021575927734,.004517511930316687,.939185619354248,21.728973388671875,-.00012811814667657018,-596984045841964e-20,.9856936931610107]],homographiesBike2H3=[[1.0311598777770996,.0011012349277734756,-54.12679672241211,-.0024361235555261374,1.0119781494140625,-11.21747875213623,6324340938590467e-20,-37644367694156244e-21,.9971030950546265],[1.0898643732070923,.06088623031973839,-113.0201416015625,-.008569265715777874,1.0580685138702393,-22.7808895111084,.00014498442760668695,5467134542413987e-20,.983923614025116]],homographiesBirdH1=[[1.0095304250717163,-.016554025933146477,8.953278541564941,.03932776674628258,1.01807701587677,-168.96636962890625,-7351650765485829e-21,.00010901226050918922,.9818366169929504]],homographiesBirdH2=[[.9741345047950745,.016616482287645343,-6.28730344772339,-.035838641226291656,.9484438896179199,163.43844604492188,12708939721051138e-21,-.00010157084761885926,.9824137687683105]],homographiesSienceParkH1=[[1.3479026556015015,.008745760656893253,-210.18344116210938,.15344436466693878,1.1760369539260864,-84.88064575195312,.0006413722294382751,6606439274037257e-20,.896777331829071]],homographiesSienceParkH2=[[.5946701169013977,-.023367745801806453,140.58761596679688,-.10435666143894197,.7485773563385015,45.653278350830085,-.00041533523472025996,-7564908446511255e-20,.8931218385696411]],imageSet=0,imagesRef=0,allHomographies=[];imageSet=localStorage.getItem("selectSceneNum")?localStorage.getItem("selectSceneNum"):1,1==imageSet?(console.log("image Set 1"),allHomographies=[homographiesBike2H1,homographiesBike2H2,homographiesBike2H3],imagesRef=["../imgs/IMG_0050.jpg","../imgs/IMG_0051.jpg","../imgs/IMG_0053.jpg"]):2==imageSet?(console.log("image Set 2"),allHomographies=[homographiesSienceParkH1,homographiesSienceParkH2],imagesRef=["../imgs/P1100328.jpg","../imgs/P1100329.jpg"]):3==imageSet&&(imagesRef=["../imgs/P1.jpg","../imgs/P2.jpg"],allHomographies=[homographiesBirdH1,homographiesBirdH2]);var stitch={},computedHs={},canvasDiv="CANVAS",imagesReady=!1,result_canvas,imageCanvases={};$(window).load(function(){imagesReady=!0,enablestart()});var selDiv1=document.querySelector("#selectedF1");placeimgs(imagesRef,selDiv1);var blob,finalcanvas=loadCanvas("final-canvas"),mouse={};!function(a){a.blobObj=function(){function a(){o=0;var a=j[0],d=c(a);n=[];for(var e={},h=1;h<imagesRef.length;h++)e[h]=11;for(var h=1;h<imagesRef.length;h++){var m=new i(h);f[h]=g.add(m,"threshold",5,20).step(1),f[h].onChange(function(a){e[this.object.blobMap]=a,b(e)});var p=j[h],q=c(p);k[h]=findDiff(d,q,p.width,p.height),p.blobs=k[h].getData();for(var r=0;r<p.blobs.numberOfUnique;r++){for(var s=r+1,t=zeros(p.blobs.data.length),u=0;u<p.blobs.data.length;u++)s===p.blobs.data[u]&&(t[u]=s+o);n.push([t,h])}o+=p.blobs.numberOfUnique}console.log("globalNumberOfUnique",o);for(var h=0;o>h;h++)l[h+1]=!1;return n}function b(a){o=0,n=[];for(var b=1;b<imagesRef.length;b++){var c=j[b];c.blobs=k[b].compareToThres(a[b]);for(var d=0;d<c.blobs.numberOfUnique;d++){for(var e=d+1,f=zeros(c.blobs.data.length),g=0;g<c.blobs.data.length;g++)e===c.blobs.data[g]&&(f[g]=e+o);n.push([f,b])}o+=c.blobs.numberOfUnique}l={};for(var b=0;o>b;b++)l[b+1]=!1;mouse.setNblobs(n,j,l),redrawScrean(n,j,l,mouse.getOffset())}function c(a){for(var b=0,c=0,d=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),e=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),f=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),g=new jsfeat.matrix_t(a.width,a.height,jsfeat.U8_t|jsfeat.C1_t),h=0;h<a.height;h++)for(var i=0;i<a.width;i++,b+=4,c+=1)d.data[c]=a.data[b],e.data[c]=a.data[b+1],f.data[c]=a.data[b+2],g.data[c]=a.data[b+3];return[d,e,f,g]}function d(){var a=document.createElement("input");a.type="button",a.className="btn btn-primary",a.value="reset",a.onclick=e;var b=document.getElementById("btn1");b.appendChild(a)}function e(){finalcanvas.width=0,finalcanvas.height=0,$("#btn1").hide();for(var a=0;a<_.size(l);a++)l[a+1]=!1;redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");b.scrollIntoView(!0)}var f={},g=new dat.GUI({autoPlace:!1}),h=document.getElementById("thresblobs");h.appendChild(g.domElement);var i=function(a){this.threshold=11,this.blobMap=a},j={},k=[],l={},m={},n=[];$("#btn1").hide(),d();var o=0;return{createBlobView:function(){result_canvas=loadCanvas("blobs"),j=stitch.getOverlap(),console.log("Length of overlap data ",j.length),m=a(),$("#ComputingBlobs").hide(),$("#blobInterface").show(),mouse=interactMouse(m,j,l,j[0].width,j[0].height),mouse.setup(),redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");return b.scrollIntoView(!0),1},getData:function(){return 1},remove:function(){for(var a=1;a<imagesRef.length;a++)console.log("REMOVE:",a),f[a]&&g.remove(f[a]);var b=document.getElementById("blobs");return b.children.blobs.remove(),result_canvas={},l={},j={},k=[],m={},n=[],1}}}}(this);
+</script>
+</body>
+</html>
