@@ -1,0 +1,108 @@
+<html>
+<head>
+    <title>Image Segmentation with Geodesic Distances in HTML5 and JS</title>
+    <script type='text/javascript' src='jquery-1.9.1.min.js'></script>
+
+    <script src="Colours.js">//http://stevehanov.ca/colours/Colours.js</script>
+    <script src="UntidyPriorityQueue.js"></script>
+    <script type='text/javascript' src='science.v1.js'></script>
+    <script type='text/javascript' src='science.stats.js'></script>
+    <script type='text/javascript' src='underscore-min.js'></script>
+
+
+    <style>
+        canvas {
+            border: 2px dotted #000;
+        }
+
+        table {
+            margin-left:auto; 
+            margin-right:auto;
+            margin-top: 100px;
+        }
+
+        td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .selectedFiles img {
+            max-width: 250px;
+            float: left;
+            margin-bottom:10px;
+            margin-left:10px;
+            display: none;
+        }
+
+    </style>
+</head>
+    <body>
+        <div id="selectedF1" class="selectedFiles"></div>
+        <div id="div_picture_version">
+        <form id="myForm2" role="form">
+    <div class="radio">
+      <label><input type="radio" name="optFB" value="1" checked>Paint Foreground</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="optFB" value="2" >Paint Background</label>
+    </div>
+</form>
+            <table>
+                <tr>
+                    <td>
+                        <input type="file" id="imageLoader" name="imageLoader"/>
+                    </td>
+                    <td>
+                        <input type="button" id="button_generate_image" value="Generate"/>
+                        <span id="text_generate_status"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+<!--                         <input type="button" id="button_foreground" value="Foreground"/>
+                        <input type="button" id="button_background" value="Background"/> -->
+                        <input type="button" id="button_clear_lines" value="Clear"/>
+                    </td>
+                    <td>
+                        <input type="button" id="button_result_normal" value="Segmentation"/>
+                        <input type="button" id="button_result_heat_fg" value="FG heat map"/>
+                        <input type="button" id="button_result_heat_bg" value="BG heat map"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="text_line_type"></span>
+                    </td>
+                    <td>
+                        <input type="button" id="button_animate_heat_fg" value="Animate FG HM"/>
+                        <input type="button" id="button_animate_heat_bg" value="Animate BG HM"/>
+                        <input type="button" id="button_stop_animation" value="Stop"/>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span>Animation Speed:</span>
+                        <input type="range" min="1" max="150" step="1" value="1" onChange="updateSpeed(this.value)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <canvas id="canvas_input_photo"></canvas>
+                    </td>
+                    <td>
+                        <canvas id="canvas_output_photo"></canvas>
+                    </td>
+                </tr>
+            <table>
+        </div>
+
+
+    <script type='text/javascript' src='segment.js'></script>
+    <script type='text/javascript' src='mousePaint.js'></script>
+
+        <h2>Note</h2>
+        <h3>all credits to the original paper by, Xue Bai and Guillermo Sapiro: A Geodesic Framework for Fast Interactive Image and Video Segmentation and Matting. <br> And to the javascript implementation:  <a href="http://rodrigoh.com/ee570/vision.html"> http://rodrigoh.com/ee570/vision.html</h3>
+    </body>
+</head>
+</html>
