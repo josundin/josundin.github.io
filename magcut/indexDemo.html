@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>The Demo</title>
+<title>Image Editing Demo</title>
+<link rel="stylesheet" href="bootstrap.min.css">
 <style>
 	.selectedFiles img {
 		max-width: 100;
@@ -14,9 +15,30 @@
 	.masks {
 		display: none;
 	}
+
+	#sidebar{
+    display: inline;
+    position: fixed;
+    left: 20px;
+    top: 450px;
+    width: 60px;
+    overflow: hidden;
+}
+.vericaltext{
+	font-size: 30px;
+	font-weight: bold;
+    display: inline;
+    position: fixed;
+    width:1px;
+  	left: 40px;
+    top: 175px;
+
+    word-wrap: break-word;
+    font-family: monospace;
+    position:inside;
+}
 </style>
 
-<link rel="stylesheet" href="bootstrap.min.css">
 
 </head>
 <body>
@@ -31,27 +53,26 @@
 <img id="P1" class="masks" src="../imgs/P1.jpg"></img>
 <img id="P2" class="masks" src="../imgs/P2.jpg"></img-->
 
-<!--script type="text/javascript" src="../ext_js/underscore-min.js"></script>
-<script type="text/javascript" src="../ext_js/underscore_dev.js"></script-->
-
-<!--script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<!-- <script type="text/javascript" src="../ext_js/underscore_dev.js"></script>
+<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
 <script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
 
-<script type="text/javascript" src="../js/extracted.js"></script>
-<script type="text/javascript" src="../ext_js/dat.gui.min.js"></script>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../ext_js/vector.js"></script>
+<script type="text/javascript" src="../ext_js/profiler.js"></script>
+
 <script type="text/javascript" src="../js/findBlobs.js"></script>
 <script type="text/javascript" src="../js/findDiff.js"></script>
 <script type="text/javascript" src="../js/imagewarp.js"></script>
 <script type="text/javascript" src="../js/blobMan.js"></script>	
 <script type="text/javascript" src="../js/interactMouse.js"></script>	
-<script type="text/javascript" src="../js/poisson.js"></script>	
-<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script-->
+<script type="text/javascript" src="../js/poisson.js"></script>	 -->
 
-<!--script type="text/javascript" src="../dist/magcut.js"></script-->	
 
-<script src="magcut.min.js" type="text/javascript"></script>
-
+<script type="text/javascript" src="magcut.min.js"></script>	
+  
 <div class="container">
+<h2>Image Editing Demo on the Web</a></h2>
 	<div class="row">
 		<div class="span12">
 			<p>The input images</p>			
@@ -80,11 +101,24 @@
 	  </div>
 
 	  <div class="col-md-4">
-		  <p>Threshold interface</p>
+		  <p>When clicked in the image</p>
 		  <div id="thresblobs"></div>
+
+		  <form id="myForm" role="form">
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="1" checked>Select Blob</label>
+		    </div>
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="2" >Paint Out</label>
+		    </div>
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="3">Paint In</label>
+		    </div>
+  		</form>
+
 		  <br> <br>
 	  		    When the regions are selected, click 
-		    <button name="adjustBtn" onclick="blend()">HERE</button>.		    
+		    <button class="btn btn-primary" name="adjustBtn" onclick="blend()">HERE</button> To blend.		    
 	  </div>
 	</div>
 
@@ -92,16 +126,34 @@
 	  <div class="col-md-8">
 	  	<div id="final-canvas"></div> 
 	  </div>
+
+	  <!--div class="col-md-8">
+	  		new-canvas
+	  	<div id="new-canvas"></div> 
+	  	src-canvas
+	  	<div id="src-canvas"></div>
+	  </div-->
 	  <div class="col-md-4">
 	  	<div id="btn1"></div>
 	  </div>
 	</div>
 </div>
-<!--script type="text/javascript" src="../js/selectview.js" ></script>
+<!-- <script src="../js/relativeBlobTreshold.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/selectview.js" ></script>
 <script type="text/javascript" src="mainDemo.js"></script>
-<script type="text/javascript" src="../js/blobObj.js" ></script-->
-<script type="text/javascript">
-"use strict";function selectview(a,b){mosaics=b,viewMosaic(mosaics),setupOverlaySelectView("#selectViewContainer",function(){})}function viewMosaic(a){b2=loadCanvas("selectViewContainer"),b2.width=a[0].width,b2.height=a[0].height,b2ctx=b2.getContext("2d"),b2ctx.globalAlpha=.7;for(var b=0;b<mosaics.length;b++)b2ctx.drawImage(mosaics[b],0,0)}function putMosaic(a){b2.width=mosaics[0].width,b2.height=mosaics[0].height,b2ctx.globalAlpha=.5;for(var b=0;b<mosaics.length;b++)b!=a&&b2ctx.drawImage(mosaics[b],0,0);b2ctx.globalAlpha=1,b2ctx.drawImage(mosaics[a],0,0)}function enablestart(){if(imagesReady){for(var a=0;a<imagesRef.length;a++)computedHs[a]={val:!1,bool:!1,H:allHomographies[a]};stitch=imagewarp(canvasDiv,allHomographies[0],imagesRef,selView)}}function placeimgs(a,b){for(var c=(Array.prototype.slice.call(a),0);c<a.length;c++){var d=new Image;d.src=a[c],b.appendChild(d)}}function findScale(){return 1}function loadCanvas(a){var b=document.createElement("canvas"),c=document.getElementById(a);return b.id=a,c.appendChild(b),b}function selView(){localStorage.getItem("num")?console.log("number",localStorage.getItem("num")):console.log("Non set",localStorage.getItem("num"));var a=stitch.getMosaic2();selectview("canvas",a)}function createImgObj(a){var b=new Array(imagesRef.length),c=0;if(!computedHs[a].val){b[c++]=imagesRef[a],computedHs[a].val=!0;for(var d=0;d<imagesRef.length;d++)d!=a&&(b[c++]=imagesRef[d],computedHs[d].val=!1);console.log(b,"Create img ooobj:",computedHs[a].H),stitch=imagewarp(canvasDiv,computedHs[a].H,b,blobStuff)}}function blobStuff(){blob?(blob.remove(),blob.createBlobView()):(blob=blobObj(),blob.createBlobView())}var mosaics=[],scrollValue=0,setupOverlaySelectView=function(){function a(a){var b=a.charAt(0);if("#"===b)var c=document.getElementById(a.slice(1,a.length));else var c=document.getElementById(a);var d={},e=function(a,b){var e,f=a.split(" "),g=f.length;for(e=0;g>e;e+=1)c.attachEvent?c.attachEvent("on"+f[e],b):c.addEventListener(f[e],b,!1);return d};return d.on=e,d.element=c,d}var b=null;return function(c,d){!function(a){return function(){a()}}(d);b=a(c);var e=document.getElementById("ComputingBlobs");b.on("touchstart mousedown",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1),console.log("down, scrollValue:",scrollValue),e.style.display="block"}).on("touchend mouseup",function(){e.scrollIntoView(!0),console.log("upp, call function in main"),createImgObj(scrollValue)}).on("DOMMouseScroll mousewheel",function(a){a.preventDefault?a.preventDefault():a.returnValue&&(a.returnValue=!1);var b=a.wheelDelta?a.wheelDelta/40:a.detail?-a.detail:0;b>0&&scrollValue<mosaics.length-1?(scrollValue+=1,putMosaic(scrollValue)):0>b&&scrollValue>0&&(scrollValue-=1,putMosaic(scrollValue))})}}(),b2,b2ctx,homographiesBike2H1=[[1.020303726196289,-.010079147294163704,-42.59284591674805,-.008457145653665066,.9905731081962585,-6.965245246887207,4839357643504627e-20,-.00012295154738239944,.9988846778869629],[.9562448859214783,-.04059208929538727,55.0452766418457,.002029840601608157,.9665254354476929,11.779176712036133,-5650325692840852e-20,-7099410140654072e-20,.9958619475364685]],homographiesBike2H2=[[.9660865664482117,-.008302299305796623,45.14383316040039,.005773747805505991,.9849867820739746,9.751049995422363,-490144120703917e-19,6797895184718072e-20,.9983599185943604],[.8957809209823608,-.025373294949531555,98.51021575927734,.004517511930316687,.939185619354248,21.728973388671875,-.00012811814667657018,-596984045841964e-20,.9856936931610107]],homographiesBike2H3=[[1.0311598777770996,.0011012349277734756,-54.12679672241211,-.0024361235555261374,1.0119781494140625,-11.21747875213623,6324340938590467e-20,-37644367694156244e-21,.9971030950546265],[1.0898643732070923,.06088623031973839,-113.0201416015625,-.008569265715777874,1.0580685138702393,-22.7808895111084,.00014498442760668695,5467134542413987e-20,.983923614025116]],homographiesBirdH1=[[1.0095304250717163,-.016554025933146477,8.953278541564941,.03932776674628258,1.01807701587677,-168.96636962890625,-7351650765485829e-21,.00010901226050918922,.9818366169929504]],homographiesBirdH2=[[.9741345047950745,.016616482287645343,-6.28730344772339,-.035838641226291656,.9484438896179199,163.43844604492188,12708939721051138e-21,-.00010157084761885926,.9824137687683105]],homographiesSienceParkH1=[[1.3479026556015015,.008745760656893253,-210.18344116210938,.15344436466693878,1.1760369539260864,-84.88064575195312,.0006413722294382751,6606439274037257e-20,.896777331829071]],homographiesSienceParkH2=[[.5946701169013977,-.023367745801806453,140.58761596679688,-.10435666143894197,.7485773563385015,45.653278350830085,-.00041533523472025996,-7564908446511255e-20,.8931218385696411]],imageSet=0,imagesRef=0,allHomographies=[];if(imageSet=localStorage.getItem("selectSceneNum")?localStorage.getItem("selectSceneNum"):1,1==imageSet){var homographiesELH1=[[1.0389015674591064,-.021919989958405495,-4.273282051086426,.09422748535871506,.9875717163085938,-5.8898749351501465,6793891952838749e-20,-867368362378329e-19,1.0001949071884155]],homographiesELH2=[[.9784799218177795,.014791175723075867,.5339639782905579,-.09201742708683014,1.0146938562393188,6.114669322967529,-5027901352150366e-20,6726609717588872e-20,1.0003852844238281]];console.log("image Set 1"),allHomographies=[homographiesELH1,homographiesELH2],imagesRef=["../imgs/EandL/P1180178.jpg","../imgs/EandL/P1180179.jpg"]}else if(2==imageSet){var homographiesSkiH1=[[1.01169753074646,-.016839805990457535,22.81320571899414,.02119976095855236,.9952255487442017,-7.414227485656738,12518536095740274e-21,8109120244625956e-21,1.0002163648605347],[.9661481976509094,-.029190676286816597,113.27467346191406,.017496902495622635,.9802349805831909,-6.218682765960693,-40292612538905814e-21,-1541243545943871e-20,.9954161643981934],[.967432975769043,-.016158273443579674,150.0976104736328,.016845792531967163,.9825758337974548,-24.608877182006836,-4376105425762944e-20,280006952380063e-19,.9924551844596863],[.937919557094574,-.007838856428861618,150.89927673339844,-.0026983320713043213,.9693214297294617,-29.952003479003906,-7996862404979765e-20,9929681255016476e-21,.9868520498275757]],homographiesSkiH2=[[.9813196063041687,-.003270781831815839,-19.718448638916016,-.025491315871477127,.9755317568778992,11.485857009887695,-13089696949464269e-21,-6815016240580007e-20,.9994958639144897],[.9375579953193665,-.01717488095164299,92.28602600097656,-.006694590672850609,.9646527171134949,3.4758987426757812,-736266520107165e-19,-30116832931526005e-21,.9926178455352783],[.9423925876617432,-.011368698440492153,128.0341796875,.0032766549848020077,.9703877568244934,-17.63808822631836,-7681920396862552e-20,-841243763716193e-20,.989737331867218],[.9498104453086853,.020767856389284134,126.0226821899414,-.01134435087442398,.9838808178901672,-24.66139793395996,-7451975397998467e-20,41468072595307603e-21,.9890984892845154]],homographiesSkiH3=[[1.0139126777648926,.022940490394830704,-113.59968566894531,-.01728522591292858,1.0102853775024414,8.091630935668945,2689881148398854e-20,-5228447662375402e-21,.9969506859779358],[1.0451877117156982,.017562206834554672,-97.22286987304688,.007259022444486618,1.0259953737258911,-4.289793968200684,657521522953175e-19,1741613232297823e-20,.9938262701034546],[.9840916991233826,.0011156642576679587,40.44911193847656,-.0002805233816616237,.9953309297561646,-18.887020111083984,-2594508623587899e-20,11096006346633658e-21,.9987226128578186],[.9838175773620605,.01544911228120327,39.93574523925781,-.01599566452205181,.9923341870307922,-23.280550003051758,-2696404953894671e-20,2234232169939787e-21,.9988448619842529]],homographiesSkiH4=[[1.0269458293914795,.026224985718727112,-155.84146118164062,-.015786726027727127,1.0152915716171265,27.3282470703125,5677257286151871e-20,-354270468960749e-20,.9912620782852173],[1.034406304359436,.01214594952762127,-133.55679321289062,-.00219235778786242,1.0169494152069092,18.38968276977539,7074053428368643e-20,10010813866756507e-22,.990869402885437],[1.010952353477478,.0015984297497197986,-40.74266052246094,.00032625222229398787,1.003129482269287,19.029930114746094,21905025278101675e-21,-75593557085085195e-22,.99897301197052],[1.0019458532333374,.022620707750320435,-1.1114107370376587,-.015627743676304817,1.0039751529693604,-4.454003810882568,-8.904158903533244e-7,14966783965064678e-21,.9999342560768127]],homographiesSkiH5=[[1.02799391746521,.006391704082489014,-155.6632537841797,.0007734594983048737,1.0107998847961426,31.66087532043457,6575458246516064e-20,-2313648656127043e-20,.989302933216095],[1.0355504751205444,-.004942593164741993,-133.48455810546875,.012805087491869926,1.0172375440597534,23.023300170898438,786042510299012e-19,-3400243258511182e-21,.9897943735122681],[1.0128307342529297,-.017082683742046356,-40.7623405456543,.01680472120642662,1.0037094354629517,22.917695999145508,26313451598980464e-21,-9436296750209294e-21,.9987296462059021],[1.0027586221694946,-.02336910180747509,.014896824024617672,.017289433628320694,.9969953894615173,3.8658764362335205,8945458830567077e-21,-2403052531008143e-20,.9999077916145325]];allHomographies=[homographiesSkiH1,homographiesSkiH2,homographiesSkiH3,homographiesSkiH4,homographiesSkiH5],imagesRef=["../imgs/ski/ski1.jpg","../imgs/ski/ski2.jpg","../imgs/ski/ski3.jpg","../imgs/ski/ski4.jpg","../imgs/ski/ski5.jpg"]}else if(3==imageSet){var homographiesHundH1=[[.9959573149681091,-.004883802495896816,2.678840160369873,.005868001375347376,.9916155338287354,1.220236897468567,2886128186219139e-21,-19482627976685762e-21,.9999841451644897]],homographiesHundH2=[[1.0037338733673096,.0017153428634628654,-2.2722158432006836,-.004822799004614353,1.0045233964920044,-1.1375906467437744,-12442297929737833e-22,12024049283354543e-21,.9999890923500061]];allHomographies=[homographiesHundH1,homographiesHundH2],imagesRef=["../imgs/hundar/DSC6201.jpg","../imgs/hundar/DSC6202.jpg"]}else if(4==imageSet){var homographiesCarH1=[[1.0406215190887451,-.0030779337976127863,-140.2157440185547,.017164135351777077,1.0202465057373047,-.7551611661911011,9318920638179407e-20,-5.902680300096108e-7,.9874429702758789],[1.0750093460083008,-.02087479643523693,-508.8431701660156,.08801420778036118,1.0420607328414917,-16.94595718383789,.00040142808575183153,4092470044270158e-20,.8111422657966614]],homographiesCarH2=[[.972752034664154,-.0057953596115112305,134.65829467773438,-.008775225840508938,1.0011701583862305,-5.0560622215271,-4124096449231729e-20,2398512515355833e-20,.9941999316215515],[1.0654523372650146,-.025096984580159187,-361.77484130859375,.06723976880311966,1.0343387126922607,-5.541501045227051,.00023750626132823527,-31810126529308036e-21,.9189171195030212]],homographiesCarH3=[[.5839483737945557,-.034430377185344696,378.4354553222656,-.059002310037612915,.7470527291297913,-17.07809066772461,-.000307348178466782,-905879569472745e-19,.7977254986763],[.7873080372810364,.02911977842450142,311.2395935058594,-.05235334858298302,.8844791054725647,-15.283720016479492,-.0002088312030537054,21151159671717323e-21,.9176208972930908]];allHomographies=[homographiesCarH1,homographiesCarH2,homographiesCarH3],imagesRef=["../imgs/cars/DSC1526.jpg","../imgs/cars/DSC1533.jpg","../imgs/cars/DSC1561.jpg"]}else 5==imageSet?(console.log("image Set 5"),allHomographies=[homographiesBike2H1,homographiesBike2H2,homographiesBike2H3],imagesRef=["../imgs/IMG_0050.jpg","../imgs/IMG_0051.jpg","../imgs/IMG_0053.jpg"]):6==imageSet?(console.log("image Set 6"),allHomographies=[homographiesSienceParkH1,homographiesSienceParkH2],imagesRef=["../imgs/P1100328.jpg","../imgs/P1100329.jpg"]):7==imageSet&&(imagesRef=["../imgs/P1.jpg","../imgs/P2.jpg"],allHomographies=[homographiesBirdH1,homographiesBirdH2]);var stitch={},computedHs={},canvasDiv="CANVAS",imagesReady=!1,result_canvas,imageCanvases={};$(window).load(function(){imagesReady=!0,enablestart()});var selDiv1=document.querySelector("#selectedF1");placeimgs(imagesRef,selDiv1);var blob,finalcanvas=loadCanvas("final-canvas"),mouse={};!function(a){a.blobObj=function(){function a(){o=0;var a=j[0],d=c(a);n=[];for(var e={},h=1;h<imagesRef.length;h++)e[h]=14;for(var h=1;h<imagesRef.length;h++){var m=new i(h);f[h]=g.add(m,"threshold",5,45).step(1),f[h].onChange(function(a){e[this.object.blobMap]=a,b(e)});var p=j[h],q=c(p);k[h]=findDiff(d,q,p.width,p.height),p.blobs=k[h].getData();for(var r=0;r<p.blobs.numberOfUnique;r++){for(var s=r+1,t=zeros(p.blobs.data.length),u=0;u<p.blobs.data.length;u++)s===p.blobs.data[u]&&(t[u]=s+o);n.push([t,h])}o+=p.blobs.numberOfUnique}console.log("globalNumberOfUnique",o);for(var h=0;o>h;h++)l[h+1]=!1;return n}function b(a){o=0,n=[];for(var b=1;b<imagesRef.length;b++){var c=j[b];c.blobs=k[b].compareToThres(a[b]);for(var d=0;d<c.blobs.numberOfUnique;d++){for(var e=d+1,f=zeros(c.blobs.data.length),g=0;g<c.blobs.data.length;g++)e===c.blobs.data[g]&&(f[g]=e+o);n.push([f,b])}o+=c.blobs.numberOfUnique}l={};for(var b=0;o>b;b++)l[b+1]=!1;mouse.setNblobs(n,j,l),redrawScrean(n,j,l,mouse.getOffset())}function c(a){for(var b=0,c=0,d=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),e=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),f=new jsfeat.matrix_t(a.width,a.height,jsfeat.F32_t|jsfeat.C1_t),g=new jsfeat.matrix_t(a.width,a.height,jsfeat.U8_t|jsfeat.C1_t),h=0;h<a.height;h++)for(var i=0;i<a.width;i++,b+=4,c+=1)d.data[c]=a.data[b],e.data[c]=a.data[b+1],f.data[c]=a.data[b+2],g.data[c]=a.data[b+3];return[d,e,f,g]}function d(){var a=document.createElement("input");a.type="button",a.className="btn btn-primary",a.value="reset",a.onclick=e;var b=document.getElementById("btn1");b.appendChild(a)}function e(){finalcanvas.width=0,finalcanvas.height=0,$("#btn1").hide();for(var a=0;a<_.size(l);a++)l[a+1]=!1;redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");b.scrollIntoView(!0)}var f={},g=new dat.GUI({autoPlace:!1}),h=document.getElementById("thresblobs");h.appendChild(g.domElement);var i=function(a){this.threshold=14,this.blobMap=a},j={},k=[],l={},m={},n=[];$("#btn1").hide(),d();var o=0;return{createBlobView:function(){result_canvas=loadCanvas("blobs"),j=stitch.getOverlap(),console.log("Length of overlap data ",j.length),m=a(),$("#ComputingBlobs").hide(),$("#blobInterface").show(),mouse=interactMouse(m,j,l,j[0].width,j[0].height),mouse.setup(),redrawScrean(m,j,l,mouse.getOffset());var b=document.getElementById("blobs");return b.scrollIntoView(!0),1},getData:function(){return 1},remove:function(){for(var a=1;a<imagesRef.length;a++)console.log("REMOVE:",a),f[a]&&g.remove(f[a]);e();var b=document.getElementById("blobs");return b.children.blobs.remove(),result_canvas={},l={},j={},k=[],m={},n=[],1}}}}(this);
-</script>
+<script type="text/javascript" src="../js/blobObj.js" ></script> -->
+
+<script type="text/javascript" src="mainDemo.min.js" ></script>
+<!-- <p class="vericaltext">
+magcut
+</p>
+<div id="sidebar">
+	<br>
+	<span class="works biohover"><a href="selScene.html">Demo</a><br></span>
+	<span class="works biohover"><a href="indexApp.html">App</a><br></span>
+
+</div> -->
+
+
 </body>
 </html>
