@@ -42,7 +42,7 @@ $(window).load(function() {
     enablestart();
 });
 
-var imagesRef = ["example_blob1.png"];
+var imagesRef = ["t12.png"];
 var selDiv1 = document.querySelector("#selectedF1");
 placeimgs(imagesRef, selDiv1);
 
