@@ -1,0 +1,133 @@
+<html>
+<head>
+<link rel=StyleSheet Type="text/css" href="style.css">
+<!--link rel=StyleSheet Type="text/css" href="crap.css"-->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<title>Magcut.js</title>
+
+</head>
+<style>
+.center { text-align: center; list-style-position:inside;}
+
+</style>
+<body>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+
+<center>
+<!-- <br><br> -->
+<!-- <div style="font-size: 40px; font-weight: bold;">Online Web tool for burst images</div> -->
+<div class="page-header"> <h1>A web tool for burst images</h1> </div>
+<!-- <br><br> -->
+
+<div style="height: 400px;">
+	<div id="teaser1" style= " background-color: white; position: absolute; width: 100%;">
+		<center>
+		<table>
+		<tr>
+			<td><center><img src="../imgs/EandL/ut480.png"><br>Output</td>
+			<td>
+				<table>
+				<tr>
+					<td><center><div id="thumb255"> <img src="../imgs/EandL/P1180178_t.jpg"><br>Input 1</td></div>
+				</tr>
+				<tr>
+					<td><center><div id="thumb255"><img src="../imgs/EandL/P1180179_t.jpg"><br>Input 2</td></div>
+				</tr>
+				</table>
+			</td>
+		</table>
+	</div>
+
+	<div id="teaser2" style= "display: none; background-color: white; position: absolute; width: 100%;">
+	<br><br>
+		<center>
+		 <img src="../imgs/ski/montage.jpg">
+	</div>
+</div>
+
+<script>
+function fade()
+{
+	$('#teaser1').fadeToggle(1000);
+	$('#teaser2').fadeToggle(1000);
+}
+
+ window.setInterval(fade, 5000);
+</script>
+
+<table width="575px">
+<tr>
+	<td>
+		
+		        <h3>How to Instructions</h3>
+
+		        <!-- <dl> -->
+<dt>1</dt>
+<dd>Select multiple pictures from one scene by either select a scene from the <a href="selScene.html">Demo-sets</a> or choose from your own photos to edit in the <a href="indexApp.html">Application</a></dd>
+<dt>2</dt>
+<dd>Wait until the images are stitched together in the application. For the demo image-sets the homographies are already computed</dd>
+<dt>3</dt>
+<dd>Traverse the multiple images via the mouse scroll wheel. To select one base reference image simply click in the image</dd>
+<dt>4</dt>
+<dd>The difference between the reference image and all other images are computed and highlighted. This allows you to select content to add or remove.  First you can adjust a global threshold by scroll the mouse wheel inside the difference image</dd>
+<dt>5</dt>
+<dd>Click inside a region to adjust that particular region. Once the region is selected the color will change</dd>
+<dt>6</dt>
+<dd>Click the blend button to let the application blend in all selected regions in the reference image</dd>
+
+<!-- </dl> -->
+
+	</td>
+</tr>
+</table>
+
+<br>
+
+<table width="800px">
+<tr>
+	<td>
+
+<h3>Introduction to Burst</h3>
+
+<p> Burst mode is a good choise when it comes to photographing moving subjects. One example is shooting sports. Sports photography can be hard because sports move fast, the athletes move fast and the fields are big. With the camera in burst mode we can hold down the shutter and pan the camera along when the athletes movement.</p>
+
+<p>Putting the camera settings in to burst mode are good in other situations too.  Animals and children are similar to athletes in the way that they move fast.</p>  
+
+<p>You often only get one chance to capture a snapshot and to do this in a situation where many things  happening at ones, to freezing the moment of a dynamic scene when everything looks right can be a harsh task. </p> 
+
+<p>The success rate is usually low and therefore photographers need good software to to edit down the number of candidates and to do post-processing in. It is here our proposal comes into play.</p> 
+
+<p>Magcut is an image editor that let the user rearrange the photographed scene to maximize the visibility or to change the composition. This can be done in several ways either by adding and moving objects or by removing objects within the scene. </p> 
+
+<p>Our application is suited for dynamic scenes where objects are moving. It also allows the camera to move slightly within a scene. We assume that the burst of images provided by the user contains some differences. That is, differences between each single image.</p> 
+
+<h3>Materials</h3>
+
+  <p>The source code and the data can be found on github in the <a href="https://github.com/josundin/magcut">Link</a>. </p> 
+
+<h3>Related</h3>
+<p>The application uses image stitching. Please see The project Image Stitching with HTML5, canvas and JavaScript <a href="http://josundin.github.io/stitch/">Demo page</a>
+and/or the <a href="https://github.com/josundin/josundin.github.io/tree/master/stitch">Source code</a> for more information on stitching. </p>
+
+	</td>
+</tr>
+</table>
+<p class="vericaltext">
+magcut
+</p>
+<div id="sidebar">
+
+
+	<!-- <img src="../imgs/side.png"><br> -->
+
+	<br>
+	<span class="works biohover"><a href="selScene.html">Demo</a><br></span>
+	<span class="works biohover"><a href="indexApp.html">App</a><br></span>
+
+</div>
+
+</center>
+<br><br><br>
+</body>
+</html>
