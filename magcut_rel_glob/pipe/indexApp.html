@@ -1,0 +1,169 @@
+<!doctype html>
+
+<html>
+<head>
+
+<meta charset="utf-8" />
+  <title>Magcut APP</title>
+  <style>
+    #drop_zone {
+      border: 2px dashed #bbb;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 25px;
+      text-align: center;
+      font: 20pt bold 'Vollkorn';
+      color: #bbb;
+    }
+
+  #selectedFiles img {
+    max-width: 250px;
+    max-height: 250px;
+    float: left;
+    margin-bottom:10px;
+    margin-left:10px;
+  }
+
+  </style>
+    <link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+  </head>
+<body>
+
+<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+<script type="text/javascript" src="../ext_js/underscore-min.js"></script>
+<script type="text/javascript" src="../ext_js/dat.gui.min.js"></script>
+<script type="text/javascript" src="../ext_js/UntidyPriorityQueue.js"></script>
+
+<script type="text/javascript" src="../js/findBlobs.js"></script>
+<script type="text/javascript" src="../js/findDiff.js"></script>
+<script type="text/javascript" src="../js/imagewarp.js"></script>
+<script type="text/javascript" src="../js/blobMan.js"></script>
+<script type="text/javascript" src="../js/interactMouse.js"></script>
+<script type="text/javascript" src="../js/poisson.js"></script> 
+<script type="text/javascript" src="../js/layout.js"></script>
+<script type="text/javascript" src="../js/orbObj.js"></script>
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../ext_js/vector.js"></script>
+<script type="text/javascript" src="../ext_js/profiler.js"></script>
+
+<!-- <script type="text/javascript" src="../dist/magcutApp.js"></script> -->
+
+
+  <div class="container">
+
+    <header>
+      <div class="page-header"> <h1>A web tool for burst images</h1> </div>
+      <p>This is the Magcut web application for burst images. It is an Interactive Photo editing tool that find differences in aligned images. </p>
+    </header>
+
+    <div class="row" id="chooseFiles">
+      <div class="span12">
+        <p>
+         Start by Stitch two or more images ether with File Browse: <input type="file" id="files" name="files" multiple accept="image/*"><br/>
+        </p>
+        <p>
+          or Drop the images on the following box.
+        </p>
+      </div>
+
+      <div id="drop_zone">Drop images here</div>
+    </div>
+
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch" style="display:none;">
+          <h2>1 Selected images</h2>
+          <p>
+
+          </p>
+        </div>
+        <div id="selectedFiles" class="selectedFiles"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <div id="pre-stitch2" style="display:none;">
+          <p>
+            <strong>You have selected the above images. <div id="runAlgo" > Run the algorithm to <button type="button" onclick="start();" class="btn btn-primary" id="example-images">stitch the images</button> Or Select new ones. </div>
+            </strong>  
+          </p>
+        </div>
+      </div> 
+    </div>
+
+    <div class="row" id="stitching" style="display:none;">
+
+      <div class="span12">
+
+        <h2>Now stitching! :</h2>
+        <p>
+          Time to compute depend on your device and your browser all computation are done in JavaScript in your browsern.
+        </p>
+      </div>
+    </div>
+
+  <div class="row" id="poststitch" style="display:none;">
+    <div class="col-md-8">
+        <div id="tmpCanvas" ></div> 
+        <h2>Select a reference view</h2>
+        <div id="selectViewContainer"></div>
+    </div>
+    <div class="col-md-4">
+      Scroll inside the images to select a reference view
+      <div id="ComputingBlobs" style="display:none;">
+        <h2>Computing Differences: </h2>  
+      </div>
+    </div>
+  </div>
+
+  <!-------------------------------------------------------------->
+  <div id="blobInterface" class="row" style="display:none;">
+    <div class="col-md-8">
+      <p>The fuond blobs</p> <br>
+      Select the colored regions by click them to blend
+      <div id="blobs"></div>
+    </div>
+
+    <div class="col-md-4">
+      <p>When clicked in the image</p>
+      <div id="thresblobs"></div>
+
+      <form id="myForm" role="form">
+        <div class="radio">
+          <label><input type="radio" name="optradio" value="1" checked>Select Blob</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="optradio" value="2" >Paint Out</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="optradio" value="3">Paint In</label>
+        </div>
+      </form>
+
+      <br> <br>
+            When the regions are selected, click 
+        <button class="btn btn-primary" name="adjustBtn" onclick="blend()">HERE</button> To blend.        
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div id="final-canvas"></div> 
+    </div>
+    <div class="col-md-4">
+      <div id="btn1"></div>
+    </div>
+  </div>
+
+  </div>
+<script src="../js/relativeBlobTreshold.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/selectview.js" ></script>
+<script type="text/javascript" src="mainApp.js"></script>
+<script type="text/javascript" src="../js/blobObj.js" ></script>
+
+<!-- <script type="text/javascript" src="../dist/mainApp.js" ></script> -->
+</body>
+</html>

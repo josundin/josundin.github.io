@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Image Editing Demo</title>
+<link rel="stylesheet" href="../libs/twitter-bootstrap/bootstrap.min.css">
+<style>
+	.selectedFiles img {
+		max-width: 100;
+		max-height: 100px;
+		float: left;
+		margin-bottom:10px;
+		margin-left:10px;
+	}
+	.masks {
+		display: none;
+	}
+
+	#sidebar{
+    display: inline;
+    position: fixed;
+    left: 20px;
+    top: 450px;
+    width: 60px;
+    overflow: hidden;
+}
+.vericaltext{
+	font-size: 30px;
+	font-weight: bold;
+    display: inline;
+    position: fixed;
+    width:1px;
+  	left: 40px;
+    top: 175px;
+
+    word-wrap: break-word;
+    font-family: monospace;
+    position:inside;
+}
+</style>
+
+
+</head>
+<body>
+
+<!--img id="IMG_0050" class="masks" src="../imgs/IMG_0050.jpg"></img>
+<img id="IMG_0053" class="masks" src="../imgs/IMG_0053.jpg"></img>
+<img id="IMG_0051" class="masks" src="../imgs/IMG_0051.jpg"></img>
+
+<img id="P1100328" class="masks" src="../imgs/P1100328.jpg"></img>
+<img id="P1100329" class="masks" src="../imgs/P1100329.jpg"></img>
+
+<img id="P1" class="masks" src="../imgs/P1.jpg"></img>
+<img id="P2" class="masks" src="../imgs/P2.jpg"></img-->
+
+<script type="text/javascript" src="../ext_js/underscore.js"></script>
+<script type="text/javascript" src="../ext_js/jsfeat-min.js"></script>
+<script type="text/javascript" src="../ext_js/numeric-1.2.6.min.js"></script>
+
+<script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../ext_js/vector.js"></script>
+<script type="text/javascript" src="../ext_js/profiler.js"></script>
+<script type="text/javascript" src="../ext_js/UntidyPriorityQueue.js"></script>
+
+
+<script type="text/javascript" src="../js/findBlobs.js"></script>
+<script type="text/javascript" src="../js/findDiff.js"></script>
+<script type="text/javascript" src="../js/imagewarp.js"></script>
+<script type="text/javascript" src="../js/blobMan.js"></script>	
+<script type="text/javascript" src="../js/interactMouse.js"></script>	
+<script type="text/javascript" src="../js/poisson.js"></script>	
+
+
+<!--script type="text/javascript" src="../dist/magcut.js"></script-->
+  
+<div class="container">
+<h2>Image Editing Demo on the Web</a></h2>
+	<div class="row">
+		<div class="span12">
+			<p>The input images</p>			
+			<div id="selectedF1" class="selectedFiles"></div>
+		</div>
+	</div>
+
+    <div class="row">
+	  <div class="col-md-8">
+      	<h2>Select reference view</h2>
+		<div id="selectViewContainer"></div>
+	  </div>
+	  <div class="col-md-4">
+	  Scroll inside the images to select a reference view
+		<div id="ComputingBlobs" style="display:none;">
+			<h2>Computing Differences: </h2>  
+		</div>
+	  </div>
+	</div>
+	
+	<div id="blobInterface" class="row" style="display:none;">
+	  <div class="col-md-8">
+		  <p>The fuond blobs</p> <br>
+		  Select the colored regions by click them to blend
+		  <div id="blobs"></div>
+	  </div>
+
+	  <div class="col-md-4">
+		  <p>When clicked in the image</p>
+		  <div id="thresblobs"></div>
+
+		  <form id="myForm" role="form">
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="1" checked>Select Blob</label>
+		    </div>
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="2" >Paint Out</label>
+		    </div>
+		    <div class="radio">
+		      <label><input type="radio" name="optradio" value="3">Paint In</label>
+		    </div>
+  		</form>
+
+		  <br> <br>
+	  		    When the regions are selected, click 
+		    <button class="btn btn-primary" name="adjustBtn" onclick="blend()">HERE</button> To blend.		    
+	  </div>
+	</div>
+
+	<div class="row">
+	  <div class="col-md-8">
+	  	<div id="final-canvas"></div> 
+	  </div>
+
+	  <!--div class="col-md-8">
+	  		new-canvas
+	  	<div id="new-canvas"></div> 
+	  	src-canvas
+	  	<div id="src-canvas"></div>
+	  </div-->
+	  <div class="col-md-4">
+	  	<div id="btn1"></div>
+	  </div>
+	</div>
+</div>
+<script src="../js/relativeBlobTreshold.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/selectview.js" ></script>
+<script type="text/javascript" src="mainDemo.js"></script>
+<script type="text/javascript" src="../js/blobObj.js" ></script> 
+
+<!--script type="text/javascript" src="../dist/mainDemo.js" ></script-->
+
+<!-- <p class="vericaltext">
+magcut
+</p>
+<div id="sidebar">
+	<br>
+	<span class="works biohover"><a href="selScene.html">Demo</a><br></span>
+	<span class="works biohover"><a href="indexApp.html">App</a><br></span>
+
+</div> -->
+
+
+</body>
+</html>

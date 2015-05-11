@@ -1,0 +1,17 @@
+{
+  "name": "magcut",
+  "version": "0.0.1",
+  "description" : "magcut is a photo alignment, magical cut tool in HTML5 canvas and JavaScript",
+  "author" : "Johan Sundin (https://github.com/josundin)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josundin/magcut.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-uglify": "~0.6.0"
+  },
+  "files" : "dist/magcut.js",
+  "main" : "dist/magcut"
+}

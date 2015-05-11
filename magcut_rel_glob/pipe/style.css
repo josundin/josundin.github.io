@@ -1,0 +1,131 @@
+body
+{
+/*	color: #444444;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	line-height: 17px;*/
+	font-family:Helvetica,Arial,sans-serif ;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+#sidebar{
+    display: inline;
+    position: fixed;
+    left: 20px;
+    top: 450px;
+    width: 60px;
+    overflow: hidden;
+}
+.vericaltext{
+	font-size: 30px;
+	font-weight: bold;
+    display: inline;
+    position: fixed;
+    width:1px;
+  	left: 40px;
+    top: 175px;
+
+    word-wrap: break-word;
+    font-family: monospace;
+    position:inside;
+}
+.page-header{
+	padding-bottom:9px;
+	margin:40px 0 20px;
+	font-family:Helvetica,Arial,sans-serif ;
+	/*Helvetica,Arial,sans-serif*/
+}
+
+a:link
+{
+	color: #0000ff;
+	text-decoration: underlined;
+}
+
+a:visited
+{
+	color: #0000ff;
+	text-decoration: underlined;
+}
+
+a:hover, a:active
+{
+	color: #f60;
+	text-decoration: underlined;
+}
+
+.small
+{
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.medium
+{
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.title
+{
+	font-size: 40px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.author
+{
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.affiliation
+{
+	font-size: 13px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.rightlink
+{
+	font-size: 13px;
+}
+
+.works, .works a, .works a:visited{
+	font-size: 20px;
+	font-weight: bold;
+	font-family: monospace;
+	text-align: left;
+    color: #3AB596;
+    text-decoration: none;
+    color: #3AB596;
+    text-decoration: none;
+}.biohover a:hover{   
+     background: #B12024;
+     color: #BEC8A5;
+}
+
+}.works, .works a, .works a:visited{
+    color: #3AB596;
+    text-decoration: none;
+}.workshover a:hover{   
+     background: #3AB596;
+     color: #8A181B;
+}.bio, .bio a, .bio a:visited{
+    color: #B12024;
+    text-decoration: none;
+}.biohover a:hover{   
+     background: #B12024;
+     color: #BEC8A5;
+}.press, .press a, .press a:visited{
+    color: #D2B12A;
+    text-decoration: none;
+}.presshover a:hover{   
+     background: #D2B12A;
+     color: #100C0D;
+}
