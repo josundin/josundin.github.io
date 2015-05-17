@@ -134,7 +134,6 @@ var TSTEP = 1;
             },
             updateThresholdIncreas: function() {
                 initTreshold++;
-                 console.log("inc The ID is:", myId, "initTreshold",initTreshold);
                 if (initTreshold > 0) {
 
 					subtactOne(dists, myXsize, myYsize, decIndx, decVal);

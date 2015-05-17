@@ -25,11 +25,11 @@ function redrawScrean(maps, odata, blobSelected, clickedPos){
             for (var yi = 0; yi < maps.length; yi++){
                 if((clickedPos[dptr_s] != 0 || maps[yi][0][dptr_s] === yi + 1) &&  odata[maps[yi][1]].data[dptr + 3] != 0){
 
-                    imageDatar.data[dptr]     =  clickedPos[dptr_s] ? 0 : odata[maps[yi][1]].data[dptr]; 
+                    imageDatar.data[dptr]     =  clickedPos[dptr_s] ? 0 : baseImgData.data[dptr]; 
                     imageDatar.data[dptr + 1] =  clickedPos[dptr_s] ? odata[maps[yi][1]].data[dptr + 1] : 0 ;
                     
-                    imageDatar.data[dptr + 2] =  clickedPos[dptr_s] ? 0 : odata[maps[yi][1]].data[dptr + 2]; 
-                    imageDatar.data[dptr + 3] = clickedPos[dptr_s] ? 255 : 200;
+                    imageDatar.data[dptr + 2] =  clickedPos[dptr_s] ? 0 : baseImgData.data[dptr + 2]; 
+                    imageDatar.data[dptr + 3] = 255; //clickedPos[dptr_s] ? 255 : 200;
 
                 }
             }            
@@ -38,6 +38,8 @@ function redrawScrean(maps, odata, blobSelected, clickedPos){
     ctx2.putImageData(imageDatar, 0, 0);
     result_ctx.putImageData(baseImgData, 0, 0);
     result_ctx.drawImage(canvas2,0,0);
+    // result_ctx.putImageData(imageDatar,0,0);
+    
 }
 
 
