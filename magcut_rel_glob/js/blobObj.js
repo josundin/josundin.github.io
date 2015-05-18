@@ -97,7 +97,7 @@ var myblobs1 = [];
             for (var xii = 0; xii < _.size(blobSelected); xii++){
                 blobSelected[xii + 1] = false;
             }
-            redrawScrean(bmaps, overlapData, blobSelected, zeros(overlapData[0].width * overlapData[0].height)); 
+            redrawScrean(bmaps, overlapData, blobSelected, mouse.getOffset()); 
             var el = document.getElementById('blobs');
             el.scrollIntoView(true);
         }
@@ -115,7 +115,7 @@ var myblobs1 = [];
 
                 mouse = interactMouse(bmaps, overlapData, blobSelected, overlapData[0].width, overlapData[0].height, ModOverlapData);
                 mouse.setup(0);
-                redrawScrean(bmaps, overlapData, blobSelected, zeros(overlapData[0].width * overlapData[0].height));
+                redrawScrean(bmaps, overlapData, blobSelected, mouse.getOffset());
 
                 var el = document.getElementById('blobs');
                 el.scrollIntoView(true);

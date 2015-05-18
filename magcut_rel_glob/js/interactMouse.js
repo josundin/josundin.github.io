@@ -1,25 +1,23 @@
 // mouse(/touch) on a canvas
 
 var cwidth, cheight;
-var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
+var imgData = [], modImgData = [], blobData = [];
 (function(_this){
 "use strict";
 
     _this['interactMouse'] = function(overlap, imgs, selectedBlobs, w, h, modImgs){
         var blobSelected = {};
-        // var scrollThresh = 37, previousScrollThresh = 37;
         var scrollThresh = 24, previousScrollThresh = 24;
         // var myblobs1 = [];
 
-        var relativeBlobs = [];
-        var clickedBlobs  =  zeros(w * h);//[];
-        var clickedBlobsMap = [];
+        var relativeBlobs = {};
+        var relativeBlobsIndxs = [];
+        var clickedBlobs  = [];
         var dDelta = 0, prevdDelta = 0;
-        var stopChanging = false;
 
-        var SELBLOB  = 1;
-        var PAINTOUT = 2;
-        var PAINTIN  = 3;
+        var SELBLOB  = 1
+        var PAINTOUT = 2
+        var PAINTIN  = 3
         var radio = $('input[name=optradio]:checked', '#myForm').val(); 
 
         $('#myForm input').on('change', function() {
@@ -105,7 +103,6 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
             var p_currPos = null;
             var canvas = null;
             var hoveredIn = 0, previusHoveredIn = 0;
-            var hoveredInRel = 0, previusHoveredInRel = 0;
         
             return function(id,onChange){
                 var localOnChange = (function(onChange){ return function(){
@@ -137,37 +134,21 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                             if( blobData[i - 1][0][ourPos] === i){
                                 dragging = i;
                                 clicked = i;
+                                hoveredIn = i;
                                 console.log("HIIIIIIIIITT", i, "on", ourPos);
-                                
+                                blobSelected[i] = !blobSelected[i];
                                 console.log(blobSelected);
 
-                                if(clickedBlobs[ourPos]){ // elativeBlobs[i] ||
-                                    console.log("already exist");    
-
-                                    hoveredIn = 0;
-                                    hoveredInRel = 0;
-                                    clicked   = 0; 
-                                    var nollStall = clickedBlobs[ourPos];
-                                    console.log("noll ställ", clickedBlobs[ourPos]);
-                                    //tabort den region som vi clickade i
-                                    //kolla vilket nummer den har i clicked blobd och sätt noll där istället
-                                    //noll ställ också blobselected
-                                    blobSelected[nollStall] = false;
-                                    blobSelected[i] = false;
-                                    for (var x = 0; x < clickedBlobs.length; x++){
-                                        if(clickedBlobs[x] == nollStall){
-                                            clickedBlobs[x] = 0;
-                                        }                                            
-                                    }
-                                    console.log(blobSelected);
+                                if(relativeBlobs[i]){
+                                    console.log("already exist");
+                                    // previusHoveredIn = 0;
+                                    // hoveredIn = 0;
+                                    // clicked = 0;
+                                    // relativeBlobs[i] = 0;
                                 }
 
                                 else{
-                                    hoveredIn = i;
-                                    hoveredInRel = i;
-                                    blobSelected[i] = !blobSelected[i];
                                     console.log("does not exist, create relative blob");
-                                    console.log("imd indx",  blobData[clicked - 1][1]);
 
                                     if(blobData[clicked - 1][1] > 1){
 
@@ -186,19 +167,27 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                                         relativeBlobs[i] = new relativeBlobTreshold(i, myblobs1[blobData[clicked - 1][1]].getGauss(), result_canvas.width, result_canvas.height, scrollThresh, ourPos, myblobs1[blobData[clicked - 1][1]].getSize(clicked), imgData[blobData[clicked - 1][1]].data);                                             
                                     }                                                                                                
                                     //save the new blob
-                                    blobDataRelative[i - 1][0] = relativeBlobs[i].getBlob();
-                                    for (var x = 0; x < clickedBlobs.length; x++){
-                                        if(blobDataRelative[i - 1][0][x] == i){
-                                            clickedBlobs[x] = i;
-                                        }                                            
-                                    }
-                                    // redrawScrean(blobData, imgData, blobSelected, clickedBlobs);
+                                    blobData[i - 1][0] = relativeBlobs[i].getBlob();
+                                    redrawScrean(blobData, imgData, blobSelected, hoveredIn);
                                 }
+
+                                //break;
                             }
                         }
-                        // redrawScrean(blobData, imgData, blobSelected, clickedBlobs);
-                        getBlobsIgnoreSelected(scrollThresh);
+                        redrawScrean(blobData, imgData, blobSelected, hoveredIn);
                         // stophere()
+                    }
+                    else if(radio == PAINTIN || radio == PAINTOUT){
+
+                        dragging = true;
+                        
+                        var dx = currPos[0].x;
+                        var dy = currPos[0].y;
+                        blobData[clicked - 1][0] = myblobs1[blobData[ clicked - 1 ][1]].paint(clicked, dx, dy, radio);
+                       
+                        // redrawScrean(blobData, imgData, blobSelected);
+                        redrawScrean(blobData, imgData, blobSelected, hoveredIn);
+
                     }
 
 
@@ -210,7 +199,20 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
         
                     var dx = currPos[0].x;
                     var dy = currPos[0].y;
-                    if(_.some(blobSelected)){
+                    if(dragging && clicked && (radio == PAINTIN || radio == PAINTOUT)){
+                        blobData[clicked - 1][0] = myblobs1[blobData[ clicked - 1 ][1]].paint(clicked, dx, dy, radio);
+                        var dxx = currPos[0].x - lastPos[0].x;
+                        var dyy = currPos[0].y - lastPos[0].y;
+                        if( dxx*dxx + dyy*dyy < 32 ){
+                            currPos = lastPos;
+                            lastPos = tmp;
+                        }
+                        else{
+                            redrawScrean(blobData, imgData, blobSelected, hoveredIn);
+
+                        }
+                    //om någon blob är clickad
+                    }else if(_.some(blobSelected)){
                         //check if we are inside a selected blob or not
                         var dxx = currPos[0].x - lastPos[0].x;
                         var dyy = currPos[0].y - lastPos[0].y;
@@ -220,9 +222,6 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                         }
                         else{
                             var ourPos = dy * result_canvas.width + dx;
-                            previusHoveredInRel = hoveredInRel;
-
-                            hoveredInRel = clickedBlobs[ourPos];
 
                             previusHoveredIn = hoveredIn;
                             var blobs;
@@ -230,7 +229,7 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                             for( blobs in blobSelected){
                                 if(blobSelected[blobs]){
                                     var hoverOver = Number(blobs);
-                                    if( blobDataRelative[hoverOver - 1][0][ourPos] !== 0){
+                                    if( blobData[hoverOver - 1][0][ourPos] !== 0){
                                         hoveredIn = hoverOver;
                                         clicked   = hoverOver;
                                         blobArray.push(1);             
@@ -238,6 +237,7 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                                     else {
                                         blobArray.push(0);
                                     }
+
                                 }
                             }
                             if(!_.contains(blobArray, 1)){
@@ -245,20 +245,21 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                                 clicked   = 0;
                             }
 
+                            //alt om previus hovered in != hoveredIn 
+                            //then redraw screan
                             if(previusHoveredIn != hoveredIn){
-                                console.log("***************************************************");
-                                console.log("REDRAW");
-                                console.log(hoveredIn, clicked);
-                            }   
-                            if(previusHoveredInRel != hoveredInRel){
+                                redrawScrean(blobData, imgData, blobSelected, hoveredIn);
 
-                                // clicked = hoveredInRel;
-
-                                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                                console.log("REDRAW FOR Hovered In");
-                                console.log(hoveredInRel, clicked);
-                            }                           
+                                // console.log(relativeBlobs[3].id);
+                            }
+                            
+                            // var tes1 = _.countBy(blobSelected , function(num) {
+                            //       return num == true ? 'trues': 'false';
+                            // });
+                            // console.log(tes1['trues'], tes1);
+                            
                         }
+
                     }
 
                     if( e.preventDefault ){
@@ -277,74 +278,63 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                     }
                     var delta = e.wheelDelta ? e.wheelDelta/40 : e.detail ? -e.detail : 0;
                     dDelta += delta;
-                    console.log("thres", scrollThresh, "delta", dDelta, dDelta > prevdDelta);
 
                     if(clicked){
-                        if(stopChanging){
+                        if(dDelta > prevdDelta){
+                            blobData[clicked - 1][0] = relativeBlobs[clicked].updateThresholdDecreas();
+                            redrawScrean(blobData, imgData, blobSelected, hoveredIn);
 
-                            for (var x = 0; x < clickedBlobs.length; x++){
-                                if(clickedBlobs[x] == clicked){
-                                    clickedBlobs[x] = 0;
-                                }                                            
-                            }
-                            clicked = 0;
-                        }
-                        else{
-                            if(dDelta > prevdDelta){
-                                blobDataRelative[clicked - 1][0] = relativeBlobs[clicked].updateThresholdDecreas();
-                                for (var x = 0; x < clickedBlobs.length; x++){
-                                    if(blobDataRelative[clicked - 1][0][x] == clicked){
-                                        clickedBlobs[x] = clicked;
-                                    } else if(clickedBlobs[x] == clicked){
-                                        clickedBlobs[x] = 0;
-                                    }                                            
-                                }
-                                // redrawScrean(blobDataRelative, imgData, blobSelected, clickedBlobs);
 
-                            }else if(dDelta < prevdDelta){
-                                blobDataRelative[clicked - 1][0] = relativeBlobs[clicked].updateThresholdIncreas();
-                                for (var x = 0; x < clickedBlobs.length; x++){
-                                    if(blobDataRelative[clicked - 1][0][x] == clicked){
-                                        clickedBlobs[x] = clicked;
-                                    }                                            
-                                }
-                                // redrawScrean(blobDataRelative, imgData, blobSelected, clickedBlobs);
-                            }
+                        }else if(dDelta < prevdDelta){
+                            blobData[clicked - 1][0] = relativeBlobs[clicked].updateThresholdIncreas();
+                            redrawScrean(blobData, imgData, blobSelected, hoveredIn);
                         }
-                        getBlobsIgnoreSelected(scrollThresh);
                     }
                     else{
 
 
-                        if(delta > 0 && scrollThresh < (550) ){
-                            scrollThresh = scrollThresh + 1;
-                            previousScrollThresh = scrollThresh;   
-                        }else if(delta < 0 && scrollThresh >= 0){
-                            scrollThresh = scrollThresh - 1;
-                            previousScrollThresh = scrollThresh;
-                        }
-
                         if(_.some(blobSelected)){
 
-                            console.log("Special Case -------------------------------------------");
-                            // clickedBlobs = zeros(blobDataRelative[0][0].length);
+
+                            if(delta > 0 && scrollThresh < (550) ){
+                                scrollThresh = scrollThresh + 1;
+                                // previousScrollThresh = scrollThresh;   
+                            }else if(delta < 0 && scrollThresh >= 0){
+                                scrollThresh = scrollThresh - 1;
+                                // previousScrollThresh = scrollThresh;
+                            }
+
+                            clickedBlobs = zeros(blobData[0][0].length);
 
                             var blobs;
                             for( blobs in blobSelected){
                                 if(blobSelected[blobs]){
-                                    // printa32(blobData[blobs - 1][0], 32);
                                     //loop throo the whole matrix
                                     for (var x = 0; x < blobData[blobs - 1][0].length; x++){
-                                        if(blobDataRelative[blobs - 1][0][x] == blobs){
+                                        if(blobData[blobs - 1][0][x] == blobs){
                                             clickedBlobs[x] = Number(blobs);
                                         }                                            
                                     }
                                 }
                             }
+                            
                             getBlobsIgnoreSelected(scrollThresh);
-                            // getThemBlobs(scrollThresh);
+                            previousScrollThresh = scrollThresh;
+
+                            // blobData[clicked - 1][0]
                         }else{
-                            getThemBlobs(scrollThresh, false);
+                            if(delta > 0 && scrollThresh < (550) ){
+                                scrollThresh = scrollThresh + 1;
+                                
+                                getThemBlobs(scrollThresh);
+                                
+                                previousScrollThresh = scrollThresh;   
+                            }else if(delta < 0 && scrollThresh >= 0){
+                                scrollThresh = scrollThresh - 1;
+                                getThemBlobs(scrollThresh);
+                                
+                                previousScrollThresh = scrollThresh;
+                            }
                         }
                     }
                     prevdDelta = dDelta;
@@ -353,19 +343,16 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
         })();
 
         function getBlobsIgnoreSelected(tvalues){
+            console.log(" getBlobsIgnoreSelected ");
             var globalNumberOfUnique = 0;
             var selctedOrNot = [];
             var blobsChangeFrom = [];
             var blobsChangeTo = [];
-
-            blobDataRelative = [];
-            clickedBlobsMap = [];
+            blobData = [];
 
             for (var xii = 1; xii < imagesRef.length; xii++){
                 var overlap = imgData[xii];
                 overlap.blobs = myblobs1[xii].compareToThres(tvalues);
-                // console.log("image:", xii);
-                // printa32(overlap.blobs.data, 32);
 
                 for (var y = 0; y < overlap.blobs.numberOfUnique; y++){          
                     var currentblobindx = y + 1;
@@ -377,51 +364,68 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                         if(currentblobindx === overlap.blobs.data[x]){
                             blobtmp[x] = currentblobindx + globalNumberOfUnique;
                             if(clickedBlobs[x] != 0){
+                                console.log("ignore this########################################", blobtmp[x], x);
                                 ignore = true;
                                 clickedBlobsIndx = clickedBlobs[x];
                                 break;
                             }
                         }
                     }
-                    if(ignore){
+                    if(ignore){ // &&  !_.contains(blobsChangeFrom, clickedBlobsIndx) 
                         blobtmp = zeros(overlap.blobs.data.length);
                         for (var x = 0; x < overlap.blobs.data.length; x++){
                             if(clickedBlobs[x] == clickedBlobsIndx){
                                 blobtmp[x] = currentblobindx + globalNumberOfUnique;
                             }
                         }
-                        selctedOrNot.push(true);
-                        blobsChangeFrom.push(clickedBlobsIndx); 
+                        // if(!_.contains(blobsChangeFrom, clickedBlobsIndx)){
+                            selctedOrNot.push(true);
+                            console.log("den :", clickedBlobsIndx);
+                            blobsChangeFrom.push(clickedBlobsIndx);    
+                        // }
+                        // else{
+                        //     console.log("MISS", selctedOrNot)
+                        // }
+                        
                     }
                     else{
                         selctedOrNot.push(false);
                     }
-
-                    blobDataRelative.push([blobtmp, xii]);
+                    blobData.push([blobtmp, xii]);
                 }
                 globalNumberOfUnique += overlap.blobs.numberOfUnique;
             }
-            
-            //vilken som ska vara grön
 
             blobSelected = {};
             for (var xii = 0; xii < globalNumberOfUnique; xii++){
                 if(selctedOrNot[xii]){
                     blobSelected[xii + 1] = true;
+                    console.log("till :", xii + 1);
                     blobsChangeTo.push(xii + 1);
+
                 }
                 else{
                     blobSelected[xii + 1] = false;
                 }
             }
+            for (var ij= 1; ij < blobData.length + 1; ij++){
+                p_offseted[ij] = { x: 0, y: 0 };
+            }
 
             if(blobsChangeFrom.length > 0){
-                // console.log("relativeBlobs before", relativeBlobs);
-                // console.log("MAKE THE CHANGES ************************", previousScrollThresh < scrollThresh);
-                // console.log("from :", blobsChangeFrom);
-                // console.log("to   :", blobsChangeTo);
-                // console.log("**************** ************************");
+                console.log("relativeBlobs before", relativeBlobs);
+                console.log("MAKE THE CHANGES ************************", previousScrollThresh < scrollThresh);
+                console.log("from :", blobsChangeFrom);
+                console.log("to   :", blobsChangeTo);
+                console.log("**************** ************************");
                 var zipped = _.zip(blobsChangeFrom,blobsChangeTo);
+                console.log("zipped", zipped);
+                // if(previousScrollThresh < scrollThresh){
+                //     zipped = _.sortBy(zipped, function(num){ return -num[1]; });
+                // }
+                // else{
+                //     zipped = _.sortBy(zipped, function(num){ return num[1]; });
+                // }
                 zipped = _.sortBy(zipped, function(num){ return -num[1]; });
                 zipped = _.uniq(zipped, false, function(num) {return num [0];})
                 
@@ -430,35 +434,40 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                 blobsChangeFrom = unzipped[0];
                 blobsChangeTo   = unzipped[1];
 
-            }
+                console.log("zip unzipped ************************");
+                console.log("from :", blobsChangeFrom);
+                console.log("to   :", blobsChangeTo);
 
-            for (var ij= 0; ij < blobsChangeFrom.length; ij++){
-              
-                if(relativeBlobs[blobsChangeFrom[ij]]){
-                    relativeBlobs[blobsChangeFrom[ij]].changeId(blobsChangeTo[ij]);
-                    changeKey(relativeBlobs, blobsChangeFrom[ij], blobsChangeTo[ij] + 99);
-                    stopChanging = false;
-                } else{
-                    stopChanging = true;
-                    break;
-                }               
-            }
 
-            for (var ij= 0; ij < blobsChangeFrom.length; ij++){
-                if(!stopChanging){
-                    changeKey(relativeBlobs, blobsChangeFrom[ij] + 99 + (blobsChangeTo[ij] - blobsChangeFrom[ij]), blobsChangeTo[ij]);
-                } else{
-                    break;
+                for (var ij= 0; ij < blobsChangeFrom.length; ij++){
+                    console.log(ij, relativeBlobs);
+                    // if(relativeBlobs[ij]){
+                        relativeBlobs[blobsChangeFrom[ij]].changeId(blobsChangeTo[ij]);
+                        changeKey(relativeBlobs, blobsChangeFrom[ij], blobsChangeTo[ij] + 99);
+                    // }
                 }
+
+
+                for (var ij= 0; ij < blobsChangeFrom.length; ij++){
+                    // if(relativeBlobs[ij]){
+                        changeKey(relativeBlobs, blobsChangeFrom[ij] + 99 + (blobsChangeTo[ij] - blobsChangeFrom[ij]), blobsChangeTo[ij]);
+                    // }
+                }
+
+                console.log("relativeBlobs after", relativeBlobs);
+
+
+                numBlobs = blobData.length;
+
+                console.log("blobSelected Size", _.size(blobSelected), blobSelected);
+
+                redrawScrean(blobData, imgData, blobSelected);
+
             }
-            numBlobs = blobData.length;
-
-            //***************************
-            // redrawScrean(blobData, imgData, blobSelected);
-            getThemBlobs(scrollThresh, true);
+        else{
+            console.log("the array is empty", blobSelected);
+        }
         }; 
-
-        //END of modifying the blobs
 
         function zeros(size) {
             var array = new Array(size);
@@ -468,7 +477,8 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
             return array;
         };
 
-        function getThemBlobs(tvalues, fromRel){
+        function getThemBlobs(tvalues){
+            console.log(" get them, ");
             var globalNumberOfUnique = 0;
             blobData = [];
 
@@ -485,18 +495,20 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                         }
                     }
                     blobData.push([blobtmp, xii]);
-                    if(!fromRel){
-                        blobDataRelative.push([blobtmp, xii]);
-                    }
                 }
                 globalNumberOfUnique += overlap.blobs.numberOfUnique;
+            }
+            blobSelected = {};
+            for (var xii = 0; xii < globalNumberOfUnique; xii++){
+                blobSelected[xii + 1] = false;
             }
             for (var ij= 1; ij < blobData.length + 1; ij++){
                 p_offseted[ij] = { x: 0, y: 0 };
             }
             numBlobs = blobData.length;
 
-            redrawScrean(blobData, imgData, blobSelected, clickedBlobs);
+            redrawScrean(blobData, imgData, blobSelected);
+
         }; 
 
         return{
@@ -506,7 +518,6 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                 (function(){    
                     numBlobs = overlap.length;
                     blobData = overlap.slice();
-                    blobDataRelative = overlap.slice();
                     imgData = imgs.slice();
                     modImgData = modImgs.slice();
                     for (var ij= 1; ij < numBlobs + 1; ij++){
@@ -516,13 +527,6 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                     setupOverlay('#blobs',function(){
                         console.log("do nada");
                     });
-                    console.log(imgData.length - 1);
-
-                    clickedBlobsMap = [];
-                    for (var ij= 1; ij < imgData.length - 1; ij++){
-                        clickedBlobsMap.push(zeros(w * h));
-                    }
-
                 })();
             },
             setNblobs: function(overlap1, imgs1, selectedBlobs){
@@ -539,9 +543,7 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
                 return p_offseted;
             },
             getBlobSelected: function(){
-                getBlobsIgnoreSelected(scrollThresh);
                 return blobSelected;
-                // relativeBlobs
             }
         };
     };
@@ -549,7 +551,6 @@ var imgData = [], modImgData = [], blobData = [], blobDataRelative = [];
 
 function blend(){
     var cont = _.contains(mouse.getBlobSelected(), true);
-    console.log(mouse.getBlobSelected());
     if(cont !== true){    
         console.log("do naada");
         alert("First, select which regions to blend by click them in the image");
@@ -577,14 +578,14 @@ function blend(){
             var blobNr = i;
 
             // src_ctx.putImageData(imgData[1], 0, 0);
-            src_ctx.putImageData(modImgData[blobDataRelative[i - 1][1]], 0, 0);
+            src_ctx.putImageData(modImgData[blobData[i - 1][1]], 0, 0);
              
             new_ctx.putImageData(imgData[0], 0, 0);
             if(firstImg){
                 final_ctx.putImageData(imgData[0], 0, 0);
                 firstImg = false;
             }
-            var mask_pixels = blobDataRelative[blobNr -1][0];
+            var mask_pixels = blobData[blobNr -1][0];
             var srcData = src_ctx.getImageData(0, 0, srccanvas.width, srccanvas.height);
             var mask_data = getMask(mask_pixels, srcData, blobNr);
             console.log("start Blending", blobNr);
@@ -626,7 +627,6 @@ function getMask(mask_pixels, src_pixels, blobNr){
 }
 
 function changeKey(o, old_key, new_key){
-
     if (old_key !== new_key) {
         Object.defineProperty(o, new_key,
         Object.getOwnPropertyDescriptor(o, old_key));
