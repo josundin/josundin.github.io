@@ -143,21 +143,29 @@
 		    <br> <br>
 		    <br> <br>
 		    <br> <br>
-		    <br> <br>
 		    
 		    <form action="index.html#instructions">
-			    <input type="submit" id="instructbtn" class="btn btn-default" aria-label="Left Align" value="instructions page">
+			    <input type="submit" id="instructbtn" class="btn btn-default btn-block" aria-label="Left Align" value="instructions page">
+			</form>
+			<form action="selScene.html">
+			    <input type="submit" id="instructbtn" class="btn btn-default btn-block" aria-label="Left Align" value="Demo Sets">
 			</form>
 
 	  </div>
 
-	<div class="col-md-8">
+		<div class="col-md-8">
 		  <h3>Adjust threshold by scrolling the mouse wheel, click to select a region </h3>
   		  <div id="wrapper" >
 			  <canvas id="blobsbottom"></canvas>
 			  <canvas id="blobstop"></canvas>
 		  </div>
-	  </div>
+	  	</div>
+
+	  	 <div class="col-md-2"> 
+	  	 	<br> <br>
+	  	 	<button class="btn btn-default btn-block" name="mosaicBtn" onclick="doMosaic()">Mosaic View</button>
+	  	 	<button class="btn btn-default btn-block" name="restviewBtn" onclick="doReset()">Reset View</button>	
+		</div>
 
 	</div>
 
