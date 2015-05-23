@@ -64,37 +64,8 @@
 <script type="text/javascript" src="../ext_js/jquery-1.9.1.min.js"></script>
 
 <center>
-<!-- <br><br> -->
-<!-- <div style="font-size: 40px; font-weight: bold;">Online Web tool for burst images</div> -->
 <div class="page-header"> <h1>Image Editing from multiple photos to one single best</h1> </div>
-<!-- <br><br> -->
 
-<!-- <div style="height: 300px;">
-
-	<center>
-	<div id="teaser1" style= "background-color: white; position: absolute; width: 100%;">
-		<center>
-		 <img src="../imgs/fp/figure1_text_1000.png">
-	</div>
-	</center>
-
-	<div id="teaser2" style= "display: none; background-color: white; position: absolute; width: 100%;">
-	<br>
-		<center>
-		 <img src="../imgs/ski/montage.jpg">
-	</div>
-</div> -->
-
-
- <script>
-// function fade()
-// {
-// 	$('#teaser1').fadeToggle(750);
-// 	$('#teaser2').fadeToggle(750);
-// }
-
-//  window.setInterval(fade, 10000);
-// </script>
 
 	<div id="teaser1" style= "background-color: white; position: relative; width: 100%; margin: 0px 30px 30px 0px;">
 		<center>
@@ -130,7 +101,7 @@
 
 	</dd>
 	<dt>Step 2 Global thresholding</dt>
-	<dd>The difference between the reference image and all other images are computed and highlighted, these highlighted areas are called blobs. This allows you to select content to add or remove. Adjust the Global threshold by scroll the mouse wheel in any region except the green one, this is done to split or merge the blobs with each other. </dd>
+	<dd>The difference between the reference image and all other images are computed and highlighted, these highlighted areas are called layers. This allows you to select content to add or remove. Adjust the Global threshold by scroll the mouse wheel in anywhere except in the green one layer, this is done to split or merge the layers with each other. The green is explained in next step. </dd>
 		<div id="sel1"  style= "background-color: white; position: relative; width: 100%; margin:24">
 			<center>
 			 <img src="../imgs/fp/global.gif">
@@ -138,14 +109,14 @@
 
 	</dd>
 	<dt>Step 3 Toggle</dt>
-	<dd>When a region that you want to change is present click in that region to make changes in the image. You can toggle the content of that specific region by click in it.</dd> <br>
-	<dd> The green layer is just an indication that the blob is selected. The content inside the green region are coming from an image other than the reference image. The content inside all other colors then green mean that that content are coming from the reference image. Different colors means that in that area there are differences with respect to the reference image. The reference image in this example only have one other image then the reference image so there is only one blue color indicating differences between these two. To choose a green blob means that when we hit that blend button then the script will automatically blend the content we see inside the green blob into the reference image. </dd>
+	<dd>When some content that you want to change is present click in that layer to make changes in the image. You can toggle the content of that specific layer by click in it.</dd> <br>
+	<dd> The green layer is just an indication that the layer is selected. The content inside the green layer are coming from an image other than the reference image. The content inside all other colored layers then the green mean that that content are coming from the reference image. Different colors means that in that area there is differences with respect to the reference image. The reference image in this example only have one other image then the reference image so there is only one blue color indicating differences between these two. To choose a green layer means that when we hit the blend button then the script will automatically blend the content we see inside the green layer into the reference image. </dd>
 	<div id="click"  style= "background-color: white; position: relative; width: 100%; margin:24">
 		<center>
 		 <img src="../imgs/fp/click.gif">
 	</div>
-	<dt>Step 4 Relative thresholding</dt>
-	<dd>Adjust the Relative threshold by scroll the mouse wheel inside any green region, the region you are currently hovering are highlighted by a light-green color to indicate which region you are adjusting.</dd> 
+	<dt>Step 4 Fine tune Relative threshold</dt>
+	<dd>Adjust the Relative threshold by scroll the mouse wheel inside any green layer, the layer you are currently hovering are highlighted by a light-green color to indicate which region you are adjusting.</dd> 
 
 	<div id="rel"  style= "background-color: white; position: relative; width: 100%; margin:24">
 		<center>
@@ -153,7 +124,7 @@
 	</div>
 
 	<br>
-	<dd>To catch up with <b>Step 2 - 4</b> , these include handling of mouse scroll wheel, mouse point and mouse click when the check box <em>Select Blob</em> is selected. For a comprehensive view see the flowchart.</dd>
+	<dd>To catch up with <b>Step 2 - 4</b> , these include handling of mouse scroll wheel, mouse point and mouse click when the check box <em>Select Layer</em> is selected. For a comprehensive view see the flowchart.</dd>
 
 	<div id="flow"  style= "background-color: white; position: relative; width: 100%; margin:24">
 		<center>
@@ -167,8 +138,8 @@
 	</div>
 
 
-	<dt>Step 5 Paint/Erase</dt>
-	<dd>If you are not satisfied with what the blob regions are covering you can manually paint or erase the layers by selecting these options in the check-box. Simply paint inside a green region to add paint.</dd>
+	<dt>Step 5 Fine tune Paint/Erase</dt>
+	<dd>If you are not satisfied with what the layer regions are covering you can manually paint or erase the layers by selecting these options in the check-box. Simply paint inside a green region to add layer.</dd>
 	<div id="add" style= "background-color: white; position: relative; width: 100%; margin:24">
 		<center>
 		 <img src="../imgs/fp/add.gif">
@@ -179,7 +150,7 @@
 		 <img src="../imgs/fp/rm.gif">
 	</div>
 	<dt>Step 6</dt>
-	<dd>Click the blend button to let the application blend in all selected regions in the reference image. Please be aware of that this is an experiment and not a fully fledge app.</dd>
+	<dd>Click the blend button to let the application blend in all selected layers in the reference image. Please be aware of that this is an experiment and not a fully fledge app.</dd>
 
 </div>
 
