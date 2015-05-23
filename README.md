@@ -4,7 +4,7 @@ Magcut is an Interactive Photo editing tool that find differences in aligned ima
 Please see the [**Demo page**](http://josundin.github.io/magcut/) and/or the [**Source code**](https://github.com/josundin/magcut)
 
 <h4>How to instructions</h4>
-	<a href="http://josundin.github.io/magcut/index.html#instructions">please see </a> 
+[**instructions**](http://josundin.github.io/magcut/index.html#instructions)
 
 ##A web browser tool for Image Alignment and Stitching
 
